@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LogLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -30,7 +31,7 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public ApplicationViewModel()
+		public ApplicationViewModel(ILogger Logger):base(Logger)
 		{
 			Projects = new ObservableCollection<ProjectViewModel>();
 		}
@@ -41,7 +42,7 @@ namespace SIP_o_matic.ViewModels
 			ProjectViewModel project;
 
 			await Task.Yield();
-			project = new ProjectViewModel();
+			project = new ProjectViewModel(Logger);
 			Projects.Add(project);
 			SelectedProject = project;
 		}

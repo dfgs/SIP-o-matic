@@ -19,9 +19,25 @@ namespace SIP_o_matic.DataSources
 			private set;
 		}
 
-		public Event(DateTime Timestamp,string Message)
+		public string SourceAddress
 		{
-			this.Timestamp = Timestamp;this.Message = Message;
+			get;
+			private set;
+		}
+
+		public string DestinationAddress
+		{
+			get;
+			private set;
+		}
+
+
+		public Event(DateTime Timestamp, string SourceAddress, string DestinationAddress, string Message)
+		{
+			this.Timestamp = Timestamp;
+			this.SourceAddress = SourceAddress;
+			this.DestinationAddress = DestinationAddress;
+			this.Message = Message;
 		}
 	}
 }

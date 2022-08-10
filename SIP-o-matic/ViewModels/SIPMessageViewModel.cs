@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LogLib;
+using SIP_o_matic.DataSources;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,8 +18,7 @@ namespace SIP_o_matic.ViewModels
 
 		public DateTime Timestamp
 		{
-			get;
-			private set;
+			get => Event.Timestamp;
 		}
 		public string From
 		{
@@ -30,10 +31,15 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public int UID
+		public Event Event
 		{
 			get;
 			private set;
+		}
+
+		public string RawMessage
+		{
+			get => Event.Message;
 		}
 
 		public ObservableCollection<FileViewModel> SourceFiles
@@ -47,22 +53,33 @@ namespace SIP_o_matic.ViewModels
 			get => SourceFiles.Count;
 		}
 
-		public SIPMessageViewModel(int UID, DateTime Timestamp,string From,string To)
+		public int UID
+		{
+			get => RawMessage.GetHashCode();
+		}
+
+		/*public abstract string CallID
+		{
+			get;
+		}*/
+
+		public SIPMessageViewModel(ILogger Logger,Event Event,string From,string To):base(Logger)
 		{
 			SourceFiles = new ObservableCollection<FileViewModel>();
-			this.UID = UID; this.Timestamp = Timestamp; this.From = From;this.To = To;
+			this.Event = Event;
+			this.From = From;this.To = To;
 		}
 
 
-		public void AddSourceFile(FileViewModel File)
+		public void AddSourceFile(FileViewModel FileViewModel)
 		{
-			SourceFiles.Add(File);
+			SourceFiles.Add(FileViewModel);
 			OnPropertyChanged("Count");
 		}
 
-		public void RemoveSourceFile(FileViewModel File)
+		public void RemoveSourceFile(FileViewModel FileViewModel)
 		{
-			SourceFiles.Remove(File);
+			SourceFiles.Remove(FileViewModel);
 			OnPropertyChanged("Count");
 		}
 	}

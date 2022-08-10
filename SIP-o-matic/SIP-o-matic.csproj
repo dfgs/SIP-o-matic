@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj" />
+    <ProjectReference Include="..\..\LogLib\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using LogLib;
+using Microsoft.Win32;
 using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace SIP_o_matic
 
 		public MainWindow()
 		{
-			applicationViewModel = new ApplicationViewModel();
+			applicationViewModel = new ApplicationViewModel(NullLogger.Instance);
 
 			InitializeComponent();
 			DataContext = applicationViewModel;

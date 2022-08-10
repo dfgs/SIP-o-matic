@@ -19,12 +19,20 @@
 			<TextBlock Text=""/>
 		</StatusBar>
 		<ToolBarTray DockPanel.Dock="Top">
-			<ToolBar Band="1" BandIndex="1">
+			<ToolBar >
 				<Button Command="New" ToolTip="New project" ToolTipService.ShowOnDisabled="true">
 					<Image Source="Images\page_white.png" ToolTip="New project" Stretch="None"/>
 				</Button>
 				<Button Command="Open" ToolTip="Open project" ToolTipService.ShowOnDisabled="true">
 					<Image Source="Images\folder.png" ToolTip="Open project" Stretch="None"/>
+				</Button>
+			</ToolBar>
+			<ToolBar >
+				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/folder_add.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.RemoveFile}" ToolTip="Remove file" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/folder_delete.png"  Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>

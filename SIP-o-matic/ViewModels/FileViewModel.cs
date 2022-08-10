@@ -1,4 +1,5 @@
-﻿using SIP_o_matic.DataSources;
+﻿using LogLib;
+using SIP_o_matic.DataSources;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,7 +36,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public FileViewModel()
+		public FileViewModel(ILogger Logger):base(Logger)
 		{
 			Events = new ObservableCollection<Event>();
 

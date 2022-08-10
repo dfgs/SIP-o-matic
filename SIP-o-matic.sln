@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIP-o-matic", "SIP-o-matic\SIP-o-matic.csproj", "{95255AE7-01F3-48A5-A307-3D7C2DD82B0B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIP-o-matic", "SIP-o-matic\SIP-o-matic.csproj", "{95255AE7-01F3-48A5-A307-3D7C2DD82B0B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthernetFrameReaderLib", "..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj", "{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIPParserLib", "..\SIPParserLib\SIPParserLib\SIPParserLib.csproj", "{692FBAD6-731F-4CE1-B202-4E981AF9E665}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogLib", "..\LogLib\LogLib\LogLib.csproj", "{EF4B0001-2859-4A09-8F95-3E5BEF4A5272}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{692FBAD6-731F-4CE1-B202-4E981AF9E665}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{692FBAD6-731F-4CE1-B202-4E981AF9E665}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{692FBAD6-731F-4CE1-B202-4E981AF9E665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -36,6 +42,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{692FBAD6-731F-4CE1-B202-4E981AF9E665} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
+		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9229E506-032C-4EEB-9A4A-D9F3DC95820E}

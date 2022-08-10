@@ -1,4 +1,5 @@
 ﻿using EthernetFrameReaderLib;
+using LogLib;
 using PcapngFile;
 using SIP_o_matic.DataSources;
 using SIPParserLib;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -43,28 +45,31 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(SelectedFileProperty, value); }
 		}
 
-
-
-		public ObservableCollection<SIPMessageViewModel> SIPMessages
+		public ObservableCollection<CallViewModel> Calls
 		{
 			get;
 			private set;
 		}
 
+		public static readonly DependencyProperty SelectedCallProperty = DependencyProperty.Register("SelectedCall", typeof(CallViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public CallViewModel? SelectedCall
+		{
+			get { return (CallViewModel)GetValue(SelectedCallProperty); }
+			set { SetValue(SelectedCallProperty, value); }
+		}
 
-		public ProjectViewModel()
+
+
+		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			Files = new ObservableCollection<FileViewModel>();
-			SIPMessages = new ObservableCollection<SIPMessageViewModel>();
+			Calls = new ObservableCollection<CallViewModel>();
 		}
 
 
-		public SIPMessageViewModel? FindMessageByUID(int UID)
-		{
-			return SIPMessages.FirstOrDefault(item => item.UID == UID);
-		}
 
-		private SIPMessageViewModel CreateSIPMessageViewModel(int UID,Event Event)
+
+		/*private SIPMessageViewModel CreateSIPMessageViewModel(Event Event)
 		{
 			SIPMessage sipMessage;
 
@@ -74,24 +79,56 @@ namespace SIP_o_matic.ViewModels
 			}
 			catch (Exception ex)
 			{
-				return new InvalidMessageViewModel(UID,Event.Timestamp, Event.Message, ex.Message);
+				return new InvalidMessageViewModel(Event, ex.Message);
 			}
 			switch (sipMessage)
 			{
-				case Request request: return new RequestViewModel(UID,Event.Timestamp, request);
-				case Response response:return new ResponseViewModel(UID,Event.Timestamp, response);
-				default: return new InvalidMessageViewModel(UID,Event.Timestamp, Event.Message, $"Invalid message type {sipMessage.GetType()}");
+				case Request request: return new RequestViewModel(Event, request);
+				case Response response:return new ResponseViewModel(Event, response);
+				default: return new InvalidMessageViewModel(Event, $"Invalid message type {sipMessage.GetType()}");
 			}
+		}*/
+		public CallViewModel? FindCallByUID(int UID)
+		{
+			return Calls.FirstOrDefault(item => item.UID == UID);
 		}
 
+
+		public void AddEvent(FileViewModel FileViewModel,Event Event)
+		{
+			CallViewModel? callViewModel;
+			int callUID;
+			SIPMessage sipMessage;
+
+			try
+			{
+				sipMessage = SIPGrammar.SIPMessage.Parse(Event.Message, ' ');
+			}
+			catch (Exception ex)
+			{
+				Log(LogLevels.Error, ex.Message);
+				return;
+			}
+
+			callUID = SIPUtils.GetCallUID(sipMessage);
+
+			callViewModel=FindCallByUID(callUID);
+
+			if (callViewModel == null)
+			{
+				callViewModel=new CallViewModel(Logger,callUID);
+				Calls.Add(callViewModel);
+			}
+			callViewModel.AddSIPMessage(FileViewModel,Event, sipMessage);
+		}
+
+		
 		public async Task AddFileAsync(string Path)
 		{
 			IDataSource dataSource;
 			FileViewModel fileViewModel;
-			SIPMessageViewModel? sipMessageViewModel;
-			int UID;
 
-			fileViewModel = new FileViewModel();
+			fileViewModel = new FileViewModel(Logger);
 			fileViewModel.Path = Path;
 			Files.Add(fileViewModel);
 
@@ -99,26 +136,12 @@ namespace SIP_o_matic.ViewModels
 			await foreach(Event _event in dataSource.EnumerateEventsAsync())
 			{
 				fileViewModel.Events.Add(_event);
-				UID = _event.Message.GetHashCode();
-
-				sipMessageViewModel = FindMessageByUID(UID);
-
-				if (sipMessageViewModel != null)
-				{
-					sipMessageViewModel.AddSourceFile(fileViewModel);
-					continue;
-				}
-				else
-				{
-					sipMessageViewModel = CreateSIPMessageViewModel(UID,_event);
-					sipMessageViewModel.AddSourceFile(fileViewModel);
-					SIPMessages.Add(sipMessageViewModel);
-				}
+				AddEvent(fileViewModel, _event);
 			}
 		}
 		public async Task RemoveFileAsync(FileViewModel File)
 		{
-			SIPMessageViewModel? sipMessageViewModel;
+			/*SIPMessageViewModel? sipMessageViewModel;
 			int UID;
 
 			Files.Remove(File);
@@ -139,7 +162,8 @@ namespace SIP_o_matic.ViewModels
 				SelectedFile = null;
 				Files.Remove(File);
 				
-			}
+			}*/
+			await Task.Yield();
 		}
 
 

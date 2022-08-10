@@ -1,4 +1,6 @@
-﻿using SIPParserLib;
+﻿using LogLib;
+using SIP_o_matic.DataSources;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +17,7 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => request.RequestLine.ToString();
 
-		public RequestViewModel(int UID, DateTime Timestamp, Request Request) : base(UID, Timestamp, Request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined", Request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
+		public RequestViewModel(ILogger Logger, Event Event, Request Request) : base(Logger,Event, Request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined", Request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
 		{
 			this.request = Request;
 		}

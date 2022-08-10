@@ -10,8 +10,8 @@
 		<TabItem Header="Files">
 			<views:FilesView/>
 		</TabItem>
-		<TabItem Header="SIP messages">
-			<views:SIPMessagesView />
+		<TabItem Header="Calls">
+			<views:CallsView />
 		</TabItem>
 	</TabControl>
 </UserControl>

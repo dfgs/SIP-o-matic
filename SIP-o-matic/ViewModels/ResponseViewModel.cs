@@ -1,4 +1,6 @@
-﻿using SIPParserLib;
+﻿using LogLib;
+using SIP_o_matic.DataSources;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => response.StatusLine.ToString();
 
-		public ResponseViewModel(int UID, DateTime Timestamp, Response Response): base(UID,Timestamp, Response.GetHeader<FromHeader>()?.Value.ToString()?? "Undefined", Response.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
+		public ResponseViewModel(ILogger Logger, Event Event, Response Response): base(Logger,Event, Response.GetHeader<FromHeader>()?.Value.ToString()?? "Undefined", Response.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
 		{
 			this.response = Response;
 		}
