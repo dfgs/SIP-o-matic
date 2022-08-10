@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <RootNamespace>SIP_o_matic</RootNamespace>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Images\folder.png" />
+    <None Remove="Images\folder_add.png" />
+    <None Remove="Images\folder_delete.png" />
+    <None Remove="Images\page_white.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Images\folder.png" />
+    <Resource Include="Images\folder_add.png" />
+    <Resource Include="Images\folder_delete.png" />
+    <Resource Include="Images\page_white.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PcapngFile" Version="1.0.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj" />
+    <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
+  </ItemGroup>
+
+</Project>
