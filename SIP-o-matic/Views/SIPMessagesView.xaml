@@ -9,8 +9,9 @@
 	<ListView ItemsSource="{Binding SIPMessages}">
 		<ListView.View>
 			<GridView>
-				<GridViewColumn Width="200" Header="From" DisplayMemberBinding="{Binding From}"/>
-				<GridViewColumn Width="200" Header="To" DisplayMemberBinding="{Binding To}"/>
+				<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp}"/>
+				<GridViewColumn Width="300" Header="From" DisplayMemberBinding="{Binding From}"/>
+				<GridViewColumn Width="300" Header="To" DisplayMemberBinding="{Binding To}"/>
 				<GridViewColumn Width="500" Header="Display" DisplayMemberBinding="{Binding Display}"/>
 				<GridViewColumn Width="50" Header="Count" DisplayMemberBinding="{Binding Count}"/>
 			</GridView>

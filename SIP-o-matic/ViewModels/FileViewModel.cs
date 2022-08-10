@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIP_o_matic.DataSources;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -28,16 +29,15 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
-		public static readonly DependencyProperty MessagesProperty = DependencyProperty.Register("Messages", typeof(ObservableCollection<string>), typeof(FileViewModel), new PropertyMetadata(null));
-		public ObservableCollection<string> Messages
+		public ObservableCollection<Event> Events
 		{
-			get { return (ObservableCollection<string>)GetValue(MessagesProperty); }
-			set { SetValue(MessagesProperty, value); }
+			get;
+			private set;
 		}
 
 		public FileViewModel()
 		{
-			Messages = new ObservableCollection<string>();
+			Events = new ObservableCollection<Event>();
 
 		}
 

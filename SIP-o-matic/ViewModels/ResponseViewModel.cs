@@ -14,7 +14,7 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => response.StatusLine.ToString();
 
-		public ResponseViewModel(int UID, Response Response): base(UID, Response.GetHeader<FromHeader>()?.Value.ToString()?? "Undefined", Response.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
+		public ResponseViewModel(int UID, DateTime Timestamp, Response Response): base(UID,Timestamp, Response.GetHeader<FromHeader>()?.Value.ToString()?? "Undefined", Response.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
 		{
 			this.response = Response;
 		}

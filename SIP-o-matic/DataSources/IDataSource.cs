@@ -8,6 +8,6 @@ namespace SIP_o_matic.DataSources
 {
 	public interface IDataSource
 	{
-		IAsyncEnumerable<string> EnumerateMessagesAsync();
+		IAsyncEnumerable<Event> EnumerateEventsAsync();
 	}
 }

@@ -15,7 +15,8 @@ namespace SIP_o_matic.DataSources
 		{
 			this.fileName = FileName;
 		}
-		public async IAsyncEnumerable<string> EnumerateMessagesAsync()
+		
+		public async IAsyncEnumerable<Event> EnumerateEventsAsync()
 		{
 			FrameReader frameReader;
 			PacketReader packetReader;
@@ -58,7 +59,7 @@ namespace SIP_o_matic.DataSources
 					if (
 						message.StartsWith("SIP/2.0") ||
 						message.StartsWith("INVITE") || message.StartsWith("ACK") || message.StartsWith("OPTIONS") || message.StartsWith("BYE") || message.StartsWith("CANCEL") || message.StartsWith("REGISTER")
-						) yield return message;
+						) yield return new Event(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp/1000).ToLocalTime(), message);
 					//await Task.Delay(2000);
 
 				}

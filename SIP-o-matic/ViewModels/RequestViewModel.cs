@@ -15,7 +15,7 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => request.RequestLine.ToString();
 
-		public RequestViewModel(int UID, Request Request) : base(UID, Request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined", Request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
+		public RequestViewModel(int UID, DateTime Timestamp, Request Request) : base(UID, Timestamp, Request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined", Request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
 		{
 			this.request = Request;
 		}

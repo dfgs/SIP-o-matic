@@ -33,7 +33,14 @@
 				</ListView.View>
 			</ListView>
 			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-			<ListBox Grid.Row="2" ItemsSource="{Binding SelectedFile.Messages}"/>
+			<ListView Grid.Row="2" ItemsSource="{Binding SelectedFile.Events}">
+				<ListView.View>
+					<GridView>
+						<GridViewColumn Width ="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp}"/>
+						<GridViewColumn Width="800" Header="Message" DisplayMemberBinding="{Binding Message}"/>
+					</GridView>
+				</ListView.View>
+			</ListView>
 		</Grid>
 	</DockPanel>
 

@@ -64,25 +64,23 @@ namespace SIP_o_matic.ViewModels
 			return SIPMessages.FirstOrDefault(item => item.UID == UID);
 		}
 
-		private SIPMessageViewModel ParseSIPMessage(string Message)
+		private SIPMessageViewModel CreateSIPMessageViewModel(int UID,Event Event)
 		{
 			SIPMessage sipMessage;
-			int UID;
 
-			UID = Message.GetHashCode();
 			try
 			{
-				sipMessage = SIPGrammar.SIPMessage.Parse(Message, ' ');
+				sipMessage = SIPGrammar.SIPMessage.Parse(Event.Message, ' ');
 			}
 			catch (Exception ex)
 			{
-				return new InvalidMessageViewModel(UID,Message, ex.Message);
+				return new InvalidMessageViewModel(UID,Event.Timestamp, Event.Message, ex.Message);
 			}
 			switch (sipMessage)
 			{
-				case Request request: return new RequestViewModel(UID, request);
-				case Response response:return new ResponseViewModel(UID, response);
-				default: return new InvalidMessageViewModel(UID,Message, $"Invalid message type {sipMessage.GetType()}");
+				case Request request: return new RequestViewModel(UID,Event.Timestamp, request);
+				case Response response:return new ResponseViewModel(UID,Event.Timestamp, response);
+				default: return new InvalidMessageViewModel(UID,Event.Timestamp, Event.Message, $"Invalid message type {sipMessage.GetType()}");
 			}
 		}
 
@@ -98,10 +96,10 @@ namespace SIP_o_matic.ViewModels
 			Files.Add(fileViewModel);
 
 			dataSource = new WiresharkDataSource(Path);
-			await foreach(string message in dataSource.EnumerateMessagesAsync())
+			await foreach(Event _event in dataSource.EnumerateEventsAsync())
 			{
-				fileViewModel.Messages.Add(message);
-				UID = message.GetHashCode();
+				fileViewModel.Events.Add(_event);
+				UID = _event.Message.GetHashCode();
 
 				sipMessageViewModel = FindMessageByUID(UID);
 
@@ -112,7 +110,7 @@ namespace SIP_o_matic.ViewModels
 				}
 				else
 				{
-					sipMessageViewModel = ParseSIPMessage(message);
+					sipMessageViewModel = CreateSIPMessageViewModel(UID,_event);
 					sipMessageViewModel.AddSourceFile(fileViewModel);
 					SIPMessages.Add(sipMessageViewModel);
 				}
@@ -125,9 +123,9 @@ namespace SIP_o_matic.ViewModels
 
 			Files.Remove(File);
 
-			await foreach (string message in File.Messages.ToAsyncEnumerable())
+			await foreach (Event _event in File.Events.ToAsyncEnumerable())
 			{
-				UID = message.GetHashCode();
+				UID = _event.Message.GetHashCode();
 
 				sipMessageViewModel = FindMessageByUID(UID);
 

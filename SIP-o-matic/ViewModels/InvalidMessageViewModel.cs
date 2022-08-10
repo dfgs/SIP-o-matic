@@ -14,7 +14,7 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => errorMessage;
 
-		public InvalidMessageViewModel(int UID,string Message,string ErrorMessage):base(UID,"Undefined","Undefined")
+		public InvalidMessageViewModel(int UID, DateTime Timestamp,string Message,string ErrorMessage):base(UID,Timestamp, "Undefined","Undefined")
 		{
 			this.message = Message;
 			this.errorMessage = ErrorMessage;

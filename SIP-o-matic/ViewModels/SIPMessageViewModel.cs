@@ -13,6 +13,12 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
+
+		public DateTime Timestamp
+		{
+			get;
+			private set;
+		}
 		public string From
 		{
 			get;
@@ -41,10 +47,10 @@ namespace SIP_o_matic.ViewModels
 			get => SourceFiles.Count;
 		}
 
-		public SIPMessageViewModel(int UID,string From,string To)
+		public SIPMessageViewModel(int UID, DateTime Timestamp,string From,string To)
 		{
 			SourceFiles = new ObservableCollection<FileViewModel>();
-			this.UID = UID; this.From = From;this.To = To;
+			this.UID = UID; this.Timestamp = Timestamp; this.From = From;this.To = To;
 		}
 
 
