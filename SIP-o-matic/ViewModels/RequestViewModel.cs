@@ -13,11 +13,26 @@ namespace SIP_o_matic.ViewModels
 	{
 		private Request request;
 
-
+		public override string? From
+		{
+			get => request.GetHeader<FromHeader>()?.Value.ToShortString();
+		}
+		public override string? To
+		{
+			get => request.GetHeader<ToHeader>()?.Value.ToShortString();
+		}
+		public override string? CallID
+		{
+			get => request.GetHeader<CallIDHeader>()?.Value;
+		}
+		public override string? FromTag
+		{
+			get => request.GetHeader<FromHeader>()?.Value.Tag;
+		}
 
 		public override string Display => request.RequestLine.ToString();
 
-		public RequestViewModel(ILogger Logger, Event Event, Request Request) : base(Logger,Event, Request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined", Request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined")
+		public RequestViewModel(ILogger Logger, Event Event, Request Request) : base(Logger,Event)
 		{
 			this.request = Request;
 		}

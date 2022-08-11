@@ -1,5 +1,6 @@
 ﻿using LogLib;
 using SIP_o_matic.DataSources;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,7 @@ namespace SIP_o_matic.ViewModels
 {
 	public abstract class SIPMessageViewModel:ViewModel
 	{
-		public abstract string Display
+		public abstract string? Display
 		{
 			get;
 		}
@@ -20,21 +21,40 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Event.Timestamp;
 		}
-		public string From
+	
+
+		public string SourceAddress
+		{
+			get => Event.SourceAddress;
+		}
+
+		public string DestinationAddress
+		{
+			get => Event.DestinationAddress;
+		}
+
+		public abstract string? From
 		{
 			get;
-			private set;
 		}
-		public string To
+
+		public abstract string? To
 		{
 			get;
-			private set;
 		}
+		public abstract string? CallID
+		{
+			get;
+		}
+		public abstract string? FromTag
+		{
+			get;
+		}
+
 
 		public Event Event
 		{
 			get;
-			private set;
 		}
 
 		public string RawMessage
@@ -58,16 +78,13 @@ namespace SIP_o_matic.ViewModels
 			get => RawMessage.GetHashCode();
 		}
 
-		/*public abstract string CallID
-		{
-			get;
-		}*/
+		
 
-		public SIPMessageViewModel(ILogger Logger,Event Event,string From,string To):base(Logger)
+		public SIPMessageViewModel(ILogger Logger,Event Event):base(Logger)
 		{
 			SourceFiles = new ObservableCollection<FileViewModel>();
 			this.Event = Event;
-			this.From = From;this.To = To;
+			//this.From = From;this.To = To;
 		}
 
 

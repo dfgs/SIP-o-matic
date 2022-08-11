@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 
 namespace SIP_o_matic.ViewModels
@@ -14,21 +15,31 @@ namespace SIP_o_matic.ViewModels
 	public class CallViewModel:ViewModel
 	{
 
-
-		public static readonly DependencyProperty StartTimeProperty = DependencyProperty.Register("StartTime", typeof(DateTime), typeof(CallViewModel), new PropertyMetadata(DateTime.MaxValue));
-		public DateTime StartTime
+		public DateTime? StartTime
 		{
-			get { return (DateTime)GetValue(StartTimeProperty); }
-			set { SetValue(StartTimeProperty, value); }
+			get => Dialogs.FirstOrDefault()?.StartTime;
 		}
 
-		public static readonly DependencyProperty StopTimeProperty = DependencyProperty.Register("StopTime", typeof(DateTime), typeof(CallViewModel), new PropertyMetadata(DateTime.MinValue));
-		public DateTime StopTime
+		public DateTime? StopTime
 		{
-			get { return (DateTime)GetValue(StopTimeProperty); }
-			set { SetValue(StopTimeProperty, value); }
+			get => Dialogs.LastOrDefault()?.StopTime;
+		}
+		
+
+		public string? From
+		{
+			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.From;
+		}
+		public string? To
+		{
+			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.To;
 		}
 
+
+		public string? CallID
+		{
+			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.CallID;
+		}
 
 
 		public static readonly DependencyProperty SelectedDialogProperty = DependencyProperty.Register("SelectedDialog", typeof(DialogViewModel), typeof(CallViewModel), new PropertyMetadata(null));
@@ -39,31 +50,12 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-
-
 		public ObservableCollection<DialogViewModel> Dialogs
 		{
 			get;
 			private set;
 		}
 
-		public string From
-		{
-			get;
-			private set;
-		}
-		public string To
-		{
-			get;
-			private set;
-		}
-
-
-		public string CallID
-		{
-			get;
-			private set;
-		}
 
 		public int UID
 		{
@@ -73,7 +65,6 @@ namespace SIP_o_matic.ViewModels
 
 		public CallViewModel(ILogger Logger, int UID):base(Logger)
 		{
-			From = "Undefined";To = "Undefined";CallID = "Undefined";
 			this.UID = UID;
 			Dialogs = new ObservableCollection<DialogViewModel>();
 		}
@@ -89,23 +80,6 @@ namespace SIP_o_matic.ViewModels
 			int dialogUID;
 
 
-			switch (SIPMessage)
-			{
-				case Request request:
-					switch (request.RequestLine.Method)
-					{
-						case "INVITE":
-							From = request.GetHeader<FromHeader>()?.Value.ToShortString() ?? "Undefined";
-							To = request.GetHeader<ToHeader>()?.Value.ToShortString() ?? "Undefined";
-							CallID = request.GetHeader<CallIDHeader>()?.Value ?? "Undefined";
-							if (this.StartTime > Event.Timestamp) this.StartTime = Event.Timestamp;
-							break;
-						case "BYE":
-							if (this.StopTime < Event.Timestamp) this.StopTime = Event.Timestamp;
-							break;
-					}
-					break;
-			}
 
 			dialogUID = SIPUtils.GetDialogUID(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
 			dialogViewModel = FindDialogByUID(dialogUID);

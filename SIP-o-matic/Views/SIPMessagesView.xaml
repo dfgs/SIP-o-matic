@@ -3,18 +3,21 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SIP_o_matic.Views"
+             xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<ListView ItemsSource="{Binding SIPMessages}">
-		<ListView.View>
-			<GridView>
-				<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp}"/>
-				<GridViewColumn Width="300" Header="From" DisplayMemberBinding="{Binding From}"/>
-				<GridViewColumn Width="300" Header="To" DisplayMemberBinding="{Binding To}"/>
-				<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>
-				<GridViewColumn Width="50" Header="Count" DisplayMemberBinding="{Binding Count}"/>
-			</GridView>
-		</ListView.View>
-	</ListView>
+	<DockPanel>
+		<views:TitleView DockPanel.Dock="Top" DataContext="Messages"/>
+		<ListView ItemsSource="{Binding SIPMessages}">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp}"/>
+					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
+					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
+					<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>
+					<GridViewColumn Width="50" Header="Count" DisplayMemberBinding="{Binding Count}"/>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
 </UserControl>

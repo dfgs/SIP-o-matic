@@ -41,7 +41,15 @@ namespace SIP_o_matic.ViewModels
 
 			return dialogID;
 		}
+		public static int GetTransactionUID(SIPMessage SIPMessage)
+		{
+			string transactionID;
 
+			transactionID = SIPMessage.GetHeader<CSeqHeader>()?.Value ?? ""
+							+ SIPMessage.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value ?? "";
+
+			return transactionID.GetHashCode();
+		}
 
 	}
 }
