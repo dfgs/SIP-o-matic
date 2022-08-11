@@ -21,6 +21,26 @@ namespace SIP_o_matic.ViewModels
 
 			return callID.GetHashCode();
 		}
+		public static int GetDialogUID(SIPMessage SIPMessage,string SourceAddress,string DestinationAddress)
+		{
+			string s, d;
+			string addressID;
+			string callID;
+			string fromTag;
+			int dialogID;
+
+			s = SourceAddress ?? "";
+			d = DestinationAddress ?? "";
+
+			if (s.CompareTo(d)<0) addressID = s + d;
+			else addressID = d + s;
+
+			callID = SIPMessage.GetHeader<CallIDHeader>()?.Value ?? "";
+			fromTag = SIPMessage.GetHeader<FromHeader>()?.Value.Tag ?? "";
+			dialogID = (addressID+callID+fromTag).GetHashCode();
+
+			return dialogID;
+		}
 
 
 	}

@@ -26,13 +26,8 @@
 				<Button Command="Open" ToolTip="Open project" ToolTipService.ShowOnDisabled="true">
 					<Image Source="Images\folder.png" ToolTip="Open project" Stretch="None"/>
 				</Button>
-			</ToolBar>
-			<ToolBar >
 				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/folder_add.png" Stretch="None"/>
-				</Button>
-				<Button Command="{x:Static root:RoutedCommands.RemoveFile}" ToolTip="Remove file" ToolTipService.ShowOnDisabled="true">
-					<Image Source="/Images/folder_delete.png"  Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>

@@ -7,12 +7,46 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace SIP_o_matic.ViewModels
 {
 	public class CallViewModel:ViewModel
 	{
-		
+
+
+		public static readonly DependencyProperty StartTimeProperty = DependencyProperty.Register("StartTime", typeof(DateTime), typeof(CallViewModel), new PropertyMetadata(DateTime.MaxValue));
+		public DateTime StartTime
+		{
+			get { return (DateTime)GetValue(StartTimeProperty); }
+			set { SetValue(StartTimeProperty, value); }
+		}
+
+		public static readonly DependencyProperty StopTimeProperty = DependencyProperty.Register("StopTime", typeof(DateTime), typeof(CallViewModel), new PropertyMetadata(DateTime.MinValue));
+		public DateTime StopTime
+		{
+			get { return (DateTime)GetValue(StopTimeProperty); }
+			set { SetValue(StopTimeProperty, value); }
+		}
+
+
+
+		public static readonly DependencyProperty SelectedDialogProperty = DependencyProperty.Register("SelectedDialog", typeof(DialogViewModel), typeof(CallViewModel), new PropertyMetadata(null));
+		public DialogViewModel SelectedDialog
+		{
+			get { return (DialogViewModel)GetValue(SelectedDialogProperty); }
+			set { SetValue(SelectedDialogProperty, value); }
+		}
+
+
+
+
+		public ObservableCollection<DialogViewModel> Dialogs
+		{
+			get;
+			private set;
+		}
+
 		public string From
 		{
 			get;
@@ -25,7 +59,7 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public ObservableCollection<SIPMessageViewModel> SIPMessages
+		public string CallID
 		{
 			get;
 			private set;
@@ -39,50 +73,49 @@ namespace SIP_o_matic.ViewModels
 
 		public CallViewModel(ILogger Logger, int UID):base(Logger)
 		{
-			From = "Undefined";To = "Undefined";
-			SIPMessages = new ObservableCollection<SIPMessageViewModel>();
+			From = "Undefined";To = "Undefined";CallID = "Undefined";
 			this.UID = UID;
+			Dialogs = new ObservableCollection<DialogViewModel>();
 		}
 
-		public SIPMessageViewModel? FindMessageByUID(int UID)
+		public DialogViewModel? FindDialogByUID(int UID)
 		{
-			return SIPMessages.FirstOrDefault(item => item.UID == UID);
+			return Dialogs.FirstOrDefault(item => item.UID == UID);
 		}
 
 		public void AddSIPMessage(FileViewModel FileViewModel,Event Event, SIPMessage SIPMessage)
 		{
-			SIPMessageViewModel? sipMessageViewModel;
-			int messageUID;
+			DialogViewModel? dialogViewModel;
+			int dialogUID;
 
-			messageUID = SIPUtils.GetMessageUID(Event.Message);
 
-			sipMessageViewModel = FindMessageByUID(messageUID);
-
-			if (sipMessageViewModel == null)
+			switch (SIPMessage)
 			{
-				switch(SIPMessage)
-				{
-					case Response response:
-						sipMessageViewModel = new ResponseViewModel(Logger,Event, response);
-						break;
-					case Request request:
-						sipMessageViewModel = new RequestViewModel(Logger, Event, request);
-						if (request.RequestLine.Method=="INVITE")
-						{
-							From = request.GetHeader<FromHeader>()?.Value.ToString() ?? "Undefined";
-							To = request.GetHeader<ToHeader>()?.Value.ToString() ?? "Undefined";
-						}
-						break;
-					default:
-						return;
-				}
-
-				
-
-				SIPMessages.Add(sipMessageViewModel);
+				case Request request:
+					switch (request.RequestLine.Method)
+					{
+						case "INVITE":
+							From = request.GetHeader<FromHeader>()?.Value.ToShortString() ?? "Undefined";
+							To = request.GetHeader<ToHeader>()?.Value.ToShortString() ?? "Undefined";
+							CallID = request.GetHeader<CallIDHeader>()?.Value ?? "Undefined";
+							if (this.StartTime > Event.Timestamp) this.StartTime = Event.Timestamp;
+							break;
+						case "BYE":
+							if (this.StopTime < Event.Timestamp) this.StopTime = Event.Timestamp;
+							break;
+					}
+					break;
 			}
 
-			sipMessageViewModel.AddSourceFile(FileViewModel);
+			dialogUID = SIPUtils.GetDialogUID(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+			dialogViewModel = FindDialogByUID(dialogUID);
+
+			if (dialogViewModel == null)
+			{
+				dialogViewModel = new DialogViewModel(Logger, dialogUID);
+				Dialogs.Add(dialogViewModel);
+			}
+			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
 
 		}
 
