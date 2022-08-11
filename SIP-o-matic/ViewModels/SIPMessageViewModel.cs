@@ -87,17 +87,22 @@ namespace SIP_o_matic.ViewModels
 			//this.From = From;this.To = To;
 		}
 
+		protected void OnPropertiesChanged()
+		{
+			OnPropertyChanged(nameof(Count));
+
+		}
 
 		public void AddSourceFile(FileViewModel FileViewModel)
 		{
 			SourceFiles.Add(FileViewModel);
-			OnPropertyChanged("Count");
+			OnPropertiesChanged();
 		}
 
 		public void RemoveSourceFile(FileViewModel FileViewModel)
 		{
 			SourceFiles.Remove(FileViewModel);
-			OnPropertyChanged("Count");
+			OnPropertiesChanged();
 		}
 	}
 }

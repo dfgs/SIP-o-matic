@@ -66,28 +66,12 @@ namespace SIP_o_matic.ViewModels
 			Calls = new ObservableCollection<CallViewModel>();
 		}
 
-
-
-
-		/*private SIPMessageViewModel CreateSIPMessageViewModel(Event Event)
+		protected void OnPropertiesChanged()
 		{
-			SIPMessage sipMessage;
+			
+		}
 
-			try
-			{
-				sipMessage = SIPGrammar.SIPMessage.Parse(Event.Message, ' ');
-			}
-			catch (Exception ex)
-			{
-				return new InvalidMessageViewModel(Event, ex.Message);
-			}
-			switch (sipMessage)
-			{
-				case Request request: return new RequestViewModel(Event, request);
-				case Response response:return new ResponseViewModel(Event, response);
-				default: return new InvalidMessageViewModel(Event, $"Invalid message type {sipMessage.GetType()}");
-			}
-		}*/
+
 		public CallViewModel? FindCallByUID(int UID)
 		{
 			return Calls.FirstOrDefault(item => item.UID == UID);
@@ -120,9 +104,35 @@ namespace SIP_o_matic.ViewModels
 				Calls.Add(callViewModel);
 			}
 			callViewModel.AddSIPMessage(FileViewModel,Event, sipMessage);
+
+		}
+		public void RemoveEvent(FileViewModel FileViewModel, Event Event)
+		{
+			CallViewModel? callViewModel;
+			int callUID;
+			SIPMessage sipMessage;
+
+			try
+			{
+				sipMessage = SIPGrammar.SIPMessage.Parse(Event.Message, ' ');
+			}
+			catch (Exception ex)
+			{
+				Log(LogLevels.Error, ex.Message);
+				return;
+			}
+
+			callUID = SIPUtils.GetCallUID(sipMessage);
+
+			callViewModel = FindCallByUID(callUID);
+
+			if (callViewModel == null) return;
+			
+			callViewModel.RemoveSIPMessage(FileViewModel, Event, sipMessage);
+			if (callViewModel.Dialogs.Count == 0) Calls.Remove(callViewModel);
+
 		}
 
-		
 		public async Task AddFileAsync(string Path)
 		{
 			IDataSource dataSource;
@@ -138,32 +148,21 @@ namespace SIP_o_matic.ViewModels
 				fileViewModel.Events.Add(_event);
 				AddEvent(fileViewModel, _event);
 			}
+			OnPropertiesChanged();
 		}
-		public async Task RemoveFileAsync(FileViewModel File)
+		public async Task RemoveFileAsync(FileViewModel FileViewModel)
 		{
-			/*SIPMessageViewModel? sipMessageViewModel;
-			int UID;
 
-			Files.Remove(File);
 
-			await foreach (Event _event in File.Events.ToAsyncEnumerable())
+			await foreach (Event _event in FileViewModel.Events.ToAsyncEnumerable())
 			{
-				UID = _event.Message.GetHashCode();
+				RemoveEvent(FileViewModel, _event);
+			}
 
-				sipMessageViewModel = FindMessageByUID(UID);
+			SelectedFile = null;
+			Files.Remove(FileViewModel);
+			OnPropertiesChanged();
 
-				if (sipMessageViewModel != null)
-				{
-					sipMessageViewModel.RemoveSourceFile(File);
-					if (sipMessageViewModel.Count == 0) SIPMessages.Remove(sipMessageViewModel);
-					continue;
-				}
-
-				SelectedFile = null;
-				Files.Remove(File);
-				
-			}*/
-			await Task.Yield();
 		}
 
 

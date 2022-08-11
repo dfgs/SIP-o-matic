@@ -69,6 +69,16 @@ namespace SIP_o_matic.ViewModels
 			Dialogs = new ObservableCollection<DialogViewModel>();
 		}
 
+		protected void OnPropertiesChanged()
+		{
+			OnPropertyChanged(nameof(StartTime));
+			OnPropertyChanged(nameof(StopTime));
+			OnPropertyChanged(nameof(From));
+			OnPropertyChanged(nameof(To));
+			OnPropertyChanged(nameof(CallID));
+		}
+
+
 		public DialogViewModel? FindDialogByUID(int UID)
 		{
 			return Dialogs.FirstOrDefault(item => item.UID == UID);
@@ -90,9 +100,23 @@ namespace SIP_o_matic.ViewModels
 				Dialogs.Add(dialogViewModel);
 			}
 			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
-
+			OnPropertiesChanged();
 		}
+		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
+		{
+			DialogViewModel? dialogViewModel;
+			int dialogUID;
 
+
+
+			dialogUID = SIPUtils.GetDialogUID(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+			dialogViewModel = FindDialogByUID(dialogUID);
+
+			if (dialogViewModel == null) return;
+			dialogViewModel.RemoveSIPMessage(FileViewModel, Event, SIPMessage);
+			if (dialogViewModel.Transactions.Count == 0) Dialogs.Remove(dialogViewModel);
+			OnPropertiesChanged();
+		}
 
 
 	}

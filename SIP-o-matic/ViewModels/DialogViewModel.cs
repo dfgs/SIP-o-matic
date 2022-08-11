@@ -63,6 +63,16 @@ namespace SIP_o_matic.ViewModels
 			this.UID = UID;
 			Transactions = new ObservableCollection<TransactionViewModel>();
 		}
+
+		protected void OnPropertiesChanged()
+		{
+			OnPropertyChanged(nameof(StartTime));
+			OnPropertyChanged(nameof(StopTime));
+			OnPropertyChanged(nameof(SourceAddress));
+			OnPropertyChanged(nameof(DestinationAddress));
+			OnPropertyChanged(nameof(FromTag));
+		}
+
 		public TransactionViewModel? FindTransactionByUID(int UID)
 		{
 			return Transactions.FirstOrDefault(item => item.UID == UID);
@@ -83,8 +93,24 @@ namespace SIP_o_matic.ViewModels
 			}
 
 			transactionViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
+			OnPropertiesChanged();
+		}
+		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
+		{
+			TransactionViewModel? transactionViewModel;
+			int transactionUID;
+
+			transactionUID = SIPUtils.GetTransactionUID(SIPMessage);
+			transactionViewModel = FindTransactionByUID(transactionUID);
+
+			if (transactionViewModel == null) return;
+			transactionViewModel.RemoveSIPMessage(FileViewModel, Event, SIPMessage);
+			if (transactionViewModel.SIPMessages.Count == 0) Transactions.Remove(transactionViewModel);
+			OnPropertiesChanged();
 
 		}
+
+
 
 	}
 }

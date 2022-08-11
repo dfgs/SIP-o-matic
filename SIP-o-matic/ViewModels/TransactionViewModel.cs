@@ -56,10 +56,23 @@ namespace SIP_o_matic.ViewModels
 			this.UID = UID;
 			SIPMessages = new ObservableCollection<SIPMessageViewModel>();
 		}
+
+
+
+		protected void OnPropertiesChanged()
+		{
+			OnPropertyChanged(nameof(StartTime));
+			OnPropertyChanged(nameof(StopTime));
+			OnPropertyChanged(nameof(SourceAddress));
+			OnPropertyChanged(nameof(DestinationAddress));
+			OnPropertyChanged(nameof(Display));
+		}
+
 		public SIPMessageViewModel? FindMessageByUID(int UID)
 		{
 			return SIPMessages.FirstOrDefault(item => item.UID == UID);
 		}
+			
 
 		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
 		{
@@ -87,9 +100,23 @@ namespace SIP_o_matic.ViewModels
 			}
 
 			sipMessageViewModel.AddSourceFile(FileViewModel);
-
+			OnPropertiesChanged();
 		}
+		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
+		{
+			SIPMessageViewModel? sipMessageViewModel;
+			int messageUID;
 
+			messageUID = SIPUtils.GetMessageUID(Event.Message);
+			sipMessageViewModel = FindMessageByUID(messageUID);
+
+			if (sipMessageViewModel == null) return;
+			
+
+			sipMessageViewModel.RemoveSourceFile(FileViewModel);
+			if (sipMessageViewModel.SourceFiles.Count == 0) SIPMessages.Remove(sipMessageViewModel);
+			OnPropertiesChanged();
+		}
 
 
 

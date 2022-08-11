@@ -6,37 +6,20 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<Grid>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="100"/>
-			<RowDefinition Height="5"/>
-			<RowDefinition Height="1*"/>
-			<RowDefinition Height="5"/>
-			<RowDefinition Height="1*"/>
-			<RowDefinition Height="5"/>
-			<RowDefinition Height="1*"/>
-		</Grid.RowDefinitions>
-		<DockPanel Grid.Row="0">
-			<views:TitleView DockPanel.Dock="Top" DataContext="Calls"/>
+	<DockPanel >
+		<views:TitleView DockPanel.Dock="Top" DataContext="Calls"/>
 
-			<ListView  ItemsSource="{Binding Calls}" SelectedItem="{Binding SelectedCall}">
-				<ListView.View>
-					<GridView>
-						<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
-						<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
-						<GridViewColumn Width="300" Header="From" DisplayMemberBinding="{Binding From}"/>
-						<GridViewColumn Width="300" Header="To" DisplayMemberBinding="{Binding To}"/>
-						<GridViewColumn Width="200" Header="Call ID" DisplayMemberBinding="{Binding CallID}"/>
-					</GridView>
-				</ListView.View>
-			</ListView>
-		</DockPanel>
-		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-		<views:DialogsView Grid.Row="2" DataContext="{Binding SelectedCall}"/>
-		<GridSplitter Grid.Row="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-		<views:TransactionsView Grid.Row="4" DataContext="{Binding SelectedCall.SelectedDialog}"/>
-		<GridSplitter Grid.Row="5" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-		<views:SIPMessagesView Grid.Row="6" DataContext="{Binding SelectedCall.SelectedDialog.SelectedTransaction}"/>
+		<ListView  ItemsSource="{Binding Calls}" SelectedItem="{Binding SelectedCall}">
+			<ListView.View>
+				<GridView>
+					<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
+					<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
+					<GridViewColumn Width="300" Header="From" DisplayMemberBinding="{Binding From}"/>
+					<GridViewColumn Width="300" Header="To" DisplayMemberBinding="{Binding To}"/>
+					<GridViewColumn Width="200" Header="Call ID" DisplayMemberBinding="{Binding CallID}"/>
+				</GridView>
+			</ListView.View>
+		</ListView>
+	</DockPanel>
 
-	</Grid>
 </UserControl>
