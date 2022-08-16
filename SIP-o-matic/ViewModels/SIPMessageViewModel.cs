@@ -16,7 +16,10 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
-
+		public abstract string? ShortDisplay
+		{
+			get;
+		}
 		public DateTime Timestamp
 		{
 			get => Event.Timestamp;

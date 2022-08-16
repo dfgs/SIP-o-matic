@@ -56,6 +56,11 @@ namespace SIP_o_matic.ViewModels
 			get => SIPMessages.FirstOrDefault()?.Display;
 		}
 
+		public string? ShortDisplay
+		{
+			get => SIPMessages.FirstOrDefault()?.ShortDisplay;
+		}
+
 		public ObservableCollection<SIPMessageViewModel> SIPMessages
 		{
 			get;
@@ -83,6 +88,7 @@ namespace SIP_o_matic.ViewModels
 			OnPropertyChanged(nameof(SourceAddress));
 			OnPropertyChanged(nameof(DestinationAddress));
 			OnPropertyChanged(nameof(Display));
+			OnPropertyChanged(nameof(ShortDisplay));
 			OnPropertyChanged(nameof(FromTag));
 			OnPropertyChanged(nameof(ToTag));
 			OnPropertyChanged(nameof(CSeq));

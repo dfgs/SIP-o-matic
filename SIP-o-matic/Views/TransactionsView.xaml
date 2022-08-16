@@ -8,20 +8,58 @@
              d:DesignHeight="450" d:DesignWidth="800">
 	<DockPanel>
 		<views:TitleView DockPanel.Dock="Top" DataContext="Transactions"/>
-		<ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}">
-			<ListView.View>
-				<GridView>
-					<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
-					<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
-					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
-					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
-					<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>
-					<GridViewColumn Width="200" Header="From Tag" DisplayMemberBinding="{Binding FromTag}"/>
-					<GridViewColumn Width="200" Header="To Tag" DisplayMemberBinding="{Binding ToTag}"/>
-					<GridViewColumn Width="200" Header="CSeq" DisplayMemberBinding="{Binding CSeq}"/>
-					<GridViewColumn Width="200" Header="Via branch" DisplayMemberBinding="{Binding ViaBranch}"/>
-				</GridView>
-			</ListView.View>
-		</ListView>
+		<TabControl>
+			<TabItem Header="Message view">
+				<ListView ItemsSource="{Binding Transactions}" SelectedItem="{Binding SelectedTransaction}">
+					<ListView.View>
+						<GridView>
+							<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
+							<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
+							<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
+							<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
+							<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>
+							<GridViewColumn Width="200" Header="From Tag" DisplayMemberBinding="{Binding FromTag}"/>
+							<GridViewColumn Width="200" Header="To Tag" DisplayMemberBinding="{Binding ToTag}"/>
+							<GridViewColumn Width="200" Header="CSeq" DisplayMemberBinding="{Binding CSeq}"/>
+							<GridViewColumn Width="200" Header="Via branch" DisplayMemberBinding="{Binding ViaBranch}"/>
+						</GridView>
+					</ListView.View>
+				</ListView>
+			</TabItem>
+			<TabItem Header="Diagram view">
+				<views:LadderControl ColumnWidth="200" ColumnPadding="100" Columns="{Binding Devices}"  Rows="{Binding Transactions}" SelectedRow="{Binding SelectedTransaction}" VerticalAlignment="Top" HorizontalAlignment="Left">
+					<views:LadderControl.HeaderTemplate>
+						<DataTemplate>
+							<Border BorderBrush="Black" BorderThickness="1">
+								<TextBlock Text="{Binding}" TextAlignment="Center" />
+							</Border>
+						</DataTemplate>
+					</views:LadderControl.HeaderTemplate>
+					<views:LadderControl.RowTemplate>
+						<DataTemplate>
+							<StackPanel>
+								<TextBlock Text="{Binding ShortDisplay}"/>
+								<TextBlock Text="&#x2794;" />
+							</StackPanel>
+						</DataTemplate>
+					</views:LadderControl.RowTemplate>
+					<views:LadderControl.ColumnTemplate>
+						<DataTemplate>
+							<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center">
+							</Border>
+						</DataTemplate>
+					</views:LadderControl.ColumnTemplate>
+
+					<views:LadderControl.RowContainerStyle>
+						<Style TargetType="{x:Type ContentControl}">
+							<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding SourceAddress}"/>
+							<Setter Property="views:LadderPanel.RightColumn" Value="{Binding DestinationAddress}"/>
+						</Style>
+					</views:LadderControl.RowContainerStyle>
+
+
+				</views:LadderControl>
+			</TabItem>
+		</TabControl>
 	</DockPanel>
 </UserControl>

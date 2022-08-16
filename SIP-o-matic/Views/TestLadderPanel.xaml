@@ -21,6 +21,39 @@
 		Columns="{StaticResource ResourceKey=columns}"  
 		Rows="{x:Static data:TestData.Rows}"
 	VerticalAlignment="Top" HorizontalAlignment="Left" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+		<views:LadderControl.HeaderTemplate>
+			<DataTemplate>
+				<Border BorderBrush="Black" BorderThickness="1">
+					<TextBlock Text="{Binding}" TextAlignment="Center" />
+				</Border>
+			</DataTemplate>
+		</views:LadderControl.HeaderTemplate>
+		<views:LadderControl.RowTemplate>
+			<DataTemplate>
+				<Border BorderThickness="1" BorderBrush="Beige">
+					<StackPanel>
+						<TextBlock Text="{Binding Text}"/>
+						<TextBlock Text="&#x2794;" />
+					</StackPanel>
+				</Border>
+			</DataTemplate>
+		</views:LadderControl.RowTemplate>
+		<views:LadderControl.ColumnTemplate>
+			<DataTemplate>
+				<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center">
+				</Border>
+			</DataTemplate>
+		</views:LadderControl.ColumnTemplate>
+
+		<views:LadderControl.RowContainerStyle>
+			<Style TargetType="{x:Type ContentControl}">
+				<Setter Property="HorizontalAlignment" Value="Stretch"/>
+				<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+				<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding LeftColumn}"/>
+				<Setter Property="views:LadderPanel.RightColumn" Value="{Binding RightColumn}"/>
+			</Style>
+		</views:LadderControl.RowContainerStyle>
+
 		
 	</views:LadderControl>
 </UserControl>

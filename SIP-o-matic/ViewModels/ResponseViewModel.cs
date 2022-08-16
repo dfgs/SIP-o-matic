@@ -47,6 +47,11 @@ namespace SIP_o_matic.ViewModels
 
 		public override string Display => response.StatusLine.ToString();
 
+		public override string ShortDisplay => response.StatusLine.ToString();
+
+
+
+
 		public ResponseViewModel(ILogger Logger, Event Event, Response Response): base(Logger,Event)
 		{
 			this.response = Response;

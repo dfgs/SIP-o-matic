@@ -47,6 +47,15 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
+
+		public IEnumerable<string?> Devices
+		{
+			get
+			{
+				return Transactions.Select(item => item.SourceAddress).Union(Transactions.Select(item=>item.DestinationAddress));
+			}
+		}
+
 		public static readonly DependencyProperty SelectedTransactionProperty = DependencyProperty.Register("SelectedTransaction", typeof(TransactionViewModel), typeof(DialogViewModel), new PropertyMetadata(null));
 		public TransactionViewModel SelectedTransaction
 		{
