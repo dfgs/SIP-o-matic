@@ -16,6 +16,7 @@
 					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
 					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
 					<GridViewColumn Width="200" Header="From Tag" DisplayMemberBinding="{Binding FromTag}"/>
+					<GridViewColumn Width="200" Header="To Tag" DisplayMemberBinding="{Binding ToTag}"/>
 				</GridView>
 			</ListView.View>
 		</ListView>

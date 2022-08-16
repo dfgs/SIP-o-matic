@@ -32,7 +32,7 @@ namespace SIP_o_matic.ViewModels
 		}
 		public string? To
 		{
-			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.To;
+			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault(item=>item.ToTag!=null)?.To;
 		}
 
 
@@ -87,18 +87,30 @@ namespace SIP_o_matic.ViewModels
 		public void AddSIPMessage(FileViewModel FileViewModel,Event Event, SIPMessage SIPMessage)
 		{
 			DialogViewModel? dialogViewModel;
-			int dialogUID;
+			int dialogUIDSecondStage,dialogUIDFirstStage;
 
 
 
-			dialogUID = SIPUtils.GetDialogUID(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
-			dialogViewModel = FindDialogByUID(dialogUID);
+			dialogUIDSecondStage = SIPUtils.GetDialogUIDSecondStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+			dialogViewModel = FindDialogByUID(dialogUIDSecondStage);
 
-			if (dialogViewModel == null)
+			if (dialogViewModel==null)
 			{
-				dialogViewModel = new DialogViewModel(Logger, dialogUID);
-				Dialogs.Add(dialogViewModel);
+				dialogUIDFirstStage = SIPUtils.GetDialogUIDFirstStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+				dialogViewModel = FindDialogByUID(dialogUIDFirstStage);
+				if (dialogViewModel == null)
+				{
+					dialogViewModel = new DialogViewModel(Logger, dialogUIDFirstStage);
+					Dialogs.Add(dialogViewModel);
+				}
+				else
+				{
+					dialogViewModel.UpdateUID(dialogUIDSecondStage);
+				}
 			}
+
+
+			
 			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
 			OnPropertiesChanged();
 		}
@@ -109,7 +121,7 @@ namespace SIP_o_matic.ViewModels
 
 
 
-			dialogUID = SIPUtils.GetDialogUID(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+			dialogUID = SIPUtils.GetDialogUIDSecondStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
 			dialogViewModel = FindDialogByUID(dialogUID);
 
 			if (dialogViewModel == null) return;

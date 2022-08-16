@@ -11,5 +11,6 @@ namespace SIP_o_matic
 	{
 		public static RoutedCommand AddFile = new RoutedCommand();
 		public static RoutedCommand RemoveFile = new RoutedCommand();
+		public static RoutedCommand CopyLogs = new RoutedCommand();
 	}
 }

@@ -38,7 +38,10 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.FromTag;
 		}
-
+		public string? ToTag
+		{
+			get => Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault(item=>!string.IsNullOrEmpty(item.ToTag))?.ToTag;
+		}
 		public ObservableCollection<TransactionViewModel> Transactions
 		{
 			get;
@@ -63,6 +66,10 @@ namespace SIP_o_matic.ViewModels
 			this.UID = UID;
 			Transactions = new ObservableCollection<TransactionViewModel>();
 		}
+		public void UpdateUID(int UID)
+		{
+			this.UID = UID;
+		}
 
 		protected void OnPropertiesChanged()
 		{
@@ -71,6 +78,7 @@ namespace SIP_o_matic.ViewModels
 			OnPropertyChanged(nameof(SourceAddress));
 			OnPropertyChanged(nameof(DestinationAddress));
 			OnPropertyChanged(nameof(FromTag));
+			OnPropertyChanged(nameof(ToTag));
 		}
 
 		public TransactionViewModel? FindTransactionByUID(int UID)
@@ -109,8 +117,6 @@ namespace SIP_o_matic.ViewModels
 			OnPropertiesChanged();
 
 		}
-
-
 
 	}
 }

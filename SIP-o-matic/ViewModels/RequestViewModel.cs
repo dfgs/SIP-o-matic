@@ -29,6 +29,18 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => request.GetHeader<FromHeader>()?.Value.Tag;
 		}
+		public override string? ToTag
+		{
+			get => request.GetHeader<ToHeader>()?.Value.Tag;
+		}
+		public override string? CSeq
+		{
+			get => request.GetHeader<CSeqHeader>()?.Value;
+		}
+		public override string? ViaBranch 
+		{
+			get => request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value;
+		}
 
 		public override string Display => request.RequestLine.ToString();
 

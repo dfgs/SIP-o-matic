@@ -30,6 +30,21 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => response.GetHeader<FromHeader>()?.Value.Tag;
 		}
+
+		public override string? ToTag
+		{
+			get => response.GetHeader<ToHeader>()?.Value.Tag;
+		}
+
+		public override string? CSeq
+		{
+			get => response.GetHeader<CSeqHeader>()?.Value;
+		}
+		public override string? ViaBranch
+		{
+			get => response.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value;
+		}
+
 		public override string Display => response.StatusLine.ToString();
 
 		public ResponseViewModel(ILogger Logger, Event Event, Response Response): base(Logger,Event)

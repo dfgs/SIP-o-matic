@@ -90,7 +90,7 @@ namespace SIP_o_matic.ViewModels
 			}
 			catch (Exception ex)
 			{
-				Log(LogLevels.Error, ex.Message);
+				Log(LogLevels.Error, ex.Message+" / "+Event.Message.ReplaceLineEndings(@"\r\n"));
 				return;
 			}
 
@@ -142,8 +142,10 @@ namespace SIP_o_matic.ViewModels
 			fileViewModel.Path = Path;
 			Files.Add(fileViewModel);
 
-			dataSource = new WiresharkDataSource(Path);
-			await foreach(Event _event in dataSource.EnumerateEventsAsync())
+			//dataSource = new WiresharkDataSource(Path);
+			dataSource = new OracleDataSource(Path);
+			
+			await foreach (Event _event in dataSource.EnumerateEventsAsync())
 			{
 				fileViewModel.Events.Add(_event);
 				AddEvent(fileViewModel, _event);

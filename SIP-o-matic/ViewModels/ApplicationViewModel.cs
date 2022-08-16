@@ -19,7 +19,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-
+		
 
 		public static readonly DependencyProperty SelectedProjectProperty = DependencyProperty.Register("SelectedProject", typeof(ProjectViewModel), typeof(ApplicationViewModel), new PropertyMetadata(null));
 		public ProjectViewModel? SelectedProject
@@ -31,8 +31,9 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public ApplicationViewModel(ILogger Logger):base(Logger)
+		public ApplicationViewModel():base(NullLogger.Instance)
 		{
+
 			Projects = new ObservableCollection<ProjectViewModel>();
 		}
 
@@ -40,9 +41,11 @@ namespace SIP_o_matic.ViewModels
 		public async Task AddProjectAsync()
 		{
 			ProjectViewModel project;
+			ProjectLogger logger;
 
 			await Task.Yield();
-			project = new ProjectViewModel(Logger);
+			logger = new ProjectLogger();
+			project = new ProjectViewModel(logger);
 			Projects.Add(project);
 			SelectedProject = project;
 		}

@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 
 namespace SIP_o_matic.ViewModels
@@ -32,6 +33,22 @@ namespace SIP_o_matic.ViewModels
 		public string? DestinationAddress
 		{
 			get => SIPMessages.FirstOrDefault()?.DestinationAddress;
+		}
+		public string? FromTag
+		{
+			get => SIPMessages.FirstOrDefault()?.FromTag;
+		}
+		public string? ToTag
+		{
+			get => SIPMessages.FirstOrDefault(item=>!string.IsNullOrEmpty(item.ToTag))?.ToTag;
+		}
+		public string? CSeq
+		{
+			get => SIPMessages.FirstOrDefault()?.CSeq;
+		}
+		public string? ViaBranch
+		{
+			get => SIPMessages.FirstOrDefault()?.ViaBranch;
 		}
 
 		public string? Display
@@ -66,6 +83,10 @@ namespace SIP_o_matic.ViewModels
 			OnPropertyChanged(nameof(SourceAddress));
 			OnPropertyChanged(nameof(DestinationAddress));
 			OnPropertyChanged(nameof(Display));
+			OnPropertyChanged(nameof(FromTag));
+			OnPropertyChanged(nameof(ToTag));
+			OnPropertyChanged(nameof(CSeq));
+			OnPropertyChanged(nameof(ViaBranch));
 		}
 
 		public SIPMessageViewModel? FindMessageByUID(int UID)

@@ -21,26 +21,71 @@ namespace SIP_o_matic.ViewModels
 
 			return callID.GetHashCode();
 		}
-		public static int GetDialogUID(SIPMessage SIPMessage,string SourceAddress,string DestinationAddress)
+		public static int GetDialogUIDFirstStage(SIPMessage SIPMessage,string SourceAddress,string DestinationAddress)
 		{
-			string s, d;
-			string addressID;
+			string sourceAddress, destinationAddress;
+			string addressID,tagID;
 			string callID;
 			string fromTag;
 			int dialogID;
 
-			s = SourceAddress ?? "";
-			d = DestinationAddress ?? "";
-
-			if (s.CompareTo(d)<0) addressID = s + d;
-			else addressID = d + s;
-
-			callID = SIPMessage.GetHeader<CallIDHeader>()?.Value ?? "";
+			sourceAddress = SourceAddress ?? "";
+			destinationAddress = DestinationAddress ?? "";
 			fromTag = SIPMessage.GetHeader<FromHeader>()?.Value.Tag ?? "";
-			dialogID = (addressID+callID+fromTag).GetHashCode();
+			callID = SIPMessage.GetHeader<CallIDHeader>()?.Value ?? "";
+
+			if (sourceAddress.CompareTo(destinationAddress) < 0)
+			{
+				addressID = sourceAddress + destinationAddress;
+				tagID = fromTag ;
+			}
+			else
+			{
+				addressID = destinationAddress + sourceAddress;
+				tagID = fromTag;
+			}
+
+			dialogID = (addressID+callID+tagID).GetHashCode();
 
 			return dialogID;
 		}
+		public static int GetDialogUIDSecondStage(SIPMessage SIPMessage, string SourceAddress, string DestinationAddress)
+		{
+			string sourceAddress, destinationAddress;
+			string addressID, tagID;
+			string callID;
+			string fromTag;
+			string toTag;
+			int dialogID;
+
+			sourceAddress = SourceAddress ?? "";
+			destinationAddress = DestinationAddress ?? "";
+			fromTag = SIPMessage.GetHeader<FromHeader>()?.Value.Tag ?? "";
+			toTag = SIPMessage.GetHeader<ToHeader>()?.Value.Tag ?? "";
+			callID = SIPMessage.GetHeader<CallIDHeader>()?.Value ?? "";
+
+			if (sourceAddress.CompareTo(destinationAddress) < 0)
+			{
+				addressID = sourceAddress + destinationAddress;
+			}
+			else
+			{
+				addressID = destinationAddress + sourceAddress;
+			}
+			if (fromTag.CompareTo(toTag) < 0)
+			{
+				tagID = fromTag + toTag;
+			}
+			else
+			{
+				tagID = toTag + fromTag;
+			}
+
+			dialogID = (addressID + callID + tagID).GetHashCode();
+
+			return dialogID;
+		}
+
 		public static int GetTransactionUID(SIPMessage SIPMessage)
 		{
 			string transactionID;

@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Text.Json;
 
 namespace SIP_o_matic
 {
@@ -27,7 +28,7 @@ namespace SIP_o_matic
 
 		public MainWindow()
 		{
-			applicationViewModel = new ApplicationViewModel(NullLogger.Instance);
+			applicationViewModel = new ApplicationViewModel();
 
 			InitializeComponent();
 			DataContext = applicationViewModel;
@@ -115,6 +116,28 @@ namespace SIP_o_matic
 			try
 			{
 				await applicationViewModel.SelectedProject.RemoveFileAsync(applicationViewModel.SelectedProject.SelectedFile);
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
+
+		private void CopyLogsCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject != null;
+		}
+
+		private void CopyLogsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			string logs;
+
+			if (applicationViewModel?.SelectedProject == null) return;
+			try
+			{
+				logs=string.Join("\r\n",((ProjectLogger)applicationViewModel.SelectedProject.Logger).Logs.Select(item=>item.Message));
+				Clipboard.SetText(logs);
 			}
 			catch (Exception ex)
 			{

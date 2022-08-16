@@ -16,6 +16,10 @@
 					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
 					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
 					<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>
+					<GridViewColumn Width="200" Header="From Tag" DisplayMemberBinding="{Binding FromTag}"/>
+					<GridViewColumn Width="200" Header="To Tag" DisplayMemberBinding="{Binding ToTag}"/>
+					<GridViewColumn Width="200" Header="CSeq" DisplayMemberBinding="{Binding CSeq}"/>
+					<GridViewColumn Width="200" Header="Via branch" DisplayMemberBinding="{Binding ViaBranch}"/>
 				</GridView>
 			</ListView.View>
 		</ListView>

@@ -42,6 +42,18 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
+
+		public abstract string? CSeq
+		{
+			get;
+		}
+
+		public abstract string? ViaBranch
+		{
+			get;
+		}
+
+
 		public abstract string? CallID
 		{
 			get;
@@ -50,7 +62,10 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
-
+		public abstract string? ToTag
+		{
+			get;
+		}
 
 		public Event Event
 		{

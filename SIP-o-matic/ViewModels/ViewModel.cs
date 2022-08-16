@@ -15,7 +15,7 @@ namespace SIP_o_matic.ViewModels
 		public event PropertyChangedEventHandler? PropertyChanged;
 
 		private ILogger logger;
-		protected ILogger Logger
+		public ILogger Logger
 		{
 			get => logger;
 		}

@@ -12,6 +12,7 @@
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddFile}" CanExecute="AddFileCommandBinding_CanExecute" Executed="AddFileCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveFile}" CanExecute="RemoveFileCommandBinding_CanExecute" Executed="RemoveFileCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.CopyLogs}" CanExecute="CopyLogsCommandBinding_CanExecute" Executed="CopyLogsCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>
@@ -27,6 +28,9 @@
 					<Image Source="Images\folder.png" ToolTip="Open project" Stretch="None"/>
 				</Button>
 				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/folder_add.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.CopyLogs}"  ToolTip="Copy logs" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/folder_add.png" Stretch="None"/>
 				</Button>
 			</ToolBar>
