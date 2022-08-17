@@ -6,7 +6,7 @@
         xmlns:root="clr-namespace:SIP_o_matic"
 		xmlns:views="clr-namespace:SIP_o_matic.Views"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized"
-        Title="SIP-o-matic" Height="640" Width="800" Loaded="Window_Loaded">
+        Title="SIP-o-matic" Height="640" Width="800" >
 
 	<Window.CommandBindings>
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>

@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
+using SIP_o_matic.DataSources;
 
 namespace SIP_o_matic
 {
@@ -25,10 +26,15 @@ namespace SIP_o_matic
 	public partial class MainWindow : Window
 	{
 		private ApplicationViewModel applicationViewModel;
-
+		private DataSourceManager dataSourceManager;
 		public MainWindow()
 		{
+			dataSourceManager= new DataSourceManager();
+			dataSourceManager.Register(new OracleDataSource());
+			dataSourceManager.Register(new WiresharkDataSource());
+
 			applicationViewModel = new ApplicationViewModel();
+
 
 			InitializeComponent();
 			DataContext = applicationViewModel;
@@ -36,7 +42,7 @@ namespace SIP_o_matic
 			
 		}
 
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
+		/*private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			string[] args = Environment.GetCommandLineArgs();
 
@@ -52,7 +58,7 @@ namespace SIP_o_matic
 					ShowError(ex);
 				}
 			}
-		}
+		}//**/
 
 
 		private void ShowError(Exception ex)
@@ -87,6 +93,7 @@ namespace SIP_o_matic
 		private async void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
+			IDataSource[] dataSources;
 
 			dialog = new OpenFileDialog();
 			dialog.Filter = "All files|*.*";
@@ -96,9 +103,17 @@ namespace SIP_o_matic
 
 			if (!dialog.ShowDialog(this) ?? false) return;
 
+			dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();
+
+			if (dataSources.Length == 0)
+			{
+				ShowError(new Exception("File format is not supported"));
+				return;
+			}
+
 			try
 			{
-				await applicationViewModel.SelectedProject.AddFileAsync(dialog.FileName);
+				await applicationViewModel.SelectedProject.AddFileAsync(dialog.FileName, dataSources[0]);
 			}
 			catch (Exception ex)
 			{

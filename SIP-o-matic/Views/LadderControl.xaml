@@ -17,7 +17,7 @@
 		</DataTemplate>
 	</UserControl.Resources>
 	<DockPanel>
-		<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate,TargetNullValue={StaticResource defaultLineTemplate}}">
+		<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate}">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
 					<StackPanel Orientation="Horizontal"/>
@@ -43,7 +43,7 @@
 				</ItemsControl.ItemContainerStyle>
 			</ItemsControl>
 			<ListBox ItemsSource="{Binding ElementName=root,Path=Rows}" SelectedItem="{Binding ElementName=root,Path=SelectedRow,Mode=TwoWay}"
-				ItemTemplate="{Binding ElementName=root,Path=RowTemplate,TargetNullValue={StaticResource defaultLineTemplate}}" 
+				ItemTemplate="{Binding ElementName=root,Path=RowTemplate}" 
 				ItemContainerStyle="{Binding ElementName=root,Path=RowContainerStyle}"
 				BorderThickness="0" Background="Transparent">
 

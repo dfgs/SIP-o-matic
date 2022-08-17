@@ -179,25 +179,21 @@ namespace SIP_o_matic.ViewModels
 
 			if (deviceViewModel.Count == 0) Devices.Remove(deviceViewModel);
 		}
-		public async Task AddFileAsync(string Path)
+		public async Task AddFileAsync(string Path,IDataSource DataSource)
 		{
-			IDataSource dataSource;
 			FileViewModel fileViewModel;
 
 			fileViewModel = new FileViewModel(Logger);
 			fileViewModel.Path = Path;
 			Files.Add(fileViewModel);
 
-			//dataSource = new WiresharkDataSource(Path);
-			dataSource = new OracleDataSource(Path);
-
-			await foreach (Device _device in dataSource.EnumerateDevicesAsync())
+			await foreach (Device _device in DataSource.EnumerateDevicesAsync(Path))
 			{
 				fileViewModel.Devices.Add(_device);
 				AddDevice(fileViewModel, _device);
 			}
 
-			await foreach (Event _event in dataSource.EnumerateEventsAsync())
+			await foreach (Event _event in DataSource.EnumerateEventsAsync(Path))
 			{
 				fileViewModel.Events.Add(_event);
 				AddEvent(fileViewModel, _event);

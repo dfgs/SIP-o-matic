@@ -10,19 +10,24 @@ namespace SIP_o_matic.DataSources
 {
 	public class WiresharkDataSource : IDataSource
 	{
-		private string fileName;
-		public WiresharkDataSource(string FileName)
+		public WiresharkDataSource()
 		{
-			this.fileName = FileName;
 		}
-		public async IAsyncEnumerable<Device> EnumerateDevicesAsync()
+
+		public IEnumerable<string> GetSupportedFileExts()
+		{
+			yield return "pcapng";
+		}
+
+
+		public async IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName)
 		{
 			await Task.Yield();
 			yield break;
 		}
 
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync()
+		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
 		{
 			FrameReader frameReader;
 			PacketReader packetReader;
@@ -41,7 +46,7 @@ namespace SIP_o_matic.DataSources
 			udpSegmentReader = new UDPSegmentReader();
 			tcpSegmentReader = new TCPSegmentReader();
 			
-			using (var reader = new Reader(fileName))
+			using (var reader = new Reader(FileName))
 			{
 				
 				await foreach (var block in reader.EnhancedPacketBlocks.ToAsyncEnumerable())

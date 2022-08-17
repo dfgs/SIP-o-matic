@@ -11,13 +11,17 @@ namespace SIP_o_matic.DataSources
 {
 	public class OracleDataSource : IDataSource
 	{
-		private string fileName;
 		private static Regex dataRegex = new Regex(@"var data = \((?<Value>.+)\);$", RegexOptions.Multiline);
 		private static Regex devicesRegex = new Regex(@"devices: \((?<Value>.+)\),$", RegexOptions.Multiline);
 		private static Regex ipRegex = new Regex(@"(?<Value>\d+\.\d+\.\d+\.\d+)");
-		public OracleDataSource(string FileName)
+		public OracleDataSource()
 		{
-			this.fileName = FileName;
+		}
+
+		public IEnumerable<string> GetSupportedFileExts()
+		{
+			yield return "htm";
+			yield return "html";
 		}
 
 		private string GetIPAddress(string Data)
@@ -29,7 +33,7 @@ namespace SIP_o_matic.DataSources
 			return match.Groups["Value"].Value;
 		}
 
-		public async IAsyncEnumerable<Device> EnumerateDevicesAsync()
+		public async IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName)
 		{
 			string line, devicesString;
 			Match match;
@@ -39,7 +43,7 @@ namespace SIP_o_matic.DataSources
 			string name, addresses;
 			
 
-			using (StreamReader reader = new StreamReader(fileName))
+			using (StreamReader reader = new StreamReader(FileName))
 			{
 				line = await reader.ReadToEndAsync();
 				match = devicesRegex.Match(line);
@@ -68,7 +72,7 @@ namespace SIP_o_matic.DataSources
 		}
 
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync()
+		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
 		{
 			string line,dataString;
 			Match match;
@@ -80,7 +84,7 @@ namespace SIP_o_matic.DataSources
 			string sourceAddress, destinationAddress;
 			string message;
 
-			using (StreamReader reader=new StreamReader(fileName))
+			using (StreamReader reader=new StreamReader(FileName))
 			{
 				line=await reader.ReadToEndAsync();
 				match = dataRegex.Match(line);
@@ -109,9 +113,6 @@ namespace SIP_o_matic.DataSources
 
 		}
 
-
-
-
-
+		
 	}
 }

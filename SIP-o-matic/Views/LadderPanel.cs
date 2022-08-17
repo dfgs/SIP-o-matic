@@ -40,6 +40,7 @@ namespace SIP_o_matic.Views
 
 		public static readonly DependencyProperty LeftColumnProperty = DependencyProperty.RegisterAttached("LeftColumn", typeof(object), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 		public static readonly DependencyProperty RightColumnProperty = DependencyProperty.RegisterAttached("RightColumn", typeof(object), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+		public static readonly DependencyProperty IsInvertedProperty = DependencyProperty.RegisterAttached("IsInverted", typeof(bool), typeof(LadderPanel), new FrameworkPropertyMetadata(false,FrameworkPropertyMetadataOptions.BindsTwoWayByDefault | FrameworkPropertyMetadataOptions.Inherits));
 
 
 
@@ -65,13 +66,25 @@ namespace SIP_o_matic.Views
 
 		public static object GetRightColumn(DependencyObject obj)
 		{
-			return (object)obj.GetValue(RightColumnProperty);
+			return obj.GetValue(RightColumnProperty);
 		}
 
 		public static void SetRightColumn(DependencyObject obj, object value)
 		{
 			obj.SetValue(RightColumnProperty, value);
 		}
+
+
+		public static bool GetIsInverted(DependencyObject obj)
+		{
+			return (bool)obj.GetValue(IsInvertedProperty);
+		}
+
+		public static void SetIsInverted(DependencyObject obj, bool value)
+		{
+			obj.SetValue(IsInvertedProperty, value);
+		}
+
 
 		private static void ColumnsPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
 		{
@@ -139,6 +152,7 @@ namespace SIP_o_matic.Views
 			object? rightColumn;
 			double totalHeight = 0;
 			int leftIndex,rightIndex;
+			bool isInverted;
 
 			columns = new List<object>();
 			if (Columns != null) columns.AddRange(Columns);
@@ -153,13 +167,14 @@ namespace SIP_o_matic.Views
 				if (!columns.Contains(rightColumn)) columns.Add(rightColumn);
 				rightIndex = columns.IndexOf(rightColumn);
 
-				if (leftIndex>rightIndex)
+				isInverted = leftIndex > rightIndex;
+				if (isInverted)
 				{
 					int tmp = rightIndex;
 					rightIndex = leftIndex;
 					leftIndex = tmp;
 				}
-
+				SetIsInverted(element, isInverted);
 				element.Arrange(new Rect(leftIndex*ColumnWidth+ColumnPadding, totalHeight, (rightIndex-leftIndex)*ColumnWidth, element.DesiredSize.Height));
 
 				totalHeight += element.DesiredSize.Height;

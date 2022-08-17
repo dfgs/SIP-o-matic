@@ -11,8 +11,8 @@
 		<ListView ItemsSource="{Binding Dialogs}" SelectedItem="{Binding SelectedDialog}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
-					<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
+					<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime, StringFormat='HH:mm:ss:ffff'}"/>
+					<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime, StringFormat='HH:mm:ss:ffff'}"/>
 					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
 					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
 					<GridViewColumn Width="200" Header="From Tag" DisplayMemberBinding="{Binding FromTag}"/>

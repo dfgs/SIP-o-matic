@@ -50,6 +50,18 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
+
+		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register("IsSelected", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));
+		public bool IsSelected
+		{
+			get { return (bool)GetValue(IsSelectedProperty); }
+			set { SetValue(IsSelectedProperty, value); }
+		}
+
+
+
+
+
 		public ObservableCollection<DialogViewModel> Dialogs
 		{
 			get;

@@ -11,7 +11,7 @@
 		<ListView ItemsSource="{Binding SIPMessages}">
 			<ListView.View>
 				<GridView>
-					<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp}"/>
+					<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp, StringFormat='HH:mm:ss:ffff'}"/>
 					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
 					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
 					<GridViewColumn Width="500" Header="Message" DisplayMemberBinding="{Binding Display}"/>

@@ -4,44 +4,71 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
-			 xmlns:data="clr-namespace:SIP_o_matic.Views.TestData"
+			xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
+			xmlns:data="clr-namespace:SIP_o_matic.Views.TestData"
 			xmlns:sys="clr-namespace:System;assembly=mscorlib"
-			mc:Ignorable="d" 
-             d:DesignHeight="200" d:DesignWidth="800">
-	<UserControl.Resources>
-		<x:Array x:Key="columns" Type="sys:String">
-			<sys:String>A</sys:String>
-			<sys:String>B</sys:String>
-			<sys:String>C</sys:String>
-		</x:Array>
-		
-	</UserControl.Resources>
+			mc:Ignorable="d" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
 
-	<views:LadderControl ColumnWidth="200" ColumnPadding="100" 
-		Columns="{StaticResource ResourceKey=columns}"  
-		Rows="{x:Static data:TestData.Rows}"
-	VerticalAlignment="Top" HorizontalAlignment="Left" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+	<UserControl.Resources>
+		<SolidColorBrush x:Key="darkBrush" Color="#CC000000"/>
+		<SolidColorBrush x:Key="lightBrush" Color="#CCFFFFFF"/>
+		<SolidColorBrush x:Key="dialogColor" Color="Green"/>
+		<SolidColorBrush x:Key="transactionColor" Color="Blue"/>
+
+		<Style x:Key="orientedControlStyle" TargetType="{x:Type FrameworkElement}">
+			<Style.Triggers>
+				<Trigger Property="views:LadderPanel.IsInverted" Value="True">
+					<Setter Property="HorizontalAlignment" Value="Right"/>
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+		<Style x:Key="timestampTextBoxStyle" BasedOn="{StaticResource orientedControlStyle}" TargetType="{x:Type TextBlock}">
+			<Setter Property="FontFamily" Value="Bahnschrift SemiBold"/>
+			<Setter Property="Foreground" Value="{StaticResource darkBrush}"/>
+		</Style>
+		<Style x:Key="displayTextBoxStyle" BasedOn="{StaticResource orientedControlStyle}" TargetType="{x:Type TextBlock}">
+			<Setter Property="FontFamily" Value="Arial"/>
+		</Style>
+
+		<DataTemplate DataType="{x:Type viewModels:DialogEventViewModel}">
+			<Border BorderThickness="1" Background="WhiteSmoke" BorderBrush="{StaticResource dialogColor}" Padding="2">
+				<StackPanel>
+					<TextBlock Style="{StaticResource timestampTextBoxStyle}" Text="{Binding Timestamp,StringFormat='HH:mm:ss'}" />
+					<StackPanel Orientation="Horizontal" Style="{StaticResource orientedControlStyle}">
+						<TextBlock Style="{StaticResource displayTextBoxStyle}" Text="D" Margin="0,0,3,0" Foreground="{StaticResource dialogColor}" FontWeight="Bold"  />
+						<TextBlock Style="{StaticResource displayTextBoxStyle}" Text="{Binding Display}" FontFamily="Arial"/>
+					</StackPanel>
+					<views:ArrowView Height="10"/>
+				</StackPanel>
+			</Border>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:TransactionEventViewModel}">
+			<Border BorderThickness="1" Background="WhiteSmoke" BorderBrush="{StaticResource transactionColor}" Padding="2">
+				<StackPanel>
+					<TextBlock Style="{StaticResource timestampTextBoxStyle}" Text="{Binding Timestamp,StringFormat='HH:mm:ss'}" />
+					<StackPanel Orientation="Horizontal" Style="{StaticResource orientedControlStyle}">
+						<TextBlock Style="{StaticResource displayTextBoxStyle}" Text="T" Margin="0,0,3,0" Foreground="{StaticResource transactionColor}" FontWeight="Bold"  />
+						<TextBlock Style="{StaticResource displayTextBoxStyle}" Text="{Binding Display}" FontFamily="Arial"/>
+					</StackPanel>
+					<views:ArrowView Height="10"/>
+				</StackPanel>
+			</Border>
+		</DataTemplate>
+	</UserControl.Resources>
+	
+	<views:LadderControl ColumnWidth="200" ColumnPadding="100" Columns="{x:Static data:TestData.Devices}" Rows="{x:Static data:TestData.Rows}"
+	VerticalAlignment="Top" HorizontalAlignment="Left" >
 		<views:LadderControl.HeaderTemplate>
 			<DataTemplate>
-				<Border BorderBrush="Black" BorderThickness="1">
-					<TextBlock Text="{Binding}" TextAlignment="Center" />
+				<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
+					<TextBlock Text="{Binding Name}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
 				</Border>
 			</DataTemplate>
 		</views:LadderControl.HeaderTemplate>
-		<views:LadderControl.RowTemplate>
-			<DataTemplate>
-				<Border BorderThickness="1" BorderBrush="Beige">
-					<StackPanel>
-						<TextBlock Text="{Binding Text}"/>
-						<TextBlock Text="&#x2794;" />
-					</StackPanel>
-				</Border>
-			</DataTemplate>
-		</views:LadderControl.RowTemplate>
+		
 		<views:LadderControl.ColumnTemplate>
 			<DataTemplate>
-				<Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center">
-				</Border>
+				<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
 			</DataTemplate>
 		</views:LadderControl.ColumnTemplate>
 
@@ -49,8 +76,8 @@
 			<Style TargetType="{x:Type ContentControl}">
 				<Setter Property="HorizontalAlignment" Value="Stretch"/>
 				<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-				<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding LeftColumn}"/>
-				<Setter Property="views:LadderPanel.RightColumn" Value="{Binding RightColumn}"/>
+				<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding SourceDevice}"/>
+				<Setter Property="views:LadderPanel.RightColumn" Value="{Binding DestinationDevice}"/>
 			</Style>
 		</views:LadderControl.RowContainerStyle>
 

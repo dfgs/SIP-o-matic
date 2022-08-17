@@ -8,8 +8,10 @@ namespace SIP_o_matic.DataSources
 {
 	public interface IDataSource
 	{
-		IAsyncEnumerable<Event> EnumerateEventsAsync();
-		IAsyncEnumerable<Device> EnumerateDevicesAsync();
+		IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName);
+		IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName);
+
+		IEnumerable<string> GetSupportedFileExts();
 
 	}
 }

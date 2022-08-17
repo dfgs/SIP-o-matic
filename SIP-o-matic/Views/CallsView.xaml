@@ -12,6 +12,13 @@
 		<ListView  ItemsSource="{Binding Calls}" SelectedItem="{Binding SelectedCall}">
 			<ListView.View>
 				<GridView>
+					<GridViewColumn Width="30" Header="">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<CheckBox IsChecked="{Binding IsSelected}"/>
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
 					<GridViewColumn Width="150" Header="Start time" DisplayMemberBinding="{Binding StartTime}"/>
 					<GridViewColumn Width="150" Header="Stop time" DisplayMemberBinding="{Binding StopTime}"/>
 					<GridViewColumn Width="300" Header="From" DisplayMemberBinding="{Binding From}"/>
