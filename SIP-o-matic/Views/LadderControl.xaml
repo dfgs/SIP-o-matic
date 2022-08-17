@@ -16,24 +16,12 @@
 			<TextBlock Text="{Binding}" TextAlignment="Center" />
 		</DataTemplate>
 	</UserControl.Resources>
-	<DockPanel>
-		<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate}">
-			<ItemsControl.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal"/>
-				</ItemsPanelTemplate>
-			</ItemsControl.ItemsPanel>
-			<ItemsControl.ItemContainerStyle>
-				<Style TargetType="{x:Type ContentPresenter}">
-					<Setter Property="Width" Value="{Binding ElementName=root,Path=ColumnWidth}"/>
-				</Style>
-			</ItemsControl.ItemContainerStyle>
-		</ItemsControl>
-		<Grid>
-			<ItemsControl ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=ColumnTemplate}">
+	<ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
+		<DockPanel>
+			<ItemsControl DockPanel.Dock="Top" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
-						<StackPanel Orientation="Horizontal" />
+						<StackPanel Orientation="Horizontal"/>
 					</ItemsPanelTemplate>
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemContainerStyle>
@@ -42,17 +30,31 @@
 					</Style>
 				</ItemsControl.ItemContainerStyle>
 			</ItemsControl>
-			<ListBox ItemsSource="{Binding ElementName=root,Path=Rows}" SelectedItem="{Binding ElementName=root,Path=SelectedRow,Mode=TwoWay}"
-				ItemTemplate="{Binding ElementName=root,Path=RowTemplate}" 
-				ItemContainerStyle="{Binding ElementName=root,Path=RowContainerStyle}"
-				BorderThickness="0" Background="Transparent">
+			<Grid>
+				<ItemsControl ItemsSource="{Binding ElementName=root,Path=Columns}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemTemplate="{Binding ElementName=root,Path=ColumnTemplate}">
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemContainerStyle>
+						<Style TargetType="{x:Type ContentPresenter}">
+							<Setter Property="Width" Value="{Binding ElementName=root,Path=ColumnWidth}"/>
+						</Style>
+					</ItemsControl.ItemContainerStyle>
+				</ItemsControl>
+				<ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ElementName=root,Path=Rows}" SelectedItem="{Binding ElementName=root,Path=SelectedRow,Mode=TwoWay}"
+					ItemTemplate="{Binding ElementName=root,Path=RowTemplate}" 
+					ItemContainerStyle="{Binding ElementName=root,Path=RowContainerStyle}"
+					BorderThickness="0" Background="Transparent">
 
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<views:LadderPanel   ColumnWidth="{Binding ElementName=root,Path=ColumnWidth}" ColumnPadding="{Binding ElementName=root,Path=ColumnPadding}" Columns="{Binding ElementName=root,Path=Columns}"  VerticalAlignment="Top" HorizontalAlignment="Left"/>
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-			</ListBox>
-		</Grid>
-	</DockPanel>
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<views:LadderPanel   ColumnWidth="{Binding ElementName=root,Path=ColumnWidth}" ColumnPadding="{Binding ElementName=root,Path=ColumnPadding}" Columns="{Binding ElementName=root,Path=Columns}"  VerticalAlignment="Top" HorizontalAlignment="Left"/>
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+				</ListBox>
+			</Grid>
+		</DockPanel>
+	</ScrollViewer>
 </UserControl>

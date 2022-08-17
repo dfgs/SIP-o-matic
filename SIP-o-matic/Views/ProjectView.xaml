@@ -19,5 +19,8 @@
 		<TabItem Header="Logs">
 			<views:LogsView/>
 		</TabItem>
+		<TabItem Header="Test">
+			<views:TestLadderPanel/>
+		</TabItem>
 	</TabControl>
 </UserControl>

@@ -19,6 +19,13 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DisplayProperty, value); }
 		}
 
+		public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register("IsExpanded", typeof(bool), typeof(DialogEventViewModel), new PropertyMetadata(false));
+		public bool IsExpanded
+		{
+			get { return (bool)GetValue(IsExpandedProperty); }
+			set { SetValue(IsExpandedProperty, value); }
+		}
+
 
 
 
