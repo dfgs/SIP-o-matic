@@ -79,9 +79,13 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public DialogViewModel? FindDialogByUID(int UID)
+		public DialogViewModel? FindDialogByUID1(int UID1)
 		{
-			return Dialogs.FirstOrDefault(item => item.UID == UID);
+			return Dialogs.FirstOrDefault(item => item.UID1 == UID1);
+		}
+		public DialogViewModel? FindDialogByUID2(int UID2)
+		{
+			return Dialogs.FirstOrDefault(item => item.UID2 == UID2);
 		}
 
 		public void AddSIPMessage(FileViewModel FileViewModel,Event Event, SIPMessage SIPMessage)
@@ -92,12 +96,12 @@ namespace SIP_o_matic.ViewModels
 
 
 			dialogUIDSecondStage = SIPUtils.GetDialogUIDSecondStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
-			dialogViewModel = FindDialogByUID(dialogUIDSecondStage);
+			dialogViewModel = FindDialogByUID2(dialogUIDSecondStage);
 
 			if (dialogViewModel==null)
 			{
 				dialogUIDFirstStage = SIPUtils.GetDialogUIDFirstStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
-				dialogViewModel = FindDialogByUID(dialogUIDFirstStage);
+				dialogViewModel = FindDialogByUID1(dialogUIDFirstStage);
 				if (dialogViewModel == null)
 				{
 					dialogViewModel = new DialogViewModel(Logger, dialogUIDFirstStage);
@@ -105,10 +109,9 @@ namespace SIP_o_matic.ViewModels
 				}
 				else
 				{
-					dialogViewModel.UpdateUID(dialogUIDSecondStage);
+					dialogViewModel.UpdateUID2(dialogUIDSecondStage);
 				}
 			}
-
 
 			
 			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
@@ -117,17 +120,24 @@ namespace SIP_o_matic.ViewModels
 		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
 		{
 			DialogViewModel? dialogViewModel;
-			int dialogUID;
+			int dialogUIDSecondStage, dialogUIDFirstStage;
 
+			dialogUIDSecondStage = SIPUtils.GetDialogUIDSecondStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+			dialogViewModel = FindDialogByUID2(dialogUIDSecondStage);
 
+			if (dialogViewModel == null)
+			{
+				dialogUIDFirstStage = SIPUtils.GetDialogUIDFirstStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
+				dialogViewModel = FindDialogByUID1(dialogUIDFirstStage);
+				if (dialogViewModel == null) return;
+			}
 
-			dialogUID = SIPUtils.GetDialogUIDSecondStage(SIPMessage, Event.SourceAddress, Event.DestinationAddress);
-			dialogViewModel = FindDialogByUID(dialogUID);
-
-			if (dialogViewModel == null) return;
-			dialogViewModel.RemoveSIPMessage(FileViewModel, Event, SIPMessage);
+			dialogViewModel.RemoveSIPMessage(FileViewModel,Event, SIPMessage);
 			if (dialogViewModel.Transactions.Count == 0) Dialogs.Remove(dialogViewModel);
+
 			OnPropertiesChanged();
+
+
 		}
 
 

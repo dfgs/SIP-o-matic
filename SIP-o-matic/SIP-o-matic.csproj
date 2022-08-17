@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\bug_edit.png" />
     <None Remove="Images\folder.png" />
     <None Remove="Images\folder_add.png" />
     <None Remove="Images\folder_delete.png" />
@@ -16,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\bug_edit.png" />
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\folder_add.png" />
     <Resource Include="Images\folder_delete.png" />

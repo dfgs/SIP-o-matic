@@ -12,7 +12,8 @@ namespace SIP_o_matic.DataSources
 	public class OracleDataSource : IDataSource
 	{
 		private string fileName;
-		private static Regex regex = new Regex(@"var data = \((?<Value>.+)\);$", RegexOptions.Multiline);
+		private static Regex dataRegex = new Regex(@"var data = \((?<Value>.+)\);$", RegexOptions.Multiline);
+		private static Regex devicesRegex = new Regex(@"devices: \((?<Value>.+)\),$", RegexOptions.Multiline);
 		private static Regex ipRegex = new Regex(@"(?<Value>\d+\.\d+\.\d+\.\d+)");
 		public OracleDataSource(string FileName)
 		{
@@ -27,6 +28,45 @@ namespace SIP_o_matic.DataSources
 			if (!match.Success) return Data;
 			return match.Groups["Value"].Value;
 		}
+
+		public async IAsyncEnumerable<Device> EnumerateDevicesAsync()
+		{
+			string line, devicesString;
+			Match match;
+			JsonNode? devicesNode;
+			JsonArray? devicesArray;
+			Device _device;
+			string name, addresses;
+			
+
+			using (StreamReader reader = new StreamReader(fileName))
+			{
+				line = await reader.ReadToEndAsync();
+				match = devicesRegex.Match(line);
+				if (!match.Success) yield break;
+				devicesString = match.Groups["Value"].Value;
+
+				devicesNode = JsonNode.Parse(devicesString);
+				if (devicesNode == null) yield break;
+
+				devicesArray = devicesNode.AsArray();
+				if (devicesArray == null) yield break;
+
+
+				await foreach (JsonNode? node in devicesArray.ToAsyncEnumerable())
+				{
+					name= node!["name"]!.GetValue<string>();
+					addresses = node!["ipranges"]!.GetValue<string>();
+					foreach (string address in addresses.Split('\n'))
+					{
+						_device = new Device(name, GetIPAddress( address) );
+						yield return _device;
+					}
+				}
+			}
+
+		}
+
 
 		public async IAsyncEnumerable<Event> EnumerateEventsAsync()
 		{
@@ -43,7 +83,7 @@ namespace SIP_o_matic.DataSources
 			using (StreamReader reader=new StreamReader(fileName))
 			{
 				line=await reader.ReadToEndAsync();
-				match = regex.Match(line);
+				match = dataRegex.Match(line);
 				if (!match.Success) yield break;
 				dataString = match.Groups["Value"].Value;
 
@@ -68,5 +108,10 @@ namespace SIP_o_matic.DataSources
 			}
 
 		}
+
+
+
+
+
 	}
 }

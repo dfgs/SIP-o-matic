@@ -9,5 +9,7 @@ namespace SIP_o_matic.DataSources
 	public interface IDataSource
 	{
 		IAsyncEnumerable<Event> EnumerateEventsAsync();
+		IAsyncEnumerable<Device> EnumerateDevicesAsync();
+
 	}
 }

@@ -58,12 +58,25 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(SelectedCallProperty, value); }
 		}
 
+		public ObservableCollection<DeviceViewModel> Devices
+		{
+			get;
+			private set;
+		}
+
+		public static readonly DependencyProperty SelectedDeviceProperty = DependencyProperty.Register("SelectedDevice", typeof(DeviceViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public DeviceViewModel? SelectedDevice
+		{
+			get { return (DeviceViewModel)GetValue(SelectedDeviceProperty); }
+			set { SetValue(SelectedDeviceProperty, value); }
+		}
 
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			Files = new ObservableCollection<FileViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
+			Devices = new ObservableCollection<DeviceViewModel>();
 		}
 
 		protected void OnPropertiesChanged()
@@ -76,7 +89,30 @@ namespace SIP_o_matic.ViewModels
 		{
 			return Calls.FirstOrDefault(item => item.UID == UID);
 		}
+		public DeviceViewModel? FindDeviceByName(string Name)
+		{
+			return Devices.FirstOrDefault(item => item.Name == Name);
+		}
+		public void AddDevice(FileViewModel FileViewModel, Device Device)
+		{
+			DeviceViewModel? deviceViewModel;
+			int addressIndex;
 
+			deviceViewModel = FindDeviceByName(Device.Name);
+			if (deviceViewModel == null)
+			{
+				deviceViewModel = new DeviceViewModel(Device.Name);
+				Devices.Add(deviceViewModel);
+			}
+
+			deviceViewModel.AddSourceFile(FileViewModel);
+
+			addressIndex = deviceViewModel.Addresses.IndexOf(Device.Address);
+			if (addressIndex >= 0) return;
+
+			deviceViewModel.Addresses.Add(Device.Address);
+			
+		}
 
 		public void AddEvent(FileViewModel FileViewModel,Event Event)
 		{
@@ -132,7 +168,17 @@ namespace SIP_o_matic.ViewModels
 			if (callViewModel.Dialogs.Count == 0) Calls.Remove(callViewModel);
 
 		}
+		public void RemoveDevice(FileViewModel FileViewModel, Device Device)
+		{
+			DeviceViewModel? deviceViewModel;
 
+			deviceViewModel = FindDeviceByName(Device.Name);
+			if (deviceViewModel == null) return;
+
+			deviceViewModel.RemoveSourceFile(FileViewModel);
+
+			if (deviceViewModel.Count == 0) Devices.Remove(deviceViewModel);
+		}
 		public async Task AddFileAsync(string Path)
 		{
 			IDataSource dataSource;
@@ -144,7 +190,13 @@ namespace SIP_o_matic.ViewModels
 
 			//dataSource = new WiresharkDataSource(Path);
 			dataSource = new OracleDataSource(Path);
-			
+
+			await foreach (Device _device in dataSource.EnumerateDevicesAsync())
+			{
+				fileViewModel.Devices.Add(_device);
+				AddDevice(fileViewModel, _device);
+			}
+
 			await foreach (Event _event in dataSource.EnumerateEventsAsync())
 			{
 				fileViewModel.Events.Add(_event);
@@ -159,6 +211,10 @@ namespace SIP_o_matic.ViewModels
 			await foreach (Event _event in FileViewModel.Events.ToAsyncEnumerable())
 			{
 				RemoveEvent(FileViewModel, _event);
+			}
+			await foreach (Device _device in FileViewModel.Devices.ToAsyncEnumerable())
+			{
+				RemoveDevice(FileViewModel, _device);
 			}
 
 			SelectedFile = null;

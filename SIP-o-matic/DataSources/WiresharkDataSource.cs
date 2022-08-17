@@ -15,7 +15,13 @@ namespace SIP_o_matic.DataSources
 		{
 			this.fileName = FileName;
 		}
-		
+		public async IAsyncEnumerable<Device> EnumerateDevicesAsync()
+		{
+			await Task.Yield();
+			yield break;
+		}
+
+
 		public async IAsyncEnumerable<Event> EnumerateEventsAsync()
 		{
 			FrameReader frameReader;

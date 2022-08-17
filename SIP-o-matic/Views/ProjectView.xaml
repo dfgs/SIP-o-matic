@@ -10,6 +10,9 @@
 		<TabItem Header="Calls">
 			<views:GeneralCallsView />
 		</TabItem>
+		<TabItem Header="Devices">
+			<views:DevicesView />
+		</TabItem>
 		<TabItem Header="Files">
 			<views:FilesView/>
 		</TabItem>

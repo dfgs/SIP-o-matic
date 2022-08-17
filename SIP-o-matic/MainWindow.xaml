@@ -31,7 +31,7 @@
 					<Image Source="/Images/folder_add.png" Stretch="None"/>
 				</Button>
 				<Button Command="{x:Static root:RoutedCommands.CopyLogs}"  ToolTip="Copy logs" ToolTipService.ShowOnDisabled="true">
-					<Image Source="/Images/folder_add.png" Stretch="None"/>
+					<Image Source="/Images/bug_edit.png" Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>

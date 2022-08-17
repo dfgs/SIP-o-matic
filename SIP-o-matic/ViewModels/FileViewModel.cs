@@ -35,11 +35,15 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
-
+		public ObservableCollection<Device> Devices
+		{
+			get;
+			private set;
+		}
 		public FileViewModel(ILogger Logger):base(Logger)
 		{
 			Events = new ObservableCollection<Event>();
-
+			Devices = new ObservableCollection<Device>();
 		}
 
 	}

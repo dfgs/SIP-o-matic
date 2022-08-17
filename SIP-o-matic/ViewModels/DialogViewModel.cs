@@ -64,20 +64,25 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public int UID
+		public int UID1
+		{
+			get;
+			private set;
+		}
+		public int UID2
 		{
 			get;
 			private set;
 		}
 
-		public DialogViewModel(ILogger Logger, int UID) : base(Logger)
+		public DialogViewModel(ILogger Logger, int UID1) : base(Logger)
 		{
-			this.UID = UID;
+			this.UID1 = UID1;this.UID2 = 0;
 			Transactions = new ObservableCollection<TransactionViewModel>();
 		}
-		public void UpdateUID(int UID)
+		public void UpdateUID2(int UID2)
 		{
-			this.UID = UID;
+			this.UID2 = UID2;
 		}
 
 		protected void OnPropertiesChanged()
