@@ -114,6 +114,11 @@ namespace SIP_o_matic.ViewModels
 		{
 			return Devices.FirstOrDefault(item => item.Name == Name);
 		}
+		public DeviceViewModel? FindDeviceByAddress(string Address)
+		{
+			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
+		}
+
 		public void AddDevice(FileViewModel FileViewModel, Device Device)
 		{
 			DeviceViewModel? deviceViewModel;
@@ -124,6 +129,7 @@ namespace SIP_o_matic.ViewModels
 			{
 				deviceViewModel = new DeviceViewModel(Device.Name);
 				Devices.Add(deviceViewModel);
+				FileViewModel.AddDevice(Device);
 			}
 
 			deviceViewModel.AddSourceFile(FileViewModel);
@@ -132,6 +138,26 @@ namespace SIP_o_matic.ViewModels
 			if (addressIndex >= 0) return;
 
 			deviceViewModel.Addresses.Add(Device.Address);
+		}
+		public void AddDevice(FileViewModel FileViewModel, string Address)
+		{
+			DeviceViewModel? deviceViewModel;
+			Device device;
+
+			deviceViewModel = FindDeviceByAddress(Address);
+			if (deviceViewModel == null)
+			{
+				
+				deviceViewModel = new DeviceViewModel(Address);
+				deviceViewModel.Addresses.Add(Address);
+				Devices.Add(deviceViewModel);
+
+
+				device = new Device(Address,Address);
+				FileViewModel.AddDevice(device);
+			}
+
+			deviceViewModel.AddSourceFile(FileViewModel);
 			
 		}
 
@@ -210,13 +236,16 @@ namespace SIP_o_matic.ViewModels
 
 			await foreach (Device _device in DataSource.EnumerateDevicesAsync(Path))
 			{
-				fileViewModel.Devices.Add(_device);
 				AddDevice(fileViewModel, _device);
 			}
 
 			await foreach (Event _event in DataSource.EnumerateEventsAsync(Path))
 			{
 				fileViewModel.Events.Add(_event);
+				AddDevice(fileViewModel, _event.SourceAddress);
+				AddDevice(fileViewModel, _event.DestinationAddress);
+				
+
 				AddEvent(fileViewModel, _event);
 			}
 			OnPropertiesChanged();

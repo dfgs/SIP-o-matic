@@ -68,7 +68,7 @@ namespace SIP_o_matic.DataSources
 					sourceAddress ="tbd";
 					destinationAddress = "tbd2";
 					message = match.Groups["Message"].Value;
-					_event = new Event(timeStamp, sourceAddress, destinationAddress, HttpUtility.HtmlDecode(message));
+					_event = new Event(timeStamp, sourceAddress, destinationAddress, HttpUtility.HtmlDecode(message).ReplaceLineEndings("\r\n"));
 					yield return _event;	
 				}
 			}

@@ -46,5 +46,10 @@ namespace SIP_o_matic.ViewModels
 			Devices = new ObservableCollection<Device>();
 		}
 
+		public void AddDevice(Device Device)
+		{
+			if (Devices.Contains(Device)) return;
+			Devices.Add(Device);
+		}
 	}
 }

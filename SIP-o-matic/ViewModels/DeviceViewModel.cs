@@ -47,6 +47,7 @@ namespace SIP_o_matic.ViewModels
 
 		public void AddSourceFile(FileViewModel FileViewModel)
 		{
+			if (SourceFiles.Contains(FileViewModel)) return;
 			SourceFiles.Add(FileViewModel);
 			OnPropertiesChanged();
 		}

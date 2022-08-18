@@ -63,6 +63,8 @@ namespace SIP_o_matic.ViewModels
 
 		private DeviceViewModel FindDevice(IEnumerable<DeviceViewModel> ProjectDevices,string? Address)
 		{
+			DeviceViewModel newDevice;
+
 			if (Address != null)
 			{
 				foreach (DeviceViewModel device in ProjectDevices)
@@ -71,10 +73,13 @@ namespace SIP_o_matic.ViewModels
 				}
 			}
 
-			return new DeviceViewModel(Address??"Undefined");
+			newDevice = new DeviceViewModel(Address ?? "Undefined");
+			newDevice.Addresses.Add(Address ?? "Undefined");
+			return newDevice;
 		}
 		private void AddDevice(DeviceViewModel Device)
 		{
+
 			if (!Devices.Contains(Device)) this.Devices.Add(Device);
 
 		}
