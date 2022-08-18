@@ -13,5 +13,10 @@ namespace SIP_o_matic.DataSources
 
 		IEnumerable<string> GetSupportedFileExts();
 
+		string Description
+		{
+			get;
+		}
+
 	}
 }

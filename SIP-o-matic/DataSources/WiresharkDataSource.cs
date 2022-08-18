@@ -10,6 +10,10 @@ namespace SIP_o_matic.DataSources
 {
 	public class WiresharkDataSource : IDataSource
 	{
+
+		public string Description => "Wiresharp pcapng";
+
+
 		public WiresharkDataSource()
 		{
 		}

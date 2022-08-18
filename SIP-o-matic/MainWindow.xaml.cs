@@ -30,7 +30,8 @@ namespace SIP_o_matic
 		public MainWindow()
 		{
 			dataSourceManager= new DataSourceManager();
-			dataSourceManager.Register(new OracleDataSource());
+			dataSourceManager.Register(new OracleOEMDataSource());
+			dataSourceManager.Register(new OracleSBCDataSource());
 			dataSourceManager.Register(new WiresharkDataSource());
 
 			applicationViewModel = new ApplicationViewModel();
@@ -94,6 +95,8 @@ namespace SIP_o_matic
 		{
 			OpenFileDialog dialog;
 			IDataSource[] dataSources;
+			IDataSource selectedDataSource;
+			DataSourceWindow dataSourceWindow;
 
 			dialog = new OpenFileDialog();
 			dialog.Filter = "All files|*.*";
@@ -111,9 +114,21 @@ namespace SIP_o_matic
 				return;
 			}
 
+			if (dataSources.Length == 1) selectedDataSource = dataSources[0];
+			else
+			{
+				dataSourceWindow = new DataSourceWindow();
+				dataSourceWindow.Owner = this.Owner;
+				dataSourceWindow.DataContext = dataSources;
+
+				if (!dataSourceWindow.ShowDialog() ?? false) return;
+				selectedDataSource = dataSourceWindow.SelectedDataSource;
+			}
+
+
 			try
 			{
-				await applicationViewModel.SelectedProject.AddFileAsync(dialog.FileName, dataSources[0]);
+				await applicationViewModel.SelectedProject.AddFileAsync(dialog.FileName, selectedDataSource);
 			}
 			catch (Exception ex)
 			{

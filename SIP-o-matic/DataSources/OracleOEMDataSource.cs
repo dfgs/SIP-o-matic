@@ -9,12 +9,16 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.DataSources
 {
-	public class OracleDataSource : IDataSource
+	public class OracleOEMDataSource : IDataSource
 	{
 		private static Regex dataRegex = new Regex(@"var data = \((?<Value>.+)\);$", RegexOptions.Multiline);
 		private static Regex devicesRegex = new Regex(@"devices: \((?<Value>.+)\),$", RegexOptions.Multiline);
 		private static Regex ipRegex = new Regex(@"(?<Value>\d+\.\d+\.\d+\.\d+)");
-		public OracleDataSource()
+
+		public string Description => "Oracle OEM";
+
+
+		public OracleOEMDataSource()
 		{
 		}
 
