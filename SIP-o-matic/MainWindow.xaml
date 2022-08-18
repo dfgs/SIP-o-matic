@@ -22,10 +22,10 @@
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar >
 				<Button Command="New" ToolTip="New project" ToolTipService.ShowOnDisabled="true">
-					<Image Source="Images\page_white.png" ToolTip="New project" Stretch="None"/>
+					<Image Source="Images\page_white.png"  Stretch="None"/>
 				</Button>
 				<Button Command="Open" ToolTip="Open project" ToolTipService.ShowOnDisabled="true">
-					<Image Source="Images\folder.png" ToolTip="Open project" Stretch="None"/>
+					<Image Source="Images\folder.png" Stretch="None"/>
 				</Button>
 				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/folder_add.png" Stretch="None"/>

@@ -46,7 +46,7 @@
 				<ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" ItemsSource="{Binding ElementName=root,Path=Rows}" SelectedItem="{Binding ElementName=root,Path=SelectedRow,Mode=TwoWay}"
 					ItemTemplate="{Binding ElementName=root,Path=RowTemplate}" 
 					ItemContainerStyle="{Binding ElementName=root,Path=RowContainerStyle}"
-					BorderThickness="0" Background="Transparent">
+					BorderThickness="0" Background="Transparent" MouseDoubleClick="ListBox_MouseDoubleClick" >
 
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>

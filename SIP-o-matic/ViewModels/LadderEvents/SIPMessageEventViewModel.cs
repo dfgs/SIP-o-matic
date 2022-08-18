@@ -8,11 +8,11 @@ using System.Windows;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class TransactionEventViewModel : LadderEventViewModel
+	public class SIPMessageEventViewModel : LadderEventViewModel
 	{
 
 
-		public static readonly DependencyProperty DisplayProperty = DependencyProperty.Register("Display", typeof(string), typeof(TransactionEventViewModel), new PropertyMetadata(null));
+		public static readonly DependencyProperty DisplayProperty = DependencyProperty.Register("Display", typeof(string), typeof(SIPMessageEventViewModel), new PropertyMetadata(null));
 		public override string Display
 		{
 			get { return (string)GetValue(DisplayProperty); }
@@ -22,20 +22,20 @@ namespace SIP_o_matic.ViewModels
 
 		public override string BorderColor
 		{
-			get => "Green";
+			get => "GoldenRod";
 		}
-		public static readonly DependencyProperty EventColorProperty = DependencyProperty.Register("EventColor", typeof(string), typeof(TransactionEventViewModel), new PropertyMetadata("Blue"));
+		public static readonly DependencyProperty EventColorProperty = DependencyProperty.Register("EventColor", typeof(string), typeof(SIPMessageEventViewModel), new PropertyMetadata("Blue"));
 		public override string EventColor
 		{
 			get { return (string)GetValue(EventColorProperty); }
 			set { SetValue(EventColorProperty, value); }
 		}
-		public TransactionViewModel? Transaction
+		public SIPMessageViewModel? Message
 		{
 			get;
 			set;
 		}
-		public TransactionEventViewModel() : base()
+		public SIPMessageEventViewModel() : base()
 		{
 		}
 

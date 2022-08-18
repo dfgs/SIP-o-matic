@@ -20,6 +20,9 @@ namespace SIP_o_matic.Views
 	/// </summary>
 	public partial class LadderControl : UserControl
 	{
+
+		public event MouseEventHandler? RowDoubleClicked;
+
 		private static readonly object[] defaultColumns = new object[] { "A", "B", "C" };
 		public static readonly DependencyProperty ColumnsProperty = DependencyProperty.Register("Columns", typeof(IEnumerable<object>), typeof(LadderControl)) ;
 		public IEnumerable<object> Columns
@@ -89,6 +92,13 @@ namespace SIP_o_matic.Views
 		public LadderControl()
 		{
 			InitializeComponent();
+		}
+
+		private void ListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+		{
+			if (SelectedRow == null) return;
+			RowDoubleClicked?.Invoke(this, e);
+
 		}
 	}
 }

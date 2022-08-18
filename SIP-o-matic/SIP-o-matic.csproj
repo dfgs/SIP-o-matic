@@ -9,18 +9,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Images\arrow_refresh.png" />
     <None Remove="Images\bug_edit.png" />
     <None Remove="Images\folder.png" />
     <None Remove="Images\folder_add.png" />
     <None Remove="Images\folder_delete.png" />
+    <None Remove="Images\magifier_zoom_out.png" />
+    <None Remove="Images\magnifier_zoom_in.png" />
     <None Remove="Images\page_white.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Images\arrow_refresh.png" />
     <Resource Include="Images\bug_edit.png" />
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\folder_add.png" />
     <Resource Include="Images\folder_delete.png" />
+    <Resource Include="Images\magifier_zoom_out.png" />
+    <Resource Include="Images\magnifier_zoom_in.png" />
     <Resource Include="Images\page_white.png" />
   </ItemGroup>
 

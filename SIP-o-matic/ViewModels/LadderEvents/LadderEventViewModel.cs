@@ -37,6 +37,15 @@ namespace SIP_o_matic.ViewModels
 			get;
 			set;
 		}
+		public abstract string BorderColor
+		{
+			get;
+		}
+		public abstract string EventColor
+		{
+			get;
+			set;
+		}
 
 		public LadderEventViewModel() : base(NullLogger.Instance)
 		{

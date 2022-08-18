@@ -2,6 +2,7 @@
 using LogLib;
 using PcapngFile;
 using SIP_o_matic.DataSources;
+using SIP_o_matic.Views.TestData;
 using SIPParserLib;
 using System;
 using System.Collections.Generic;
@@ -71,9 +72,29 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(SelectedDeviceProperty, value); }
 		}
 
+		public static readonly DependencyProperty LadderProperty = DependencyProperty.Register("Ladder", typeof(LadderViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public LadderViewModel? Ladder
+		{
+			get { return (LadderViewModel)GetValue(LadderProperty); }
+			set { SetValue(LadderProperty, value); }
+		}
+
+
+		public ProjectViewModel():base(NullLogger.Instance)
+		{
+			Ladder = new LadderViewModel();
+			Devices = new ObservableCollection<DeviceViewModel>();
+			Devices.Add(TestData.DeviceA);
+			Devices.Add(TestData.DeviceB);
+			Devices.Add(TestData.DeviceC);
+			Devices.Add(TestData.DeviceD);
+			Files = new ObservableCollection<FileViewModel>();
+			Calls = new ObservableCollection<CallViewModel>();
+		}
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
+			Ladder = new LadderViewModel(Logger);
 			Files = new ObservableCollection<FileViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
 			Devices = new ObservableCollection<DeviceViewModel>();

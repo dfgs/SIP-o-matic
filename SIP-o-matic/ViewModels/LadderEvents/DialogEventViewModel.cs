@@ -26,9 +26,23 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsExpandedProperty, value); }
 		}
 
+		public override string BorderColor 
+		{
+			get => "Blue";
+		}
+		public static readonly DependencyProperty EventColorProperty = DependencyProperty.Register("EventColor", typeof(string), typeof(DialogEventViewModel), new PropertyMetadata("Blue"));
+		public override string EventColor
+		{
+			get { return (string)GetValue(EventColorProperty); }
+			set { SetValue(EventColorProperty, value); }
+		}
 
 
-
+		public DialogViewModel? Dialog
+		{
+			get;
+			set;
+		}
 
 		public DialogEventViewModel() : base()
 		{
