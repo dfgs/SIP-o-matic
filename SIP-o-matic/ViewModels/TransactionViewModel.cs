@@ -107,7 +107,7 @@ namespace SIP_o_matic.ViewModels
 			int messageUID;
 
 			messageUID = SIPUtils.GetMessageUID(Event.Message);
-			sipMessageViewModel = FindMessageByUID(messageUID);
+			sipMessageViewModel = null;// FindMessageByUID(messageUID);
 
 			if (sipMessageViewModel == null)
 			{

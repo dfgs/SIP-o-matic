@@ -1,6 +1,8 @@
 ﻿using LogLib;
+using SIP_o_matic.DataSources;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,12 +21,12 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DisplayProperty, value); }
 		}
 
-		public static readonly DependencyProperty IsExpandedProperty = DependencyProperty.Register("IsExpanded", typeof(bool), typeof(DialogEventViewModel), new PropertyMetadata(false));
-		public bool IsExpanded
+		public ObservableCollection<TransactionEventViewModel> TransactionEvents
 		{
-			get { return (bool)GetValue(IsExpandedProperty); }
-			set { SetValue(IsExpandedProperty, value); }
+			get;
+			private set;
 		}
+
 
 		public override string BorderColor 
 		{
@@ -37,15 +39,26 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(EventColorProperty, value); }
 		}
 
+		
 
-		public DialogViewModel? Dialog
-		{
-			get;
-			set;
-		}
 
 		public DialogEventViewModel() : base()
 		{
+			TransactionEvents = new ObservableCollection<TransactionEventViewModel>();
+		}
+
+		public void AddEvent(TransactionEventViewModel TransactionEvent)
+		{
+			TransactionEvent.DialogEvent= this;
+			for (int t = 0; t < TransactionEvents.Count; t++)
+			{
+				if (TransactionEvents[t].Timestamp > TransactionEvent.Timestamp)
+				{
+					TransactionEvents.Insert(t, TransactionEvent);
+					return;
+				}
+			}
+			TransactionEvents.Add(TransactionEvent);
 		}
 
 	}

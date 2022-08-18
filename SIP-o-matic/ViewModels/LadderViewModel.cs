@@ -33,6 +33,8 @@ namespace SIP_o_matic.ViewModels
 			get { return (ObservableCollection<DeviceViewModel>)GetValue(DevicesProperty); }
 			set { SetValue(DevicesProperty, value); }
 		}
+		
+
 
 
 		public LadderViewModel() : base(NullLogger.Instance)
@@ -50,11 +52,13 @@ namespace SIP_o_matic.ViewModels
 			Events.Add(TestData.Event5);
 			Events.Add(TestData.Event6);
 			Events.Add(TestData.Event7);
+
 		}
 		public LadderViewModel(ILogger Logger) : base(Logger)
 		{
 			Devices = new ObservableCollection<DeviceViewModel>();
 			Events = new ObservableCollection<LadderEventViewModel>();
+			
 		}
 
 		private DeviceViewModel FindDevice(IEnumerable<DeviceViewModel> ProjectDevices,string? Address)
@@ -75,7 +79,7 @@ namespace SIP_o_matic.ViewModels
 
 		}
 		#region create ladder events
-		private DialogEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, DialogViewModel Dialog)
+		private DialogEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, DialogViewModel Dialog,string Color)
 		{
 			DeviceViewModel sourceDevice, destinationDevice;
 			DialogEventViewModel dialogEvent;
@@ -92,12 +96,12 @@ namespace SIP_o_matic.ViewModels
 				SourceDevice = sourceDevice,
 				DestinationDevice = destinationDevice,
 				Display = Dialog.Transactions.FirstOrDefault()?.ShortDisplay ?? "Undefined",
-				Dialog=Dialog
+				EventColor = Color,
 			};
 
 			return dialogEvent;
 		}
-		private TransactionEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, TransactionViewModel Transaction)
+		private TransactionEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, TransactionViewModel Transaction, string Color)
 		{
 			DeviceViewModel sourceDevice, destinationDevice;
 			TransactionEventViewModel transactionEvent;
@@ -114,12 +118,12 @@ namespace SIP_o_matic.ViewModels
 				SourceDevice = sourceDevice,
 				DestinationDevice = destinationDevice,
 				Display = Transaction.ShortDisplay ?? "Undefined",
-				Transaction=Transaction
+				EventColor = Color,
 			};
 
 			return transactionEvent;
 		}
-		private SIPMessageEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, SIPMessageViewModel SIPMessage)
+		private SIPMessageEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, SIPMessageViewModel SIPMessage,string Color)
 		{
 			DeviceViewModel sourceDevice, destinationDevice;
 			SIPMessageEventViewModel SIPMessageEvent;
@@ -136,7 +140,7 @@ namespace SIP_o_matic.ViewModels
 				SourceDevice = sourceDevice,
 				DestinationDevice = destinationDevice,
 				Display = SIPMessage.ShortDisplay ?? "Undefined",
-				Message = SIPMessage
+				EventColor = Color,
 			};
 
 			return SIPMessageEvent;
@@ -163,16 +167,36 @@ namespace SIP_o_matic.ViewModels
 		public void Refresh(IEnumerable<DeviceViewModel> ProjectDevices,IEnumerable<CallViewModel> Calls)
 		{
 			DialogEventViewModel dialogEvent;
+			TransactionEventViewModel transactionEvent;
+			SIPMessageEventViewModel messageEvent;
+			ColorManager colorManager;
+			int dialogCount, transactionCount;
 
 			Events.Clear();
 			Devices = new ObservableCollection<DeviceViewModel>();
+
+			dialogCount = Calls.SelectMany(call => call.Dialogs).Count();
+			transactionCount = Calls.SelectMany(call => call.Dialogs).SelectMany(dialog => dialog.Transactions).Count();
+
+			colorManager = new ColorManager(dialogCount + transactionCount); ;
 
 			foreach (CallViewModel call in Calls.Where(item=>item.IsSelected))
 			{
 				foreach(DialogViewModel dialog in call.Dialogs)
 				{
-					dialogEvent = CreateLadderEvent(ProjectDevices, dialog);
+					dialogEvent = CreateLadderEvent(ProjectDevices, dialog,colorManager.GetColorString());
 					AddEvent(dialogEvent);
+
+					foreach(TransactionViewModel transaction in dialog.Transactions)
+					{
+						transactionEvent = CreateLadderEvent(ProjectDevices, transaction, colorManager.GetColorString());
+						dialogEvent.AddEvent(transactionEvent);
+						foreach(SIPMessageViewModel message in transaction.SIPMessages)
+						{
+							messageEvent = CreateLadderEvent(ProjectDevices, message, transactionEvent.EventColor);
+							transactionEvent.AddEvent(messageEvent);
+						}
+					}
 				}
 			}
 		}
@@ -181,28 +205,21 @@ namespace SIP_o_matic.ViewModels
 		#region ZoomIn
 		private void ZoomIn(IEnumerable<DeviceViewModel> ProjectDevices, IEnumerable<CallViewModel> Calls,DialogEventViewModel DialogEvent)
 		{
-			TransactionEventViewModel transactionEvent;
-
-			if (DialogEvent.Dialog == null) return;
 			RemoveEvent(DialogEvent);
 
-			foreach(TransactionViewModel transaction in DialogEvent.Dialog.Transactions)
+			foreach(TransactionEventViewModel transactionEvent in DialogEvent.TransactionEvents)
 			{
-				transactionEvent = CreateLadderEvent(ProjectDevices, transaction);
 				AddEvent(transactionEvent);
 			}
 		}
 
 		private void ZoomIn(IEnumerable<DeviceViewModel> ProjectDevices, IEnumerable<CallViewModel> Calls, TransactionEventViewModel TransactionEvent)
 		{
-			SIPMessageEventViewModel messageEvent;
 
-			if (TransactionEvent.Transaction == null) return;
 			RemoveEvent(TransactionEvent);
 
-			foreach (SIPMessageViewModel message in TransactionEvent.Transaction.SIPMessages)
+			foreach (SIPMessageEventViewModel messageEvent in TransactionEvent.SIPMessageEvents)
 			{
-				messageEvent = CreateLadderEvent(ProjectDevices, message);
 				AddEvent(messageEvent);
 			}
 		}
@@ -227,42 +244,28 @@ namespace SIP_o_matic.ViewModels
 		#region ZoomOut
 		private void ZoomOut(IEnumerable<DeviceViewModel> ProjectDevices, IEnumerable<CallViewModel> Calls, TransactionEventViewModel TransactionEvent)
 		{
-			DialogEventViewModel dialogEvent;
-			DialogViewModel? dialog;
-			TransactionEventViewModel? transactionEvent;
+			DialogEventViewModel? dialogEvent;
 
-			if (TransactionEvent.Transaction == null) return;
-			dialog = Calls.Where(call => call.IsSelected).SelectMany(call => call.Dialogs).FirstOrDefault(item => item.Transactions.Contains(TransactionEvent.Transaction));
-			if (dialog == null) return;
-
-			foreach(TransactionViewModel transaction in dialog.Transactions)
+			dialogEvent = TransactionEvent.DialogEvent;
+			if (dialogEvent == null) return;
+			foreach(TransactionEventViewModel transactionEvent in dialogEvent.TransactionEvents)
 			{
-				transactionEvent = Events.OfType<TransactionEventViewModel>().FirstOrDefault(item => item.Transaction == transaction);
-				if (transactionEvent == null) continue;
 				RemoveEvent(transactionEvent);
 			}
 
-			dialogEvent = CreateLadderEvent(ProjectDevices, dialog);
 			AddEvent(dialogEvent);
 		}
 		private void ZoomOut(IEnumerable<DeviceViewModel> ProjectDevices, IEnumerable<CallViewModel> Calls, SIPMessageEventViewModel MessageEvent)
 		{
-			TransactionEventViewModel transactionEvent;
-			TransactionViewModel? transaction;
-			SIPMessageEventViewModel? messageEvent;
+			TransactionEventViewModel? transactionEvent;
 
-			if (MessageEvent.Message == null) return;
-			transaction = Calls.Where(call => call.IsSelected).SelectMany(call => call.Dialogs).SelectMany(dialog=>dialog.Transactions).FirstOrDefault(item => item.SIPMessages.Contains(MessageEvent.Message));
-			if (transaction == null) return;
-
-			foreach (SIPMessageViewModel message in transaction.SIPMessages)
+			transactionEvent = MessageEvent.TransactionEvent;
+			if (transactionEvent == null) return;
+			foreach (SIPMessageEventViewModel messageEvent in transactionEvent.SIPMessageEvents)
 			{
-				messageEvent = Events.OfType<SIPMessageEventViewModel>().FirstOrDefault(item => item.Message == message);
-				if (messageEvent == null) continue;
 				RemoveEvent(messageEvent);
 			}
 
-			transactionEvent = CreateLadderEvent(ProjectDevices, transaction);
 			AddEvent(transactionEvent);
 		}
 		public void ZoomOut(IEnumerable<DeviceViewModel> ProjectDevices, IEnumerable<CallViewModel> Calls)

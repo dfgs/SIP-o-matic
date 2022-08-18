@@ -30,7 +30,7 @@ namespace SIP_o_matic.ViewModels
 			get { return (string)GetValue(EventColorProperty); }
 			set { SetValue(EventColorProperty, value); }
 		}
-		public SIPMessageViewModel? Message
+		public TransactionEventViewModel? TransactionEvent
 		{
 			get;
 			set;

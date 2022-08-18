@@ -14,7 +14,7 @@ namespace SIP_o_matic.Views.TestData
 		public static DeviceViewModel DeviceC = new DeviceViewModel("Device C");
 		public static DeviceViewModel DeviceD = new DeviceViewModel("Device D");
 
-		public static LadderEventViewModel Event1 = new DialogEventViewModel() { SourceDevice = DeviceA, DestinationDevice = DeviceB , Display="INVITE", Timestamp = DateTime.Parse("10:00:00") , IsExpanded=true , EventColor= "GoldenRod" };
+		public static LadderEventViewModel Event1 = new DialogEventViewModel() { SourceDevice = DeviceA, DestinationDevice = DeviceB , Display="INVITE", Timestamp = DateTime.Parse("10:00:00") , EventColor= "GoldenRod" };
 		public static LadderEventViewModel Event2 = new TransactionEventViewModel() { SourceDevice = DeviceA, DestinationDevice = DeviceB, Display = "INVITE", Timestamp = DateTime.Parse("10:00:02"), EventColor = "GoldenRod" };
 		public static LadderEventViewModel Event3 = new DialogEventViewModel() { SourceDevice = DeviceB, DestinationDevice = DeviceC, Display = "INVITE", Timestamp = DateTime.Parse("10:01:00"), EventColor = "Lime" };
 		public static LadderEventViewModel Event4 = new TransactionEventViewModel() { SourceDevice = DeviceA, DestinationDevice = DeviceB, Display = "ACK", Timestamp = DateTime.Parse("10:00:02"), EventColor = "GoldenRod" };
