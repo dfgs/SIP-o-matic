@@ -190,15 +190,18 @@ namespace SIP_o_matic.ViewModels
 				foreach(DialogViewModel dialog in call.Dialogs)
 				{
 					dialogEvent = CreateLadderEvent(ProjectDevices, dialog,colorManager.GetColorString());
+					dialogEvent.Data = dialog;
 					AddEvent(dialogEvent);
 
 					foreach(TransactionViewModel transaction in dialog.Transactions)
 					{
 						transactionEvent = CreateLadderEvent(ProjectDevices, transaction, colorManager.GetColorString());
+						transactionEvent.Data = transaction;
 						dialogEvent.AddEvent(transactionEvent);
 						foreach(SIPMessageViewModel message in transaction.SIPMessages)
 						{
 							messageEvent = CreateLadderEvent(ProjectDevices, message, transactionEvent.EventColor);
+							messageEvent.Data = message;
 							transactionEvent.AddEvent(messageEvent);
 						}
 					}

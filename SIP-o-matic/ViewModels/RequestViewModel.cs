@@ -12,6 +12,7 @@ namespace SIP_o_matic.ViewModels
 	public class RequestViewModel:SIPMessageViewModel
 	{
 		private Request request;
+		public Request Request => request;
 
 		public override string? From
 		{

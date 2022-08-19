@@ -12,7 +12,7 @@ namespace SIP_o_matic.ViewModels
 	public class ResponseViewModel:SIPMessageViewModel
 	{
 		private Response response;
-
+		public Response Response => response;
 		public override string? From
 		{
 			get => response.GetHeader<FromHeader>()?.Value.ToShortString();

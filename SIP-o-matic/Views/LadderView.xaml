@@ -110,6 +110,18 @@
 			</DockPanel>
 		</DataTemplate>
 
+		<DataTemplate DataType="{x:Type viewModels:DialogViewModel}">
+			<views:TransactionsView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:TransactionViewModel}">
+			<views:SIPMessagesView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:RequestViewModel}">
+			<views:RequestView/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:ResponseViewModel}">
+			<views:ResponseView/>
+		</DataTemplate>
 	</UserControl.Resources>
 
 	<UserControl.InputBindings>
@@ -138,59 +150,67 @@
 
 			</ToolBar>
 		</ToolBarTray>
-
-		<views:LadderControl
+		<Grid>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="1*"/>
+				<RowDefinition Height="5"/>
+				<RowDefinition Height="200"/>
+			</Grid.RowDefinitions>
+			<views:LadderControl Grid.Row="0"
 			
-			ColumnWidth="200" ColumnPadding="100" Columns="{Binding Ladder.Devices}" Rows="{Binding Ladder.Events}" SelectedRow="{Binding Ladder.SelectedEvent}"
-			VerticalAlignment="Top" HorizontalAlignment="Left" RowDoubleClicked="LadderControl_RowDoubleClicked" >
-
-			
-			<views:LadderControl.HeaderTemplate>
-				<DataTemplate>
-					<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
-						<Border.Effect>
-							<DropShadowEffect ShadowDepth="5" Opacity="0.5"/>
-						</Border.Effect>
-						<TextBlock Text="{Binding Name}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
-					</Border>
-				</DataTemplate>
-			</views:LadderControl.HeaderTemplate>
-
-			<views:LadderControl.ColumnTemplate>
-				<DataTemplate>
-					<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
-				</DataTemplate>
-			</views:LadderControl.ColumnTemplate>
-
-			<views:LadderControl.RowContainerStyle>
-				<Style TargetType="{x:Type ListBoxItem}">
-					<Style.Triggers>
-						<Trigger Property="IsSelected" Value="True">
-							<Setter Property="Background" Value="LightSteelBlue"/>
-						</Trigger>
-					</Style.Triggers>
-					<Setter Property="HorizontalAlignment" Value="Stretch"/>
-					<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-					<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding SourceDevice}"/>
-					<Setter Property="views:LadderPanel.RightColumn" Value="{Binding DestinationDevice}"/>
-					<Setter Property="Background" Value="WhiteSmoke"/>
-					<Setter Property="Template">
-						<Setter.Value>
-							<ControlTemplate TargetType="{x:Type ListBoxItem}">
-								<Border Margin="5" BorderThickness="1" Background="{TemplateBinding Background}" Padding="2">
-									<Border.BorderBrush>
-										<SolidColorBrush Color="{Binding BorderColor}" />
-									</Border.BorderBrush>
-									<ContentPresenter Content="{Binding}"/>
-								</Border>
-							</ControlTemplate>
-						</Setter.Value>
-					</Setter>
-				</Style>
-			</views:LadderControl.RowContainerStyle>
+				ColumnWidth="200" ColumnPadding="100" Columns="{Binding Ladder.Devices}" Rows="{Binding Ladder.Events}" SelectedRow="{Binding Ladder.SelectedEvent}"
+				VerticalAlignment="Top" HorizontalAlignment="Left" RowDoubleClicked="LadderControl_RowDoubleClicked" >
 
 
-		</views:LadderControl>
+				<views:LadderControl.HeaderTemplate>
+					<DataTemplate>
+						<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
+							<Border.Effect>
+								<DropShadowEffect ShadowDepth="5" Opacity="0.5"/>
+							</Border.Effect>
+							<TextBlock Text="{Binding Name}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+						</Border>
+					</DataTemplate>
+				</views:LadderControl.HeaderTemplate>
+
+				<views:LadderControl.ColumnTemplate>
+					<DataTemplate>
+						<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
+					</DataTemplate>
+				</views:LadderControl.ColumnTemplate>
+
+				<views:LadderControl.RowContainerStyle>
+					<Style TargetType="{x:Type ListBoxItem}">
+						<Style.Triggers>
+							<Trigger Property="IsSelected" Value="True">
+								<Setter Property="Background" Value="LightSteelBlue"/>
+							</Trigger>
+						</Style.Triggers>
+						<Setter Property="HorizontalAlignment" Value="Stretch"/>
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding SourceDevice}"/>
+						<Setter Property="views:LadderPanel.RightColumn" Value="{Binding DestinationDevice}"/>
+						<Setter Property="Background" Value="WhiteSmoke"/>
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="{x:Type ListBoxItem}">
+									<Border Margin="5" BorderThickness="1" Background="{TemplateBinding Background}" Padding="2">
+										<Border.BorderBrush>
+											<SolidColorBrush Color="{Binding BorderColor}" />
+										</Border.BorderBrush>
+										<ContentPresenter Content="{Binding}"/>
+									</Border>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</views:LadderControl.RowContainerStyle>
+
+
+			</views:LadderControl>
+			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+			<ContentPresenter Grid.Row="2" Content="{Binding Ladder.SelectedEvent.Data}"/>
+		</Grid>
 	</DockPanel>
 
 </UserControl>
