@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <None Remove="Images\arrow_refresh.png" />
+    <None Remove="Images\attach.png" />
     <None Remove="Images\bug_edit.png" />
     <None Remove="Images\bullet_black.png" />
     <None Remove="Images\bullet_green.png" />
@@ -27,6 +28,7 @@
 
   <ItemGroup>
     <Resource Include="Images\arrow_refresh.png" />
+    <Resource Include="Images\attach.png" />
     <Resource Include="Images\bug_edit.png" />
     <Resource Include="Images\bullet_black.png" />
     <Resource Include="Images\bullet_green.png" />

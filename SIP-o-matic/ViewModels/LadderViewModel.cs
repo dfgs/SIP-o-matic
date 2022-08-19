@@ -128,7 +128,8 @@ namespace SIP_o_matic.ViewModels
 				EventColor = Color,
 				Data = Transaction,
 				Status = Transaction.Status,
-				HasRetransmissions=Transaction.HasRetransmissions
+				HasRetransmissions=Transaction.HasRetransmissions,
+				
 			};
 
 			return transactionEvent;
@@ -152,6 +153,7 @@ namespace SIP_o_matic.ViewModels
 				Display = SIPMessage.ShortDisplay ?? "Undefined",
 				EventColor = Color,
 				Data = SIPMessage,
+				HasBody = SIPMessage.HasBody
 			};
 
 			switch(SIPMessage)

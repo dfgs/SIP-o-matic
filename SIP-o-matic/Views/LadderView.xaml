@@ -122,7 +122,6 @@
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:SIPMessageEventViewModel}">
 			<DockPanel>
-				<Image DockPanel.Dock="Right" Style="{StaticResource statusImageStyle}" />
 				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
 					<Border.Background>
 						<SolidColorBrush Color="{Binding EventColor}"/>
@@ -131,6 +130,9 @@
 						<SolidColorBrush Color="{Binding EventColor}"/>
 					</Border.BorderBrush>
 				</Border>
+				<Image DockPanel.Dock="Right" Style="{StaticResource statusImageStyle}" />
+				<Image DockPanel.Dock="Right" Stretch="None"  ToolTip="Body present" Visibility="{Binding HasBody,Converter={StaticResource booleanToVisibilityConverter}}" Source="/Images/attach.png"   />
+
 				<StackPanel>
 					<TextBlock Style="{StaticResource timestampTextBoxStyle}" Text="{Binding Timestamp,StringFormat='HH:mm:ss:fff'}" />
 					<StackPanel Orientation="Horizontal" Style="{StaticResource orientedControlStyle}">
@@ -191,12 +193,12 @@
 			<views:LadderControl Grid.Row="0"
 			
 				ColumnWidth="200" ColumnPadding="100" Columns="{Binding Ladder.Devices}" Rows="{Binding Ladder.Events}" SelectedRow="{Binding Ladder.SelectedEvent}"
-				VerticalAlignment="Top" HorizontalAlignment="Left" RowDoubleClicked="LadderControl_RowDoubleClicked" >
+				VerticalAlignment="Stretch" HorizontalAlignment="Stretch" RowDoubleClicked="LadderControl_RowDoubleClicked" >
 
 
 				<views:LadderControl.HeaderTemplate>
 					<DataTemplate>
-						<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5">
+						<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5" ToolTip="{Binding Name}">
 							<Border.Effect>
 								<DropShadowEffect ShadowDepth="5" Opacity="0.5"/>
 							</Border.Effect>

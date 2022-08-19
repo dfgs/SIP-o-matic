@@ -69,7 +69,11 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
-
+		
+		public abstract bool HasBody
+		{
+			get;
+		}
 		public Event Event
 		{
 			get;

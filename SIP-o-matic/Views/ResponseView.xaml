@@ -12,7 +12,7 @@
 		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
 			<StackPanel>
 				<Expander Header="Headers" >
-					<ListBox BorderThickness="0" ItemsSource="{Binding Response.Headers}">
+					<ListBox BorderThickness="0" ItemsSource="{Binding Response.Headers}" views:ListBoxBehaviour.AutoCopy="True">
 						<ListBox.ItemTemplate>
 							<DataTemplate DataType="{x:Type sip:MessageHeader}">
 								<StackPanel Orientation="Horizontal">

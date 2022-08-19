@@ -30,6 +30,14 @@ namespace SIP_o_matic.ViewModels
 			get { return (string)GetValue(EventColorProperty); }
 			set { SetValue(EventColorProperty, value); }
 		}
+
+		public static readonly DependencyProperty HasBodyProperty = DependencyProperty.Register("HasBody", typeof(bool), typeof(SIPMessageEventViewModel), new PropertyMetadata(false));
+		public bool HasBody
+		{
+			get { return (bool)GetValue(HasBodyProperty); }
+			set { SetValue(HasBodyProperty, value); }
+		}
+
 		public TransactionEventViewModel? TransactionEvent
 		{
 			get;
