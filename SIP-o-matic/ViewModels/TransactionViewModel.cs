@@ -67,6 +67,18 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public Statuses Status
+		{
+			get;
+			private set;
+		}
+
+		public bool HasRetransmissions
+		{
+			get;
+			private set;
+		}
+
 		public int UID
 		{
 			get;
@@ -144,6 +156,40 @@ namespace SIP_o_matic.ViewModels
 			if (sipMessageViewModel.SourceFiles.Count == 0) SIPMessages.Remove(sipMessageViewModel);
 			OnPropertiesChanged();
 		}
+
+
+		public void Analyze()
+		{
+			RequestViewModel[] requests;
+			ResponseViewModel[] responses;
+
+
+			requests = SIPMessages.OfType<RequestViewModel>().ToArray();
+			responses = SIPMessages.OfType<ResponseViewModel>().ToArray();
+
+			foreach(ResponseViewModel response in responses)
+			{
+				response.Analyze();
+			}
+			
+
+			HasRetransmissions = requests.Length > 1;
+			if (requests.Length == 0) this.Status = Statuses.Incomplete;
+			else
+			{
+				if (responses.Length==0)
+				{
+					if (requests[0].Request.RequestLine.Method == "ACK") this.Status = Statuses.Success;
+					else this.Status = Statuses.Incomplete;
+				}
+				else
+				{
+					this.Status = responses.Last().Status;
+				}
+			}
+			OnPropertyChanged(nameof(Status));
+		}
+
 
 
 

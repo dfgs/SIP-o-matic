@@ -63,6 +63,12 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(SelectedTransactionProperty, value); }
 		}
 
+		public Statuses Status
+		{
+			get;
+			private set;
+		}
+
 
 		public int UID1
 		{
@@ -130,6 +136,17 @@ namespace SIP_o_matic.ViewModels
 			if (transactionViewModel.SIPMessages.Count == 0) Transactions.Remove(transactionViewModel);
 			OnPropertiesChanged();
 
+		}
+
+
+		public void Analyze()
+		{
+			foreach(TransactionViewModel transaction in Transactions)
+			{
+				transaction.Analyze();
+			}
+			this.Status = Transactions.Max(item => item.Status);
+			OnPropertyChanged(nameof(Status));
 		}
 
 	}

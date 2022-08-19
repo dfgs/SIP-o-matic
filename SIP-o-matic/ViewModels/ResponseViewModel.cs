@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace SIP_o_matic.ViewModels
 {
@@ -49,14 +50,31 @@ namespace SIP_o_matic.ViewModels
 
 		public override string ShortDisplay => response.StatusLine.ToString();
 
-
+		public Statuses Status
+		{
+			get;
+			private set;
+		}
 
 
 		public ResponseViewModel(ILogger Logger, Event Event, Response Response): base(Logger,Event)
 		{
 			this.response = Response;
 		}
+		public void Analyze()
+		{
+			char code;
 
+			code = response.StatusLine.StatusCode[0];
+			switch(code)
+			{
+				case '1': Status = Statuses.Success; break;
+				case '2': Status = Statuses.Success; break;
+				case '3': Status = Statuses.Redirected; break;
+				default: Status = Statuses.Failed; break;
+			}
+			OnPropertyChanged(nameof(Status));
+		}
 
 	}
 }

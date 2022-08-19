@@ -102,6 +102,8 @@ namespace SIP_o_matic.ViewModels
 				DestinationDevice = destinationDevice,
 				Display = Dialog.Transactions.FirstOrDefault()?.ShortDisplay ?? "Undefined",
 				EventColor = Color,
+				Data = Dialog,
+				Status = Dialog.Status,
 			};
 
 			return dialogEvent;
@@ -124,6 +126,9 @@ namespace SIP_o_matic.ViewModels
 				DestinationDevice = destinationDevice,
 				Display = Transaction.ShortDisplay ?? "Undefined",
 				EventColor = Color,
+				Data = Transaction,
+				Status = Transaction.Status,
+				HasRetransmissions=Transaction.HasRetransmissions
 			};
 
 			return transactionEvent;
@@ -146,7 +151,14 @@ namespace SIP_o_matic.ViewModels
 				DestinationDevice = destinationDevice,
 				Display = SIPMessage.ShortDisplay ?? "Undefined",
 				EventColor = Color,
+				Data = SIPMessage,
 			};
+
+			switch(SIPMessage)
+			{
+				case ResponseViewModel response: SIPMessageEvent.Status = response.Status;break;
+				default: SIPMessageEvent.Status = Statuses.Success; break;
+			}
 
 			return SIPMessageEvent;
 		}
@@ -176,7 +188,7 @@ namespace SIP_o_matic.ViewModels
 			SIPMessageEventViewModel messageEvent;
 			ColorManager colorManager;
 			int dialogCount, transactionCount;
-
+			
 			Events.Clear();
 			Devices = new ObservableCollection<DeviceViewModel>();
 
@@ -190,21 +202,21 @@ namespace SIP_o_matic.ViewModels
 				foreach(DialogViewModel dialog in call.Dialogs)
 				{
 					dialogEvent = CreateLadderEvent(ProjectDevices, dialog,colorManager.GetColorString());
-					dialogEvent.Data = dialog;
 					AddEvent(dialogEvent);
 
 					foreach(TransactionViewModel transaction in dialog.Transactions)
 					{
 						transactionEvent = CreateLadderEvent(ProjectDevices, transaction, colorManager.GetColorString());
-						transactionEvent.Data = transaction;
 						dialogEvent.AddEvent(transactionEvent);
 						foreach(SIPMessageViewModel message in transaction.SIPMessages)
 						{
 							messageEvent = CreateLadderEvent(ProjectDevices, message, transactionEvent.EventColor);
-							messageEvent.Data = message;
 							transactionEvent.AddEvent(messageEvent);
 						}
 					}
+
+					dialogEvent.HasRetransmissions = dialogEvent.TransactionEvents.Any(item => item.HasRetransmissions);
+
 				}
 			}
 		}

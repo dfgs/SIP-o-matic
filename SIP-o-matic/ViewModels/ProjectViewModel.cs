@@ -248,6 +248,11 @@ namespace SIP_o_matic.ViewModels
 
 				AddEvent(fileViewModel, _event);
 			}
+
+			await foreach(CallViewModel call in Calls.ToAsyncEnumerable())
+			{
+				call.Analyze();
+			}
 			OnPropertiesChanged();
 		}
 		public async Task RemoveFileAsync(FileViewModel FileViewModel)

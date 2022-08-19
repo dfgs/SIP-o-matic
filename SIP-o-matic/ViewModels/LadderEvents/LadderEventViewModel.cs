@@ -32,6 +32,8 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DestinationDeviceProperty, value); }
 		}
 
+		
+
 		public abstract string Display
 		{
 			get;
@@ -53,6 +55,21 @@ namespace SIP_o_matic.ViewModels
 			get { return GetValue(DataProperty); }
 			set { SetValue(DataProperty, value); }
 		}
+
+		public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(Statuses), typeof(LadderEventViewModel), new PropertyMetadata(Statuses.Undefined));
+		public Statuses Status
+		{
+			get { return (Statuses)GetValue(StatusProperty); }
+			set { SetValue(StatusProperty, value); }
+		}
+
+		public static readonly DependencyProperty HasRetransmissionsProperty = DependencyProperty.Register("HasRetransmissions", typeof(bool), typeof(LadderEventViewModel), new PropertyMetadata(false));
+		public bool HasRetransmissions
+		{
+			get { return (bool)GetValue(HasRetransmissionsProperty); }
+			set { SetValue(HasRetransmissionsProperty, value); }
+		}
+
 		public LadderEventViewModel() : base(NullLogger.Instance)
 		{
 		}

@@ -59,7 +59,7 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-
+		
 
 
 		public ObservableCollection<DialogViewModel> Dialogs
@@ -68,6 +68,11 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public Statuses Status
+		{
+			get;
+			private set;
+		}
 
 		public int UID
 		{
@@ -150,6 +155,16 @@ namespace SIP_o_matic.ViewModels
 			OnPropertiesChanged();
 
 
+		}
+
+		public void Analyze()
+		{
+			foreach (DialogViewModel dialog in Dialogs)
+			{
+				dialog.Analyze();
+			}
+			this.Status = Dialogs.Max(item => item.Status);
+			OnPropertyChanged(nameof(Status));
 		}
 
 

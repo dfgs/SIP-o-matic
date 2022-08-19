@@ -11,6 +11,8 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+
 		<SolidColorBrush x:Key="darkBrush" Color="#CC000000"/>
 		<SolidColorBrush x:Key="lightBrush" Color="#CCFFFFFF"/>
 		<SolidColorBrush x:Key="dialogColor" Color="Blue"/>
@@ -49,6 +51,30 @@
 			<Setter Property="FontFamily" Value="Arial"/>
 		</Style>
 
+		<Style x:Key="statusImageStyle" TargetType="{x:Type Image}">
+			<Setter Property="Source" Value="/Images/bullet_black.png"/>
+			<Setter Property="Stretch" Value="None"/>
+			<Setter Property="VerticalAlignment" Value="Top"/>
+			<Setter Property="ToolBar.ToolTip" Value="{Binding Status}"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Status}" Value="Undefined">
+					<Setter Property="Source" Value="/Images/bullet_black.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Success">
+					<Setter Property="Source" Value="/Images/bullet_green.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Redirected">
+					<Setter Property="Source" Value="/Images/bullet_orange.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Incomplete">
+					<Setter Property="Source" Value="/Images/bullet_pink.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Failed">
+					<Setter Property="Source" Value="/Images/bullet_red.png"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
 		<DataTemplate DataType="{x:Type viewModels:DialogEventViewModel}">
 			<DockPanel>
 				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
@@ -59,6 +85,9 @@
 						<SolidColorBrush Color="{Binding EventColor}"/>
 					</Border.BorderBrush>
 				</Border>
+				<Image DockPanel.Dock="Right" Style="{StaticResource statusImageStyle}" />
+				<TextBlock DockPanel.Dock="Right" Style="{StaticResource displayTextBoxStyle}" ToolTip="Retransmissions" Text="R" Margin="3,0,0,0"  Foreground="Orange" FontWeight="Bold" VerticalAlignment="Top" Visibility="{Binding HasRetransmissions,Converter={StaticResource booleanToVisibilityConverter}}"   />
+
 				<StackPanel>
 					<TextBlock Style="{StaticResource timestampTextBoxStyle}" VerticalAlignment="Center" Text="{Binding Timestamp,StringFormat='HH:mm:ss:fff'}" />
 					<StackPanel Orientation="Horizontal" Style="{StaticResource orientedControlStyle}">
@@ -79,6 +108,8 @@
 						<SolidColorBrush Color="{Binding EventColor}"/>
 					</Border.BorderBrush>
 				</Border>
+				<Image DockPanel.Dock="Right" Style="{StaticResource statusImageStyle}" />
+				<TextBlock DockPanel.Dock="Right" Style="{StaticResource displayTextBoxStyle}" ToolTip="Retransmissions" Text="R" Margin="3,0,0,0"  Foreground="Orange" FontWeight="Bold" VerticalAlignment="Top" Visibility="{Binding HasRetransmissions,Converter={StaticResource booleanToVisibilityConverter}}"   />
 				<StackPanel>
 					<TextBlock Style="{StaticResource timestampTextBoxStyle}" Text="{Binding Timestamp,StringFormat='HH:mm:ss:fff'}" />
 					<StackPanel Orientation="Horizontal" Style="{StaticResource orientedControlStyle}">
@@ -91,6 +122,7 @@
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:SIPMessageEventViewModel}">
 			<DockPanel>
+				<Image DockPanel.Dock="Right" Style="{StaticResource statusImageStyle}" />
 				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
 					<Border.Background>
 						<SolidColorBrush Color="{Binding EventColor}"/>

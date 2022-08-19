@@ -6,11 +6,45 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+	<UserControl.Resources>
+		<Style x:Key="statusImageStyle" TargetType="{x:Type Image}">
+			<Setter Property="Source" Value="/Images/bullet_green.png"/>
+			<Setter Property="Stretch" Value="None"/>
+			<Setter Property="VerticalAlignment" Value="Center"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Setter Property="ToolBar.ToolTip" Value="{Binding Status}"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding Status}" Value="Undefined">
+					<Setter Property="Source" Value="/Images/bullet_black.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Success">
+					<Setter Property="Source" Value="/Images/bullet_green.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Redirected">
+					<Setter Property="Source" Value="/Images/bullet_orange.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Incomplete">
+					<Setter Property="Source" Value="/Images/bullet_pink.png"/>
+				</DataTrigger>
+				<DataTrigger Binding="{Binding Status}" Value="Failed">
+					<Setter Property="Source" Value="/Images/bullet_red.png"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
+	</UserControl.Resources>
 	<DockPanel>
 		<views:TitleView DockPanel.Dock="Top" DataContext="Messages"/>
 		<ListView ItemsSource="{Binding SIPMessages}">
 			<ListView.View>
 				<GridView>
+					<GridViewColumn Width="50" Header="Status">
+						<GridViewColumn.CellTemplate>
+							<DataTemplate>
+								<Image Style="{StaticResource ResourceKey=statusImageStyle}" />
+							</DataTemplate>
+						</GridViewColumn.CellTemplate>
+					</GridViewColumn>
 					<GridViewColumn Width="200" Header="Timestamp" DisplayMemberBinding="{Binding Timestamp, StringFormat='HH:mm:ss:ffff'}"/>
 					<GridViewColumn Width="200" Header="Source address" DisplayMemberBinding="{Binding SourceAddress}"/>
 					<GridViewColumn Width="200" Header="Destination address" DisplayMemberBinding="{Binding DestinationAddress}"/>
