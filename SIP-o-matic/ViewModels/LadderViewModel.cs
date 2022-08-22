@@ -1,5 +1,5 @@
 ﻿using LogLib;
-using SIP_o_matic.Views.TestData;
+using SIP_o_matic.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -33,9 +33,21 @@ namespace SIP_o_matic.ViewModels
 			get { return (ObservableCollection<DeviceViewModel>)GetValue(DevicesProperty); }
 			set { SetValue(DevicesProperty, value); }
 		}
-		
 
 
+		public static readonly DependencyProperty SessionEventsProperty = DependencyProperty.Register("SessionEvents", typeof(ObservableCollection<SessionEventViewModel>), typeof(LadderViewModel), new PropertyMetadata(null));
+		public ObservableCollection<SessionEventViewModel> SessionEvents
+		{
+			get { return (ObservableCollection<SessionEventViewModel>)GetValue(SessionEventsProperty); }
+			set { SetValue(SessionEventsProperty, value); }
+		}
+
+		public static readonly DependencyProperty SessionTimestampsProperty = DependencyProperty.Register("SessionTimestamps", typeof(ObservableCollection<TimestampViewModel>), typeof(LadderViewModel), new PropertyMetadata(null));
+		public ObservableCollection<TimestampViewModel> SessionTimestamps
+		{
+			get { return (ObservableCollection<TimestampViewModel>)GetValue(SessionTimestampsProperty); }
+			set { SetValue(SessionTimestampsProperty, value); }
+		}
 
 		public LadderViewModel() : base(NullLogger.Instance)
 		{
@@ -53,12 +65,35 @@ namespace SIP_o_matic.ViewModels
 			Events.Add(TestData.Event6);
 			Events.Add(TestData.Event7);
 
+			SessionTimestamps = new ObservableCollection<TimestampViewModel>();
+			foreach (TimestampViewModel timestamp in TestData.SessionTimestamps)
+			{
+				SessionTimestamps.Add(timestamp);
+			}
+
+			SessionEvents = new ObservableCollection<SessionEventViewModel>();
+			SessionEvents.Add(TestData.Session1);
+			SessionEvents.Add(TestData.Session2);
+			SessionEvents.Add(TestData.Session3);
+			
+			
 		}
 		public LadderViewModel(ILogger Logger) : base(Logger)
 		{
 			Devices = new ObservableCollection<DeviceViewModel>();
 			Events = new ObservableCollection<LadderEventViewModel>();
-			
+
+
+			SessionTimestamps = new ObservableCollection<TimestampViewModel>();
+			foreach (TimestampViewModel timestamp in TestData.SessionTimestamps)
+			{
+				SessionTimestamps.Add(timestamp);
+			}
+
+			SessionEvents = new ObservableCollection<SessionEventViewModel>();
+			SessionEvents.Add(TestData.Session1);
+			SessionEvents.Add(TestData.Session2);
+			SessionEvents.Add(TestData.Session3);
 		}
 
 		private DeviceViewModel FindDevice(IEnumerable<DeviceViewModel> ProjectDevices,string? Address)

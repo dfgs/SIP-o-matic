@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
 			xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
-			xmlns:data="clr-namespace:SIP_o_matic.Views.TestData"
 			xmlns:sys="clr-namespace:System;assembly=mscorlib"
 			mc:Ignorable="d" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
 

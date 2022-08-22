@@ -6,18 +6,36 @@
 			xmlns:root="clr-namespace:SIP_o_matic"
              xmlns:views="clr-namespace:SIP_o_matic.Views"
 			xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
-			xmlns:data="clr-namespace:SIP_o_matic.Views.TestData"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.Resources>
 		<BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+		<FontFamily x:Key="lcdFont2">pack://application:,,,/Fonts/#G7 Cube 5</FontFamily>
+		<FontFamily x:Key="lcdFont">pack://application:,,,/Fonts/#Open 24 Display St</FontFamily>
 
 		<SolidColorBrush x:Key="darkBrush" Color="#CC000000"/>
 		<SolidColorBrush x:Key="lightBrush" Color="#CCFFFFFF"/>
 		<SolidColorBrush x:Key="dialogColor" Color="Blue"/>
 		<SolidColorBrush x:Key="transactionColor" Color="Green"/>
 		<SolidColorBrush x:Key="messageColor" Color="GoldenRod"/>
+		<SolidColorBrush x:Key="sessionColor" Color="Blue"/>
+		<SolidColorBrush x:Key="lcdBackgroundBrush" Color="#B1CBC4"/>
+		<SolidColorBrush x:Key="lcdForegroundBrush" Color="#1F2B22"/>
+
+		<VisualBrush x:Key="audioBrush" 
+		  TileMode="Tile" Viewport="0,0,10,10" 
+		  ViewportUnits="Absolute" Viewbox="0,0,10,10" ViewboxUnits="Absolute">
+			<VisualBrush.Visual>
+				<Canvas>
+					<Path StrokeThickness="1" Stroke="{StaticResource lcdForegroundBrush}" Data="M 1 4 L 1 6" />
+					<Path StrokeThickness="1" Stroke="{StaticResource lcdForegroundBrush}" Data="M 3 3 L 3 7" />
+					<Path StrokeThickness="1" Stroke="{StaticResource lcdForegroundBrush}" Data="M 5 0 L 5 10" />
+					<Path StrokeThickness="1" Stroke="{StaticResource lcdForegroundBrush}" Data="M 7 3 L 7 7" />
+					<Path StrokeThickness="1" Stroke="{StaticResource lcdForegroundBrush}" Data="M 9 4 L 9 6" />
+				</Canvas>
+			</VisualBrush.Visual>
+		</VisualBrush>
 
 		<Style x:Key="expandButtonStyle" TargetType="{x:Type ToggleButton}">
 			<Style.Triggers>
@@ -143,6 +161,19 @@
 				</StackPanel>
 			</DockPanel>
 		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:SessionEventViewModel}">
+			<StackPanel>
+				<DockPanel>
+					<Image DockPanel.Dock="Left" Source="/Images/sound_none.png"  Stretch="None" />
+					<Border Background="{StaticResource audioBrush}" Height="10" VerticalAlignment="Center"/>
+				</DockPanel>
+				<DockPanel>
+					<TextBlock DockPanel.Dock="Left" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Source}"/>
+					<TextBlock DockPanel.Dock="Right" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Destination}"/>
+					<TextBlock/>
+				</DockPanel>
+			</StackPanel>
+		</DataTemplate>
 
 		<DataTemplate DataType="{x:Type viewModels:DialogViewModel}">
 			<views:TransactionsView/>
@@ -243,7 +274,63 @@
 
 			</views:LadderControl>
 			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-			<ContentPresenter Grid.Row="2" Content="{Binding Ladder.SelectedEvent.Data}"/>
+			<TabControl Grid.Row="2" Background="Transparent">
+				<TabItem Header="Sessions">
+					<views:LadderControl
+						ColumnWidth="200" ColumnPadding="100" Columns="{x:Static views:TestData.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
+						VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
+
+
+						<views:LadderControl.HeaderTemplate>
+							<DataTemplate>
+								<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5" ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
+									<Border.Effect>
+										<DropShadowEffect ShadowDepth="5" Opacity="0.5"/>
+									</Border.Effect>
+									<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+								</Border>
+							</DataTemplate>
+						</views:LadderControl.HeaderTemplate>
+
+						<views:LadderControl.ColumnTemplate>
+							<DataTemplate>
+								<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
+							</DataTemplate>
+						</views:LadderControl.ColumnTemplate>
+
+						<views:LadderControl.RowContainerStyle>
+							<Style TargetType="{x:Type ListBoxItem}">
+								<Style.Triggers>
+									<Trigger Property="IsSelected" Value="True">
+										<Setter Property="Background" Value="LightSteelBlue"/>
+									</Trigger>
+								</Style.Triggers>
+								<Setter Property="HorizontalAlignment" Value="Stretch"/>
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding StartTime}"/>
+								<Setter Property="views:LadderPanel.RightColumn" Value="{Binding StopTime}"/>
+								<Setter Property="Background" Value="{StaticResource lcdBackgroundBrush}"/>
+								<Setter Property="Template">
+									<Setter.Value>
+										<ControlTemplate TargetType="{x:Type ListBoxItem}">
+											<Border Margin="5" BorderThickness="1" Background="{TemplateBinding Background}" Padding="2" BorderBrush="{StaticResource lcdForegroundBrush}">
+												<ContentPresenter Content="{Binding}"/>
+											</Border>
+										</ControlTemplate>
+									</Setter.Value>
+								</Setter>
+							</Style>
+						</views:LadderControl.RowContainerStyle>
+
+
+					</views:LadderControl>
+
+				</TabItem>
+				<TabItem Header="Details">
+					<ContentPresenter  Content="{Binding Ladder.SelectedEvent.Data}"/>
+				</TabItem>
+
+			</TabControl>
 		</Grid>
 	</DockPanel>
 
