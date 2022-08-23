@@ -166,6 +166,7 @@ namespace SIP_o_matic.ViewModels
 			CallViewModel? callViewModel;
 			int callUID;
 			SIPMessage sipMessage;
+			SDP? sdp;
 
 			try
 			{
@@ -177,6 +178,21 @@ namespace SIP_o_matic.ViewModels
 				return;
 			}
 
+			sdp = null;
+			if (!string.IsNullOrEmpty(sipMessage.Body ))
+			{
+				try
+				{
+					sdp = SDPGrammar.SDP.Parse(sipMessage.Body);
+				}
+				catch(Exception ex)
+				{
+					Log(LogLevels.Error, ex.Message + " / " + sipMessage.Body.ReplaceLineEndings(@"\r\n"));
+					return;
+				}
+			}
+
+
 			callUID = SIPUtils.GetCallUID(sipMessage);
 
 			callViewModel=FindCallByUID(callUID);
@@ -186,7 +202,7 @@ namespace SIP_o_matic.ViewModels
 				callViewModel=new CallViewModel(Logger,callUID);
 				Calls.Add(callViewModel);
 			}
-			callViewModel.AddSIPMessage(FileViewModel,Event, sipMessage);
+			callViewModel.AddSIPMessage(FileViewModel,Event, sipMessage,sdp);
 
 		}
 		public void RemoveEvent(FileViewModel FileViewModel, Event Event)

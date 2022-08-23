@@ -105,7 +105,7 @@ namespace SIP_o_matic.ViewModels
 			return Dialogs.FirstOrDefault(item => item.UID2 == UID2);
 		}
 
-		public void AddSIPMessage(FileViewModel FileViewModel,Event Event, SIPMessage SIPMessage)
+		public void AddSIPMessage(FileViewModel FileViewModel,Event Event, SIPMessage SIPMessage,SDP? SDP)
 		{
 			DialogViewModel? dialogViewModel;
 			int dialogUIDSecondStage,dialogUIDFirstStage;
@@ -131,7 +131,7 @@ namespace SIP_o_matic.ViewModels
 			}
 
 			
-			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
+			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage,SDP);
 			OnPropertiesChanged();
 		}
 		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)

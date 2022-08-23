@@ -50,7 +50,6 @@ namespace SIP_o_matic.ViewModels
 
 		public override string ShortDisplay => response.StatusLine.ToString();
 
-		public override bool HasBody => !string.IsNullOrEmpty(response.Body);
 
 		public Statuses Status
 		{
@@ -59,7 +58,7 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public ResponseViewModel(ILogger Logger, Event Event, Response Response): base(Logger,Event)
+		public ResponseViewModel(ILogger Logger, Event Event, Response Response, SDP? SDP) : base(Logger,Event,SDP)
 		{
 			this.response = Response;
 		}

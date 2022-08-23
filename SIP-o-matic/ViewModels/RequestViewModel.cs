@@ -46,10 +46,15 @@ namespace SIP_o_matic.ViewModels
 		public override string Display => request.RequestLine.ToString();
 		public override string ShortDisplay => request.RequestLine.Method;
 
-		public override bool HasBody => !string.IsNullOrEmpty(request.Body);
-		public RequestViewModel(ILogger Logger, Event Event, Request Request) : base(Logger,Event)
+		
+
+		public RequestViewModel(ILogger Logger, Event Event, Request Request, SDP? SDP) : base(Logger,Event,SDP)
 		{
 			this.request = Request;
+
 		}
+
+
+
 	}
 }

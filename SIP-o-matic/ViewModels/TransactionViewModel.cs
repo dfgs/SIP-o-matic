@@ -113,7 +113,7 @@ namespace SIP_o_matic.ViewModels
 		}
 			
 
-		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
+		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage, SDP? SDP)
 		{
 			SIPMessageViewModel? sipMessageViewModel;
 			int messageUID;
@@ -126,10 +126,10 @@ namespace SIP_o_matic.ViewModels
 				switch (SIPMessage)
 				{
 					case Response response:
-						sipMessageViewModel = new ResponseViewModel(Logger, Event, response);
+						sipMessageViewModel = new ResponseViewModel(Logger, Event, response,SDP);
 						break;
 					case Request request:
-						sipMessageViewModel = new RequestViewModel(Logger, Event, request);
+						sipMessageViewModel = new RequestViewModel(Logger, Event, request, SDP);
 						break;
 					default:
 						return;

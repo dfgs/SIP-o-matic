@@ -1,5 +1,6 @@
 ﻿using LogLib;
 using SIP_o_matic.Views;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -85,15 +86,35 @@ namespace SIP_o_matic.ViewModels
 
 
 			SessionTimestamps = new ObservableCollection<TimestampViewModel>();
-			foreach (TimestampViewModel timestamp in TestData.SessionTimestamps)
+			/*foreach (TimestampViewModel timestamp in TestData.SessionTimestamps)
 			{
 				SessionTimestamps.Add(timestamp);
-			}
+			}//*/
 
 			SessionEvents = new ObservableCollection<SessionEventViewModel>();
-			SessionEvents.Add(TestData.Session1);
-			SessionEvents.Add(TestData.Session2);
-			SessionEvents.Add(TestData.Session3);
+			//SessionEvents.Add(TestData.Session1);
+			//SessionEvents.Add(TestData.Session2);
+			//SessionEvents.Add(TestData.Session3);
+		}
+
+		private TimestampViewModel FindTimestamp(IEnumerable<TimestampViewModel> TimeStamps, DateTime Timestamp)
+		{
+			TimestampViewModel? newTimestamp;
+			DateTime roundedDateTime;
+
+			roundedDateTime= new DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day, Timestamp.Hour, Timestamp.Minute, Timestamp.Second);
+			newTimestamp = TimeStamps.FirstOrDefault(item => item.Value == roundedDateTime);
+			if (newTimestamp==null)
+			{
+				newTimestamp = new TimestampViewModel();
+				newTimestamp.Value= roundedDateTime;
+			}
+
+			return newTimestamp;
+		}
+		private void AddTimestamp(TimestampViewModel Timestamp)
+		{
+			if (!SessionTimestamps.Contains(Timestamp)) this.SessionTimestamps.Add(Timestamp);
 		}
 
 		private DeviceViewModel FindDevice(IEnumerable<DeviceViewModel> ProjectDevices,string? Address)
@@ -114,10 +135,9 @@ namespace SIP_o_matic.ViewModels
 		}
 		private void AddDevice(DeviceViewModel Device)
 		{
-
 			if (!Devices.Contains(Device)) this.Devices.Add(Device);
-
 		}
+
 		#region create ladder events
 		private DialogEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, DialogViewModel Dialog,string Color)
 		{
@@ -199,6 +219,31 @@ namespace SIP_o_matic.ViewModels
 
 			return SIPMessageEvent;
 		}
+
+		private SessionEventViewModel CreateLadderEvent(IEnumerable<DeviceViewModel> ProjectDevices, SessionViewModel Session)
+		{
+			TimestampViewModel startTime, stopTime;
+			SessionEventViewModel sessionEvent;
+
+			startTime = FindTimestamp(SessionTimestamps, Session.StartTime);
+			stopTime = FindTimestamp(SessionTimestamps, Session.StopTime);
+
+			AddTimestamp(startTime);
+			AddTimestamp(stopTime);
+
+			sessionEvent = new SessionEventViewModel()
+			{
+				StartTime = startTime,
+				StopTime=stopTime,
+				SourceAddress=Session.SourceAddress,
+				SourcePort=Session.SourcePort,
+				DestinationAddress=Session.DestinationAddress,
+				DestinationPort=Session.DestinationPort,
+			};
+
+
+			return sessionEvent;
+		}
 		#endregion
 
 		private void AddEvent(LadderEventViewModel Event)
@@ -222,12 +267,17 @@ namespace SIP_o_matic.ViewModels
 		{
 			DialogEventViewModel dialogEvent;
 			TransactionEventViewModel transactionEvent;
+			SessionEventViewModel sessionEvent;
 			SIPMessageEventViewModel messageEvent;
 			ColorManager colorManager;
 			int dialogCount, transactionCount;
-			
+
+
 			Events.Clear();
-			Devices = new ObservableCollection<DeviceViewModel>();
+			Devices.Clear();
+			SessionTimestamps.Clear();
+			SessionEvents.Clear();
+
 
 			dialogCount = Calls.SelectMany(call => call.Dialogs).Count();
 			transactionCount = Calls.SelectMany(call => call.Dialogs).SelectMany(dialog => dialog.Transactions).Count();
@@ -249,10 +299,21 @@ namespace SIP_o_matic.ViewModels
 						{
 							messageEvent = CreateLadderEvent(ProjectDevices, message, transactionEvent.EventColor);
 							transactionEvent.AddEvent(messageEvent);
+
 						}
 					}
 
+					foreach(SessionViewModel session in dialog.Sessions)
+					{
+						sessionEvent = CreateLadderEvent(ProjectDevices, session);
+						SessionEvents.Add(sessionEvent);
+					}
+
+
 					dialogEvent.HasRetransmissions = dialogEvent.TransactionEvents.Any(item => item.HasRetransmissions);
+
+
+
 
 				}
 			}

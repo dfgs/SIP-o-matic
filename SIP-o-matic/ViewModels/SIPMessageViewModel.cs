@@ -70,10 +70,17 @@ namespace SIP_o_matic.ViewModels
 			get;
 		}
 		
-		public abstract bool HasBody
+		public bool HasBody
+		{
+			get => SDP != null;
+		}
+
+		public SDP? SDP
 		{
 			get;
+			private set;
 		}
+
 		public Event Event
 		{
 			get;
@@ -102,10 +109,10 @@ namespace SIP_o_matic.ViewModels
 
 		
 
-		public SIPMessageViewModel(ILogger Logger,Event Event):base(Logger)
+		public SIPMessageViewModel(ILogger Logger,Event Event,SDP? SDP):base(Logger)
 		{
 			SourceFiles = new ObservableCollection<FileViewModel>();
-			this.Event = Event;
+			this.Event = Event;this.SDP = SDP;
 			//this.From = From;this.To = To;
 		}
 

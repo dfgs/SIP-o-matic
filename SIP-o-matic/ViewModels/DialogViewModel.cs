@@ -47,7 +47,11 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
-
+		public ObservableCollection<SessionViewModel> Sessions
+		{
+			get;
+			private set;
+		}
 		public IEnumerable<string?> Devices
 		{
 			get
@@ -81,10 +85,14 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		private SessionViewModel? currentSession;
+
 		public DialogViewModel(ILogger Logger, int UID1) : base(Logger)
 		{
 			this.UID1 = UID1;this.UID2 = 0;
 			Transactions = new ObservableCollection<TransactionViewModel>();
+			Sessions = new ObservableCollection<SessionViewModel>();
+			currentSession = null;
 		}
 		public void UpdateUID2(int UID2)
 		{
@@ -106,7 +114,57 @@ namespace SIP_o_matic.ViewModels
 			return Transactions.FirstOrDefault(item => item.UID == UID);
 		}
 
-		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
+
+		private void ProcessMessageSDP(Event Event, Request Request,SDP? SDP)
+		{
+			switch (Request.RequestLine.Method)
+			{
+				case "INVITE":
+
+					// reinvite
+					if (currentSession != null)
+					{
+						currentSession.StopTime = Event.Timestamp;
+					}
+					currentSession = new SessionViewModel();
+					if (SDP != null)
+					{
+						currentSession.SourceAddress = SDP.GetField<ConnectionField>()?.Address ?? "Undefined";
+						currentSession.SourcePort = SDP.GetField<MediaField>()?.Port ?? 0;
+					}
+
+					break;
+				case "BYE":
+
+					if (currentSession != null)
+					{
+						currentSession.StopTime = Event.Timestamp;
+					}
+					currentSession = null;
+					break;
+			}
+
+		}
+		private void ProcessMessageSDP(Event Event, Response Response, SDP? SDP)
+		{
+			switch (Response.StatusLine.StatusCode)
+			{
+				case "200":
+					if (currentSession != null)
+					{
+						currentSession.StartTime = Event.Timestamp;
+						Sessions.Add(currentSession);
+						if (SDP != null)
+						{
+							currentSession.DestinationAddress = SDP.GetField<ConnectionField>()?.Address ?? "Undefined";
+							currentSession.DestinationPort = SDP.GetField<MediaField>()?.Port ?? 0;
+						}
+					}
+					break;
+			}
+		}
+
+		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage, SDP? SDP)
 		{
 			TransactionViewModel? transactionViewModel;
 			int transactionUID;
@@ -120,7 +178,17 @@ namespace SIP_o_matic.ViewModels
 				Transactions.Add(transactionViewModel);
 			}
 
-			transactionViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage);
+			transactionViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage,SDP);
+			switch(SIPMessage)
+			{
+				case Request request:
+					ProcessMessageSDP(Event, request,SDP);
+					break;
+				case Response response:
+					ProcessMessageSDP(Event, response,  SDP);
+					break;
+			}
+
 			OnPropertiesChanged();
 		}
 		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)

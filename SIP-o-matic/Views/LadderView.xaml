@@ -277,7 +277,7 @@
 			<TabControl Grid.Row="2" Background="Transparent">
 				<TabItem Header="Sessions">
 					<views:LadderControl
-						ColumnWidth="200" ColumnPadding="100" Columns="{x:Static views:TestData.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
+						ColumnWidth="400" ColumnPadding="200" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
 						VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
 
