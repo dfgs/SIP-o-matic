@@ -85,14 +85,13 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		private SessionViewModel? currentSession,previousSession;
 
 		public DialogViewModel(ILogger Logger, int UID1) : base(Logger)
 		{
 			this.UID1 = UID1;this.UID2 = 0;
 			Transactions = new ObservableCollection<TransactionViewModel>();
 			Sessions = new ObservableCollection<SessionViewModel>();
-			currentSession = null;previousSession = null;
+			//currentSession = null;previousSession = null;
 		}
 		public void UpdateUID2(int UID2)
 		{
@@ -115,55 +114,6 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		private void ProcessMessageSDP(Event Event, Request Request,SDP? SDP)
-		{
-			switch (Request.RequestLine.Method)
-			{
-				case "INVITE":
-
-					previousSession = currentSession; 
-					currentSession = new SessionViewModel();
-					if (SDP != null)
-					{
-						currentSession.SourceAddress = SDP.GetField<ConnectionField>()?.Address ?? "Undefined";
-						currentSession.SourcePort = SDP.GetField<MediaField>()?.Port ?? 0;
-					}
-
-					break;
-				case "BYE":
-
-					if (currentSession != null)
-					{
-						currentSession.StopTime = Event.Timestamp;
-					}
-					currentSession = null;previousSession= null;
-					break;
-			}
-
-		}
-		private void ProcessMessageSDP(Event Event, Response Response, SDP? SDP)
-		{
-			switch (Response.StatusLine.StatusCode)
-			{
-				case "200":
-					if (previousSession!=null)
-					{
-						previousSession.StopTime = Event.Timestamp;
-						previousSession = null;
-					}
-					if (currentSession != null)
-					{
-						currentSession.StartTime = Event.Timestamp;
-						Sessions.Add(currentSession);
-						if (SDP != null)
-						{
-							currentSession.DestinationAddress = SDP.GetField<ConnectionField>()?.Address ?? "Undefined";
-							currentSession.DestinationPort = SDP.GetField<MediaField>()?.Port ?? 0;
-						}
-					}
-					break;
-			}
-		}
 
 		public void AddSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage, SDP? SDP)
 		{
@@ -180,15 +130,7 @@ namespace SIP_o_matic.ViewModels
 			}
 
 			transactionViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage,SDP);
-			switch(SIPMessage)
-			{
-				case Request request:
-					ProcessMessageSDP(Event, request,SDP);
-					break;
-				case Response response:
-					ProcessMessageSDP(Event, response,  SDP);
-					break;
-			}
+			
 
 			OnPropertiesChanged();
 		}
@@ -210,10 +152,41 @@ namespace SIP_o_matic.ViewModels
 
 		public void Analyze()
 		{
+			SessionViewModel? currentSession=null,nextSession=null;
+
+			Sessions.Clear();
+
 			foreach(TransactionViewModel transaction in Transactions)
 			{
 				transaction.Analyze();
+
+				switch(transaction.SessionTrigger)
+				{
+					case SessionTriggers.Init:
+						if (transaction.Session != null) nextSession = transaction.Session;
+						break;
+					case SessionTriggers.Start:
+						if ((nextSession!= null) && (transaction.StartTime.HasValue))
+						{
+							if (currentSession != null) currentSession.StopTime = transaction.StartTime.Value;
+							currentSession = nextSession;
+							currentSession.StartTime = transaction.StartTime.Value;
+							Sessions.Add(currentSession);
+						}
+						break;
+					case SessionTriggers.Stop:
+						if ((currentSession != null) && (transaction.StopTime.HasValue))
+						{
+							currentSession.StopTime = transaction.StopTime.Value;
+						}
+						currentSession = null;
+						break;
+
+				}
+				
 			}
+
+
 			this.Status = Transactions.Max(item => item.Status);
 			OnPropertyChanged(nameof(Status));
 		}

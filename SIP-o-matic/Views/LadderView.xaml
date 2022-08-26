@@ -175,8 +175,16 @@
 			</DockPanel>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:SessionEventViewModel}">
-			<StackPanel>
-				<DockPanel>
+			<DockPanel>
+				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
+					<Border.Background>
+						<SolidColorBrush Color="{Binding DialogEvent.EventColor}"/>
+					</Border.Background>
+					<Border.BorderBrush>
+						<SolidColorBrush Color="{Binding DialogEvent.EventColor}"/>
+					</Border.BorderBrush>
+				</Border>
+				<DockPanel DockPanel.Dock="Top">
 					<Image DockPanel.Dock="Left" Source="/Images/sound_none.png"  Stretch="None" />
 					<Border Background="{StaticResource audioBrush}" Height="10" VerticalAlignment="Center"/>
 				</DockPanel>
@@ -185,7 +193,7 @@
 					<TextBlock DockPanel.Dock="Right" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Destination}"/>
 					<TextBlock/>
 				</DockPanel>
-			</StackPanel>
+			</DockPanel>
 		</DataTemplate>
 
 		<DataTemplate DataType="{x:Type viewModels:DialogViewModel}">

@@ -153,18 +153,18 @@ namespace SIP_o_matic
 		}*/
 		public string GetColorString()
 		{
-			int div;
-			int rest;
+			//int div;
+			//int rest;
 			int index;
-			int step;
+			//int step;
 
 			Color color;
 
-			div = request /2;
-			rest = request % colors.Length;
-			step = colors.Length / 2;
+			//div = request /2;
+			//rest = request % colors.Length;
+			//step = colors.Length / 2;
 
-			index = rest * step+div;
+			index = request;// rest * step+div;
 			color= colors[index % colors.Length];
 
 			request++;

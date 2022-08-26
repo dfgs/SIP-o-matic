@@ -49,6 +49,14 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DestinationPortProperty, value); }
 		}
 
+		public static readonly DependencyProperty DialogEventProperty = DependencyProperty.Register("DialogEvent", typeof(DialogEventViewModel), typeof(SessionEventViewModel));
+		public DialogEventViewModel DialogEvent
+		{
+			get { return (DialogEventViewModel)GetValue(DialogEventProperty); }
+			set { SetValue(DialogEventProperty, value); }
+		}
+
+
 		public string Source
 		{
 			get => $"{SourceAddress} {SourcePort}";

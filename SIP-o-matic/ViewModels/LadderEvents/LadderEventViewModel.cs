@@ -31,7 +31,7 @@ namespace SIP_o_matic.ViewModels
 			get { return (DeviceViewModel)GetValue(DestinationDeviceProperty); }
 			set { SetValue(DestinationDeviceProperty, value); }
 		}
-
+		
 		
 
 		public abstract string Display

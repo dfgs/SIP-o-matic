@@ -69,7 +69,8 @@ namespace SIP_o_matic.ViewModels
 		{
 			get;
 		}
-		
+
+
 		public bool HasBody
 		{
 			get => SDP != null;

@@ -279,8 +279,8 @@ namespace SIP_o_matic.ViewModels
 			SessionEvents.Clear();
 
 
-			dialogCount = Calls.SelectMany(call => call.Dialogs).Count();
-			transactionCount = Calls.SelectMany(call => call.Dialogs).SelectMany(dialog => dialog.Transactions).Count();
+			dialogCount = Calls.Where(item => item.IsSelected).SelectMany(call => call.Dialogs).Count();
+			transactionCount = Calls.Where(item => item.IsSelected).SelectMany(call => call.Dialogs).SelectMany(dialog => dialog.Transactions).Count();
 
 			colorManager = new ColorManager(dialogCount + transactionCount); ;
 
@@ -306,6 +306,7 @@ namespace SIP_o_matic.ViewModels
 					foreach(SessionViewModel session in dialog.Sessions)
 					{
 						sessionEvent = CreateLadderEvent(ProjectDevices, session);
+						sessionEvent.DialogEvent = dialogEvent;
 						SessionEvents.Add(sessionEvent);
 					}
 

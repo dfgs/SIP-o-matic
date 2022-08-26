@@ -286,6 +286,12 @@ namespace SIP_o_matic.ViewModels
 
 			SelectedFile = null;
 			Files.Remove(FileViewModel);
+			
+			await foreach (CallViewModel call in Calls.ToAsyncEnumerable())
+			{
+				call.Analyze();
+			}
+
 			OnPropertiesChanged();
 
 		}
