@@ -49,6 +49,8 @@ namespace SIP_o_matic.ViewModels
 			set;
 		}
 
+
+
 		public static readonly DependencyProperty DataProperty = DependencyProperty.Register("Data", typeof(object), typeof(LadderEventViewModel), new PropertyMetadata(null));
 		public object Data
 		{

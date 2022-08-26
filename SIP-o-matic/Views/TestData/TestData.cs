@@ -1,4 +1,6 @@
-﻿using SIP_o_matic.ViewModels;
+﻿using LogLib;
+using SIP_o_matic.ViewModels;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,20 @@ namespace SIP_o_matic.Views
 		public static SessionEventViewModel Session3 = new SessionEventViewModel() { StartTime = Timestamp5, StopTime = Timestamp6, SourceAddress = "10.10.1.1", SourcePort = 31400, DestinationAddress = "192.168.1.2", DestinationPort = 28788, DialogEvent = Event5 };
 		public static SessionEventViewModel[] Sessions = new SessionEventViewModel[] { Session1, Session2, Session3 };
 		public static TimestampViewModel[] SessionTimestamps = new TimestampViewModel[] { Timestamp1, Timestamp2, Timestamp3, Timestamp4, Timestamp5, Timestamp6};
+
+		public static string InviteString1 = "INVITE sip:+33140143960@ecb.core.nord:5060;user=phone SIP/2.0\r\nVia: SIP/2.0/UDP 22.19.16.38:5060;branch=z9hG4bKgf8qu4309gm3f6ljhkc0.1\r\nAllow: INVITE, ACK, CANCEL, BYE, PRACK, NOTIFY, SUBSCRIBE, OPTIONS, UPDATE, INFO\r\nSupported: path,100rel\r\nUser-Agent: OmniPCX Enterprise R12.1 m2.300.23\r\nP-Asserted-Identity: \"ITGP TEL05 T NT1\" <sip:+33157437620@22.19.16.38;user=phone>\r\nContent-Type: application/sdp\r\nTo: <sip:+33140143960@22.19.1.52;user=phone>\r\nFrom: \"ITGP TEL05 T NT1\" <sip:+33157437620@alcatel;user=phone>;tag=SD1duf601-c2810c7ef9af3af338277ef2e8bad0e9\r\nContact: <sip:+33157437620@22.19.16.38:5060;transport=udp>\r\nCall-ID: SD1duf601-56e1a9f579471d1ae274d6db70de1aa7-mo420q0\r\nCSeq: 1568068945 INVITE\r\nMax-Forwards: 69\r\nContent-Length: 288\r\n    \r\nv = 0\r\no =OXE 1657028298 1657028298 IN IP4 22.19.16.38\r\ns = abs\r\nc = IN IP4 22.19.16.38\r\nt = 0 0\r\nm =audio 20664 RTP/AVP 8 18 101\r\na = sendrecv\r\na = rtpmap:8 PCMA/8000\r\na = ptime:20\r\na = maxptime:30\r\na =rtpmap:18 G729/8000\r\na =fmtp:18 annexb=no\r\na = ptime:20\r\na = maxptime:40\r\na =rtpmap:101 telephone-event/8000";
+		public static Request Request1 =(Request)SIPGrammar.SIPMessage.Parse(InviteString1,' ') ;
+		public static SDP SDP1=SDPGrammar.SDP.Parse(Request1.Body,' ') ;
+
+		public static string ResponseString1 = "SIP / 2.0 200 OK\r\nVia: SIP/2.0/UDP 10.105.9.205:5060;branch=z9hG4bKac2032292049\r\nTo: <sip:+33986011458@176.161.242.37;user=phone>;tag=h7g4Esbg_916984333-1653917221092\r\nFrom: <sip:+33663422020@ent.bouyguestelecom.fr;user=phone>;tag=1c187532784\r\nCall-ID: 13874654713052022152659@10.105.9.205\r\nCSeq: 1 INVITE\r\nContact: <sip:sgc_c@176.161.242.37;transport=udp>\r\nRecord-Route: <sip:176.161.242.37;transport=udp;lr>\r\nRequire: timer\r\nSession-Expires: 1800;refresher=uac\r\nSupported: timer\r\nSupported:\r\nContent-Type: application/sdp\r\nContent-Length: 274\r\nAllow: ACK,BYE,CANCEL,INFO,INVITE,OPTIONS,PRACK,REFER,NOTIFY,UPDATE\r\nAccept: application/media_control+xml,application/sdp\r\n\r\nv=0\r\no=BroadWorks 1179974073 1 IN IP4 176.161.242.37\r\ns=-\r\nc=IN IP4 176.161.242.225\r\nt=0 0\r\nm=audio 22290 RTP/AVP 18 8 101\r\nb=AS:128\r\na=sendrecv\r\na=rtpmap:18 G729/8000\r\na=fmtp:18 annexb=no\r\na=ptime:20\r\na=maxptime:40\r\na=rtpmap:8 PCMA/8000\r\na=rtpmap:101 telephone-event/8000";
+		public static Response Response1 = (Response)SIPGrammar.SIPMessage.Parse(ResponseString1, ' ');
+		public static SDP SDP2 = SDPGrammar.SDP.Parse(Response1.Body, ' ');
+
+
+
+		public static RequestViewModel Invite1 = new RequestViewModel(NullLogger.Instance, new DataSources.Event(), Request1, SDP1);
+		public static ResponseViewModel OK1 = new ResponseViewModel(NullLogger.Instance, new DataSources.Event(), Response1, SDP2);
+
 
 	}
 }

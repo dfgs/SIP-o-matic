@@ -203,10 +203,10 @@
 			<views:SIPMessagesView/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:RequestViewModel}">
-			<views:RequestView/>
+			<views:SIPMessageTooltip/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:ResponseViewModel}">
-			<views:ResponseView/>
+			<views:SIPMessageTooltip/>
 		</DataTemplate>
 	</UserControl.Resources>
 
@@ -272,6 +272,7 @@
 								<Setter Property="Background" Value="LightSteelBlue"/>
 							</Trigger>
 						</Style.Triggers>
+						<Setter Property="ToolTip" Value="{Binding Data}"/>
 						<Setter Property="HorizontalAlignment" Value="Stretch"/>
 						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
 						<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding SourceDevice}"/>

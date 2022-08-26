@@ -19,6 +19,7 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DisplayProperty, value); }
 		}
 
+		
 
 		public override string BorderColor
 		{

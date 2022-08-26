@@ -34,8 +34,17 @@
 
 	</UserControl.Resources>
 	<DockPanel>
-		<views:TitleView DockPanel.Dock="Top" DataContext="Messages"/>
+		<views:TitleView DockPanel.Dock="Top" DataContext="Messages" />
 		<ListView ItemsSource="{Binding SIPMessages}">
+			<ListView.ItemContainerStyle>
+				<Style TargetType="{x:Type ListViewItem}">
+					<Setter Property="ToolTip">
+						<Setter.Value>
+							<views:SIPMessageTooltip/>
+						</Setter.Value>
+					</Setter>
+				</Style>
+			</ListView.ItemContainerStyle>
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Width="50" Header="Status">

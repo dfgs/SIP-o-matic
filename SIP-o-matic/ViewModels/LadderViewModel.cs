@@ -208,7 +208,7 @@ namespace SIP_o_matic.ViewModels
 				Display = SIPMessage.ShortDisplay ?? "Undefined",
 				EventColor = Color,
 				Data = SIPMessage,
-				HasBody = SIPMessage.HasBody
+				HasBody = SIPMessage.HasBody,
 			};
 
 			switch(SIPMessage)
