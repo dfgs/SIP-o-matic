@@ -85,14 +85,14 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		private SessionViewModel? currentSession;
+		private SessionViewModel? currentSession,previousSession;
 
 		public DialogViewModel(ILogger Logger, int UID1) : base(Logger)
 		{
 			this.UID1 = UID1;this.UID2 = 0;
 			Transactions = new ObservableCollection<TransactionViewModel>();
 			Sessions = new ObservableCollection<SessionViewModel>();
-			currentSession = null;
+			currentSession = null;previousSession = null;
 		}
 		public void UpdateUID2(int UID2)
 		{
@@ -121,11 +121,7 @@ namespace SIP_o_matic.ViewModels
 			{
 				case "INVITE":
 
-					// reinvite
-					if (currentSession != null)
-					{
-						currentSession.StopTime = Event.Timestamp;
-					}
+					previousSession = currentSession; 
 					currentSession = new SessionViewModel();
 					if (SDP != null)
 					{
@@ -140,7 +136,7 @@ namespace SIP_o_matic.ViewModels
 					{
 						currentSession.StopTime = Event.Timestamp;
 					}
-					currentSession = null;
+					currentSession = null;previousSession= null;
 					break;
 			}
 
@@ -150,6 +146,11 @@ namespace SIP_o_matic.ViewModels
 			switch (Response.StatusLine.StatusCode)
 			{
 				case "200":
+					if (previousSession!=null)
+					{
+						previousSession.StopTime = Event.Timestamp;
+						previousSession = null;
+					}
 					if (currentSession != null)
 					{
 						currentSession.StartTime = Event.Timestamp;

@@ -33,6 +33,7 @@ namespace SIP_o_matic
 			dataSourceManager.Register(new OracleOEMDataSource());
 			dataSourceManager.Register(new OracleSBCDataSource());
 			dataSourceManager.Register(new WiresharkDataSource());
+			dataSourceManager.Register(new AudiocodesSyslogDataSource());
 
 			applicationViewModel = new ApplicationViewModel();
 

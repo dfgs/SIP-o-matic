@@ -36,6 +36,19 @@
 				</Canvas>
 			</VisualBrush.Visual>
 		</VisualBrush>
+		<VisualBrush x:Key="tickBrush" 
+		  TileMode="Tile" Viewport="0,0,10,5" 
+		  ViewportUnits="Absolute" Viewbox="0,0,10,5" ViewboxUnits="Absolute">
+			<VisualBrush.Visual>
+				<Canvas>
+					<Path StrokeThickness="2" Stroke="{StaticResource darkBrush}" Data="M 0 0 L 0 5" />
+					<Path StrokeThickness="1" Stroke="{StaticResource darkBrush}" Data="M 2 3 L 2 5" />
+					<Path StrokeThickness="1" Stroke="{StaticResource darkBrush}" Data="M 4 3 L 4 5" />
+					<Path StrokeThickness="1" Stroke="{StaticResource darkBrush}" Data="M 6 3 L 6 5" />
+					<Path StrokeThickness="1" Stroke="{StaticResource darkBrush}" Data="M 8 3 L 8 5" />
+				</Canvas>
+			</VisualBrush.Visual>
+		</VisualBrush>
 
 		<Style x:Key="expandButtonStyle" TargetType="{x:Type ToggleButton}">
 			<Style.Triggers>
@@ -277,17 +290,17 @@
 			<TabControl Grid.Row="2" Background="Transparent">
 				<TabItem Header="Sessions">
 					<views:LadderControl
-						ColumnWidth="400" ColumnPadding="200" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
+						ColumnWidth="300" ColumnPadding="150" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
 						VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
 
 						<views:LadderControl.HeaderTemplate>
 							<DataTemplate>
-								<Border BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="1" Margin="5" Padding="5" CornerRadius="5" ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
-									<Border.Effect>
-										<DropShadowEffect ShadowDepth="5" Opacity="0.5"/>
-									</Border.Effect>
-									<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+								<Border SnapsToDevicePixels="True" BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="0,0,0,1" Margin="0" Padding="0"  ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
+									<StackPanel Margin="0,2,0,0">
+										<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+										<Border Height="5" Width="2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource darkBrush}"/>
+									</StackPanel>
 								</Border>
 							</DataTemplate>
 						</views:LadderControl.HeaderTemplate>

@@ -51,7 +51,7 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register("IsSelected", typeof(bool), typeof(CallViewModel), new PropertyMetadata(true));
+		public static readonly DependencyProperty IsSelectedProperty = DependencyProperty.Register("IsSelected", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));
 		public bool IsSelected
 		{
 			get { return (bool)GetValue(IsSelectedProperty); }
