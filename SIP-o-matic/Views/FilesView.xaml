@@ -6,7 +6,7 @@
 			 xmlns:root="clr-namespace:SIP_o_matic"
   			 xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="200">
 	<DockPanel>
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar Band="1" BandIndex="1">
@@ -18,8 +18,8 @@
 				</Button>
 			</ToolBar>
 		</ToolBarTray>
-
-		<Grid>
+		<ListBox ItemsSource="{Binding Files}" DisplayMemberPath="Name" SelectedItem="{Binding SelectedFile}"/>
+		<!--Grid>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="200"/>
 				<RowDefinition Height="5"/>
@@ -41,7 +41,7 @@
 					</GridView>
 				</ListView.View>
 			</ListView>
-		</Grid>
+		</Grid-->
 	</DockPanel>
 
 </UserControl>

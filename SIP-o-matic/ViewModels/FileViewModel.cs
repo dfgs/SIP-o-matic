@@ -14,11 +14,10 @@ namespace SIP_o_matic.ViewModels
 	{
 
 
-		public static readonly DependencyProperty PathProperty = DependencyProperty.Register("Path", typeof(string), typeof(FileViewModel), new PropertyMetadata(null));
 		public string Path
 		{
-			get { return (string)GetValue(PathProperty); }
-			set { SetValue(PathProperty, value); }
+			get;
+			private set;
 		}
 
 		public string Name
@@ -40,10 +39,11 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
-		public FileViewModel(ILogger Logger):base(Logger)
+		public FileViewModel(ILogger Logger,string Path):base(Logger)
 		{
 			Events = new ObservableCollection<Event>();
 			Devices = new ObservableCollection<Device>();
+			this.Path = Path;
 		}
 
 		public void AddDevice(Device Device)
@@ -51,5 +51,7 @@ namespace SIP_o_matic.ViewModels
 			if (Devices.Contains(Device)) return;
 			Devices.Add(Device);
 		}
+
+
 	}
 }

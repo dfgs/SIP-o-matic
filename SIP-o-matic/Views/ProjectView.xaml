@@ -6,21 +6,52 @@
  			 xmlns:views="clr-namespace:SIP_o_matic.Views"
             mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<TabControl>
-		<TabItem Header="Calls">
-			<views:GeneralCallsView />
-		</TabItem>
-		<TabItem Header="Devices">
-			<views:DevicesView />
-		</TabItem>
-		<TabItem Header="Files">
-			<views:FilesView/>
-		</TabItem>
-		<TabItem Header="Logs">
-			<views:LogsView/>
-		</TabItem>
-		<TabItem Header="Ladder">
-			<views:LadderView/>
-		</TabItem>
-	</TabControl>
+	
+	<DockPanel>
+		<Expander DockPanel.Dock="Bottom" Header="Errors" IsExpanded="False">
+			<views:LogsView Height="150"/>
+		</Expander>
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="200"/>
+				<ColumnDefinition Width="5"/>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="5"/>
+				<ColumnDefinition Width="300"/>
+			</Grid.ColumnDefinitions>
+			<TabControl TabStripPlacement="Left" Grid.Column="0">
+					<TabItem Padding="0,5,0,5">
+						<TabItem.Header>
+							<TextBlock Text="Files">
+								<TextBlock.LayoutTransform>
+									<RotateTransform Angle="-90"/>
+								</TextBlock.LayoutTransform>
+							</TextBlock>
+						</TabItem.Header>
+						<views:FilesView/>
+					</TabItem>
+					<TabItem Padding="0,5,0,5">
+						<TabItem.Header>
+							<TextBlock Text="Devices">
+								<TextBlock.LayoutTransform>
+									<RotateTransform Angle="-90"/>
+								</TextBlock.LayoutTransform>
+							</TextBlock>
+						</TabItem.Header>
+						<views:DevicesView/>
+					</TabItem>
+				</TabControl>
+			<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
+			<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">
+				<TabItem Header="Calls">
+					<views:GeneralCallsView />
+				</TabItem>
+				<TabItem Header="Ladder">
+					<views:LadderView/>
+				</TabItem>
+			</TabControl>
+			<GridSplitter Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
+			<views:DetailView x:Name="detailView" Grid.Column="4"/>
+		</Grid>
+	</DockPanel>
 </UserControl>

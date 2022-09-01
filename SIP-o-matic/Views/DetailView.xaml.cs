@@ -16,24 +16,13 @@ using System.Windows.Shapes;
 namespace SIP_o_matic.Views
 {
 	/// <summary>
-	/// Logique d'interaction pour ProjectView.xaml
+	/// Logique d'interaction pour DetailView.xaml
 	/// </summary>
-	public partial class ProjectView : UserControl
+	public partial class DetailView : UserControl
 	{
-		public ProjectView()
+		public DetailView()
 		{
 			InitializeComponent();
-		}
-
-		
-
-		private void UserControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			ListBox? listBox;
-			
-			listBox = e.OriginalSource as ListBox;
-			if (listBox == null) return;
-			detailView.DataContext = listBox.SelectedItem;
 		}
 	}
 }

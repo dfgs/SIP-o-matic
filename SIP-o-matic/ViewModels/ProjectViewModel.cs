@@ -2,6 +2,7 @@
 using LogLib;
 using PcapngFile;
 using SIP_o_matic.DataSources;
+using SIP_o_matic.ViewModels.PathNodeViewModels;
 using SIP_o_matic.Views;
 using SIPParserLib;
 using System;
@@ -12,10 +13,11 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Linq;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ProjectViewModel: ViewModel
+	public class ProjectViewModel: ViewModel, IFolderNodeProvider
 	{
 
 
@@ -34,6 +36,12 @@ namespace SIP_o_matic.ViewModels
 		}
 
 		public ObservableCollection<FileViewModel> Files
+		{
+			get;
+			private set;
+		}
+
+		public ObservableCollection<PathNodeViewModel> Folders
 		{
 			get;
 			private set;
@@ -89,6 +97,7 @@ namespace SIP_o_matic.ViewModels
 			Devices.Add(TestData.DeviceC);
 			Devices.Add(TestData.DeviceD);
 			Files = new ObservableCollection<FileViewModel>();
+			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
 		}
 
@@ -96,6 +105,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			Ladder = new LadderViewModel(Logger);
 			Files = new ObservableCollection<FileViewModel>();
+			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
 			Devices = new ObservableCollection<DeviceViewModel>();
 		}
@@ -118,6 +128,17 @@ namespace SIP_o_matic.ViewModels
 		{
 			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
 		}
+
+		public FolderNodeViewModel? FindFolderNode(string Name)
+		{
+			return Folders.OfType<FolderNodeViewModel>().FirstOrDefault(item => item.Name == Name);
+		}
+
+		public void AddPathNode(PathNodeViewModel PathNode)
+		{
+			Folders.Add(PathNode);
+		}
+
 
 		public void AddDevice(FileViewModel FileViewModel, Device Device)
 		{
@@ -244,11 +265,28 @@ namespace SIP_o_matic.ViewModels
 		}
 		public async Task AddFileAsync(string Path,IDataSource DataSource)
 		{
+			string[] folders;
 			FileViewModel fileViewModel;
+			FolderNodeViewModel? folderNodeViewModel;
+			IFolderNodeProvider currentProvider;
 
-			fileViewModel = new FileViewModel(Logger);
-			fileViewModel.Path = Path;
+			fileViewModel = new FileViewModel(Logger,Path);
 			Files.Add(fileViewModel);
+
+			currentProvider = this;
+			folders = Path.Split(System.IO.Path.DirectorySeparatorChar);
+			foreach(string folder in folders.SkipLast(1))
+			{
+				folderNodeViewModel = currentProvider.FindFolderNode(folder);
+				if (folderNodeViewModel==null)
+				{
+					folderNodeViewModel = new FolderNodeViewModel();
+					folderNodeViewModel.Name = folder;
+					currentProvider.AddPathNode(folderNodeViewModel);
+				}
+				currentProvider = folderNodeViewModel;
+			}
+			currentProvider.AddPathNode(new FileNodeViewModel() { Name=fileViewModel.Name });
 
 			await foreach (Device _device in DataSource.EnumerateDevicesAsync(Path))
 			{
@@ -296,10 +334,6 @@ namespace SIP_o_matic.ViewModels
 
 		}
 
-
-
-
-
-
+		
 	}
 }

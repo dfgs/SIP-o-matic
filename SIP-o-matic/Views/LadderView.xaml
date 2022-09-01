@@ -296,63 +296,56 @@
 
 			</views:LadderControl>
 			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-			<TabControl Grid.Row="2" Background="Transparent">
-				<TabItem Header="Sessions">
-					<views:LadderControl
+			
+			<views:LadderControl Grid.Row="2"
 						ColumnWidth="300" ColumnPadding="150" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
 						VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
 
-						<views:LadderControl.HeaderTemplate>
-							<DataTemplate>
-								<Border SnapsToDevicePixels="True" BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="0,0,0,1" Margin="0" Padding="0"  ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
-									<StackPanel Margin="0,2,0,0">
-										<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
-										<Border Height="5" Width="2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource darkBrush}"/>
-									</StackPanel>
-								</Border>
-							</DataTemplate>
-						</views:LadderControl.HeaderTemplate>
+				<views:LadderControl.HeaderTemplate>
+					<DataTemplate>
+						<Border SnapsToDevicePixels="True" BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="0,0,0,1" Margin="0" Padding="0"  ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
+							<StackPanel Margin="0,2,0,0">
+								<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+								<Border Height="5" Width="2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource darkBrush}"/>
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</views:LadderControl.HeaderTemplate>
 
-						<views:LadderControl.ColumnTemplate>
-							<DataTemplate>
-								<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
-							</DataTemplate>
-						</views:LadderControl.ColumnTemplate>
+				<views:LadderControl.ColumnTemplate>
+					<DataTemplate>
+						<Line X1="0" Y1="0" X2="0" Y2="50" Stretch="Fill" Stroke="DarkGray" StrokeDashArray="2, 3" StrokeThickness="2" />
+					</DataTemplate>
+				</views:LadderControl.ColumnTemplate>
 
-						<views:LadderControl.RowContainerStyle>
-							<Style TargetType="{x:Type ListBoxItem}">
-								<Style.Triggers>
-									<Trigger Property="IsSelected" Value="True">
-										<Setter Property="Background" Value="LightSteelBlue"/>
-									</Trigger>
-								</Style.Triggers>
-								<Setter Property="HorizontalAlignment" Value="Stretch"/>
-								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-								<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding StartTime}"/>
-								<Setter Property="views:LadderPanel.RightColumn" Value="{Binding StopTime}"/>
-								<Setter Property="Background" Value="{StaticResource lcdBackgroundBrush}"/>
-								<Setter Property="Template">
-									<Setter.Value>
-										<ControlTemplate TargetType="{x:Type ListBoxItem}">
-											<Border Margin="5" BorderThickness="1" Background="{TemplateBinding Background}" Padding="2" BorderBrush="{StaticResource lcdForegroundBrush}">
-												<ContentPresenter Content="{Binding}"/>
-											</Border>
-										</ControlTemplate>
-									</Setter.Value>
-								</Setter>
-							</Style>
-						</views:LadderControl.RowContainerStyle>
+				<views:LadderControl.RowContainerStyle>
+					<Style TargetType="{x:Type ListBoxItem}">
+						<Style.Triggers>
+							<Trigger Property="IsSelected" Value="True">
+								<Setter Property="Background" Value="LightSteelBlue"/>
+							</Trigger>
+						</Style.Triggers>
+						<Setter Property="HorizontalAlignment" Value="Stretch"/>
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						<Setter Property="views:LadderPanel.LeftColumn" Value="{Binding StartTime}"/>
+						<Setter Property="views:LadderPanel.RightColumn" Value="{Binding StopTime}"/>
+						<Setter Property="Background" Value="{StaticResource lcdBackgroundBrush}"/>
+						<Setter Property="Template">
+							<Setter.Value>
+								<ControlTemplate TargetType="{x:Type ListBoxItem}">
+									<Border Margin="5" BorderThickness="1" Background="{TemplateBinding Background}" Padding="2" BorderBrush="{StaticResource lcdForegroundBrush}">
+										<ContentPresenter Content="{Binding}"/>
+									</Border>
+								</ControlTemplate>
+							</Setter.Value>
+						</Setter>
+					</Style>
+				</views:LadderControl.RowContainerStyle>
 
 
-					</views:LadderControl>
-
-				</TabItem>
-				<TabItem Header="Details">
-					<ContentPresenter  Content="{Binding Ladder.SelectedEvent.Data}"/>
-				</TabItem>
-
-			</TabControl>
+			</views:LadderControl>
+			
 		</Grid>
 	</DockPanel>
 
