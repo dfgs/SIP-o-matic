@@ -197,10 +197,10 @@
 		</DataTemplate>
 
 		<DataTemplate DataType="{x:Type viewModels:DialogViewModel}">
-			<views:TransactionsView/>
+			<views:DialogTooltip/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:TransactionViewModel}">
-			<views:SIPMessagesView/>
+			<views:TransactionTooltip/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:RequestViewModel}">
 			<views:SIPMessageTooltip/>

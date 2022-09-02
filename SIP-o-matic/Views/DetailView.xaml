@@ -12,15 +12,26 @@
 	<UserControl.Resources>
 
 		<DataTemplate DataType="{x:Type viewModels:DialogEventViewModel}">
-			<views:TransactionsView DataContext="{Binding Data}"/>
+			<views:DialogTooltip DataContext="{Binding Data}"/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:DialogViewModel}">
+			<views:DialogTooltip/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:CallViewModel}">
+			<views:CallTooltip/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:TransactionEventViewModel}">
-			<views:SIPMessagesView DataContext="{Binding Data}"/>
+			<views:TransactionTooltip DataContext="{Binding Data}"/>
+		</DataTemplate>
+		<DataTemplate DataType="{x:Type viewModels:TransactionViewModel}">
+			<views:TransactionTooltip/>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:SIPMessageEventViewModel}">
 			<views:SIPMessageTooltip DataContext="{Binding Data}"/>
 		</DataTemplate>
-		
+		<DataTemplate DataType="{x:Type viewModels:SIPMessageViewModel}">
+			<views:SIPMessageTooltip/>
+		</DataTemplate>
 	</UserControl.Resources>
 
 	<ContentPresenter  Content="{Binding}"/>

@@ -1,0 +1,17 @@
+﻿<UserControl x:Class="SIP_o_matic.Views.DialogTooltip"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:SIP_o_matic.Views"
+             mc:Ignorable="d">
+	<StackPanel Grid.IsSharedSizeScope="True">
+		<views:PropertyView Header="Status" Text="{Binding Status}"/>
+		<views:PropertyView Header="Start time" Text="{Binding StartTime}"/>
+		<views:PropertyView Header="Stop time" Text="{Binding StopTime}"/>
+		<views:PropertyView Header="Source" Text="{Binding SourceAddress}"/>
+		<views:PropertyView Header="Destination" Text="{Binding DestinationAddress}"/>
+		<views:PropertyView Header="From tag" Text="{Binding FromTag}"/>
+		<views:PropertyView Header="To tag" Text="{Binding ToTag}"/>
+	</StackPanel>
+</UserControl>
