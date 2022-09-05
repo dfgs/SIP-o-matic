@@ -34,6 +34,7 @@ namespace SIP_o_matic
 			dataSourceManager.Register(new OracleSBCDataSource());
 			dataSourceManager.Register(new WiresharkDataSource());
 			dataSourceManager.Register(new AudiocodesSyslogDataSource());
+			dataSourceManager.Register(new AlcatelSIPTraceDataSource());
 
 			applicationViewModel = new ApplicationViewModel();
 

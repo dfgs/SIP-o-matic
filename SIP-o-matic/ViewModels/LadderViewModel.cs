@@ -239,6 +239,7 @@ namespace SIP_o_matic.ViewModels
 				SourcePort=Session.SourcePort,
 				DestinationAddress=Session.DestinationAddress,
 				DestinationPort=Session.DestinationPort,
+				Codec=Session.Codec,
 			};
 
 

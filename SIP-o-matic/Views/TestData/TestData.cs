@@ -34,9 +34,9 @@ namespace SIP_o_matic.Views
 		public static TimestampViewModel Timestamp5 = new TimestampViewModel() { Value = DateTime.Parse("10:20:00") };
 		public static TimestampViewModel Timestamp6 = new TimestampViewModel() { Value = DateTime.Parse("10:25:01") };
 
-		public static SessionEventViewModel Session1 = new SessionEventViewModel() { StartTime = Timestamp1 , StopTime=Timestamp3, SourceAddress = "192.168.1.1", SourcePort = 21000, DestinationAddress = "192.168.1.2", DestinationPort = 31000 ,DialogEvent=Event1};
-		public static SessionEventViewModel Session2 = new SessionEventViewModel() { StartTime = Timestamp2, StopTime = Timestamp4, SourceAddress = "192.168.1.4", SourcePort = 21002, DestinationAddress = "50.56.1.12", DestinationPort = 42123, DialogEvent = Event3 };
-		public static SessionEventViewModel Session3 = new SessionEventViewModel() { StartTime = Timestamp5, StopTime = Timestamp6, SourceAddress = "10.10.1.1", SourcePort = 31400, DestinationAddress = "192.168.1.2", DestinationPort = 28788, DialogEvent = Event5 };
+		public static SessionEventViewModel Session1 = new SessionEventViewModel() { StartTime = Timestamp1 , StopTime=Timestamp3, SourceAddress = "192.168.1.1", SourcePort = 21000, DestinationAddress = "192.168.1.2", DestinationPort = 31000 ,DialogEvent=Event1, Codec="PCMA"};
+		public static SessionEventViewModel Session2 = new SessionEventViewModel() { StartTime = Timestamp2, StopTime = Timestamp4, SourceAddress = "192.168.1.4", SourcePort = 21002, DestinationAddress = "50.56.1.12", DestinationPort = 42123, DialogEvent = Event3, Codec = "PCMA" };
+		public static SessionEventViewModel Session3 = new SessionEventViewModel() { StartTime = Timestamp5, StopTime = Timestamp6, SourceAddress = "10.10.1.1", SourcePort = 31400, DestinationAddress = "192.168.1.2", DestinationPort = 28788, DialogEvent = Event5, Codec = "PCMA" };
 		public static SessionEventViewModel[] Sessions = new SessionEventViewModel[] { Session1, Session2, Session3 };
 		public static TimestampViewModel[] SessionTimestamps = new TimestampViewModel[] { Timestamp1, Timestamp2, Timestamp3, Timestamp4, Timestamp5, Timestamp6};
 

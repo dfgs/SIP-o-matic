@@ -14,6 +14,7 @@ namespace SIP_o_matic.ViewModels
 {
 	public class TransactionViewModel:ViewModel
 	{
+		
 
 		public DateTime? StartTime
 		{
@@ -176,6 +177,7 @@ namespace SIP_o_matic.ViewModels
 			ResponseViewModel[] responses;
 			RequestViewModel? inviteRequest, byeRequest,ackRequest;
 			ResponseViewModel? okResponse;
+			int mediaIndex;
 
 			requests = SIPMessages.OfType<RequestViewModel>().ToArray();
 			responses = SIPMessages.OfType<ResponseViewModel>().ToArray();
@@ -216,10 +218,18 @@ namespace SIP_o_matic.ViewModels
 				{
 					SessionTrigger = SessionTriggers.Init;
 					Session = new SessionViewModel();
+					
 					Session.SourceAddress = inviteRequest.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined";
 					Session.SourcePort = inviteRequest.SDP?.GetField<MediaField>()?.Port ?? 0;
+					
 					Session.DestinationAddress = okResponse.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined";
 					Session.DestinationPort = okResponse.SDP?.GetField<MediaField>()?.Port ?? 0;
+					mediaIndex=okResponse.SDP?.GetMediaIndices().FirstOrDefault()??0;
+					if (mediaIndex!=0)
+					{
+						Session.Codec = okResponse.SDP?.GetCodec(mediaIndex)??"Undefined";
+					}
+
 				} 
 				else if ((byeRequest != null)  && (okResponse != null))
 				{

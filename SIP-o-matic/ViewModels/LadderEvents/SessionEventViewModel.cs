@@ -49,6 +49,13 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(DestinationPortProperty, value); }
 		}
 
+		public static readonly DependencyProperty CodecProperty = DependencyProperty.Register("Codec", typeof(string), typeof(SessionEventViewModel));
+		public string Codec
+		{
+			get { return (string)GetValue(CodecProperty); }
+			set { SetValue(CodecProperty, value); }
+		}
+
 		public static readonly DependencyProperty DialogEventProperty = DependencyProperty.Register("DialogEvent", typeof(DialogEventViewModel), typeof(SessionEventViewModel));
 		public DialogEventViewModel DialogEvent
 		{

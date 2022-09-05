@@ -188,6 +188,10 @@
 					<Image DockPanel.Dock="Left" Source="/Images/sound_none.png"  Stretch="None" />
 					<Border Background="{StaticResource audioBrush}" Height="10" VerticalAlignment="Center"/>
 				</DockPanel>
+				<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
+					<Image Source="/Images/sound.png" Stretch="None" Margin="0,0,5,0"/>
+					<TextBlock FontSize="16" HorizontalAlignment="Center" FontFamily="{StaticResource lcdFont}" Text="{Binding Codec}"/>
+				</StackPanel>
 				<DockPanel>
 					<TextBlock DockPanel.Dock="Left" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Source}"/>
 					<TextBlock DockPanel.Dock="Right" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Destination}"/>
