@@ -74,17 +74,13 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public SessionTriggers SessionTrigger
+		public SessionTrigger? SessionTrigger
 		{
 			get;
 			private set;
 		}
 
-		public SessionViewModel? Session
-		{
-			get;
-			private set;
-		}
+		
 
 		public bool HasRetransmissions
 		{
@@ -177,7 +173,6 @@ namespace SIP_o_matic.ViewModels
 			ResponseViewModel[] responses;
 			RequestViewModel? inviteRequest, byeRequest,ackRequest;
 			ResponseViewModel? okResponse;
-			int mediaIndex;
 
 			requests = SIPMessages.OfType<RequestViewModel>().ToArray();
 			responses = SIPMessages.OfType<ResponseViewModel>().ToArray();
@@ -212,38 +207,22 @@ namespace SIP_o_matic.ViewModels
 				
 				if (ackRequest!=null)
 				{
-					SessionTrigger = SessionTriggers.Start;
+					SessionTrigger = new StartSessionTrigger(this.StartTime!.Value);
 				}
-				else if ((inviteRequest!=null)  && (okResponse!=null))
+				else if ((inviteRequest!=null) && (okResponse!=null))
 				{
-					SessionTrigger = SessionTriggers.Init;
-					Session = new SessionViewModel();
-					
-					Session.SourceAddress = inviteRequest.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined";
-					Session.SourcePort = inviteRequest.SDP?.GetField<MediaField>()?.Port ?? 0;
-					
-					Session.DestinationAddress = okResponse.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined";
-					Session.DestinationPort = okResponse.SDP?.GetField<MediaField>()?.Port ?? 0;
-					mediaIndex=okResponse.SDP?.GetMediaIndices().FirstOrDefault()??0;
-					if (mediaIndex!=0)
-					{
-						Session.Codec = okResponse.SDP?.GetCodec(mediaIndex)??"Undefined";
-					}
-
+					SessionTrigger = new SetupSessionTrigger(this.StartTime!.Value, 
+						inviteRequest.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined", inviteRequest.SDP?.GetField<MediaField>()?.Port??0,
+						okResponse.SDP?.GetField<ConnectionField>()?.Address ?? "Undefined", okResponse.SDP?.GetField<MediaField>()?.Port ?? 0,
+						okResponse.SDP?.GetCodec()??"Undefined");
 				} 
 				else if ((byeRequest != null)  && (okResponse != null))
 				{
-					SessionTrigger = SessionTriggers.Stop;
+					SessionTrigger = new StopSessionTrigger(this.StartTime!.Value);
 				}
-				else
-				{
-					SessionTrigger = SessionTriggers.None;
-				}
-				
 
 			}
 
-			OnPropertyChanged(nameof(Session));
 			OnPropertyChanged(nameof(Status));
 		}
 

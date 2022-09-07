@@ -176,7 +176,7 @@
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:SessionEventViewModel}">
 			<DockPanel>
-				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
+				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,2,0" >
 					<Border.Background>
 						<SolidColorBrush Color="{Binding DialogEvent.EventColor}"/>
 					</Border.Background>
@@ -184,18 +184,26 @@
 						<SolidColorBrush Color="{Binding DialogEvent.EventColor}"/>
 					</Border.BorderBrush>
 				</Border>
+				<Border DockPanel.Dock="Left" Width="5" Margin="0,0,5,0" >
+					<Border.Background>
+						<SolidColorBrush Color="{Binding TransactionEvent.EventColor}"/>
+					</Border.Background>
+					<Border.BorderBrush>
+						<SolidColorBrush Color="{Binding TransactionEvent.EventColor}"/>
+					</Border.BorderBrush>
+				</Border>
 				<DockPanel DockPanel.Dock="Top">
 					<Image DockPanel.Dock="Left" Source="/Images/sound_none.png"  Stretch="None" />
 					<Border Background="{StaticResource audioBrush}" Height="10" VerticalAlignment="Center"/>
 				</DockPanel>
-				<StackPanel DockPanel.Dock="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
-					<Image Source="/Images/sound.png" Stretch="None" Margin="0,0,5,0"/>
-					<TextBlock FontSize="16" HorizontalAlignment="Center" FontFamily="{StaticResource lcdFont}" Text="{Binding Codec}"/>
-				</StackPanel>
+				
 				<DockPanel>
 					<TextBlock DockPanel.Dock="Left" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Source}"/>
 					<TextBlock DockPanel.Dock="Right" FontSize="16" FontFamily="{StaticResource lcdFont}" Text="{Binding Destination}"/>
-					<TextBlock/>
+					<StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+						<Image Source="/Images/sound.png" Stretch="None" Margin="0,0,5,0"/>
+						<TextBlock FontSize="16" HorizontalAlignment="Center" FontFamily="{StaticResource lcdFont}" Text="{Binding Codec}"/>
+					</StackPanel>
 				</DockPanel>
 			</DockPanel>
 		</DataTemplate>
@@ -302,7 +310,7 @@
 			<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 			
 			<views:LadderControl Grid.Row="2"
-						ColumnWidth="300" ColumnPadding="150" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
+						ColumnWidth="400" ColumnPadding="200" Columns="{Binding Ladder.SessionTimestamps}" Rows="{Binding Ladder.SessionEvents}" 
 						VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
 
@@ -310,7 +318,7 @@
 					<DataTemplate>
 						<Border SnapsToDevicePixels="True" BorderBrush="{StaticResource darkBrush}" Background="LightSlateGray" BorderThickness="0,0,0,1" Margin="0" Padding="0"  ToolTip="{Binding Value,StringFormat=HH:mm:ss}">
 							<StackPanel Margin="0,2,0,0">
-								<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
+								<TextBlock Text="{Binding Value,StringFormat=HH:mm:ss.fff}" Foreground="{StaticResource lightBrush}" TextAlignment="Center" FontFamily="Verdana" FontSize="14" />
 								<Border Height="5" Width="2" HorizontalAlignment="Center" BorderThickness="1" BorderBrush="{StaticResource darkBrush}"/>
 							</StackPanel>
 						</Border>

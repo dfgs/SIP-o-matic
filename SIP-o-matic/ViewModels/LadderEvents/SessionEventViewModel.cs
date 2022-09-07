@@ -8,8 +8,27 @@ using System.Windows;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class SessionEventViewModel:ViewModel
+	public class SessionEventViewModel: LadderEventViewModel
 	{
+		public override string BorderColor
+		{
+			get => "Blue";
+		}
+		public static readonly DependencyProperty EventColorProperty = DependencyProperty.Register("EventColor", typeof(string), typeof(SessionEventViewModel), new PropertyMetadata("Blue"));
+		public override string EventColor
+		{
+			get { return (string)GetValue(EventColorProperty); }
+			set { SetValue(EventColorProperty, value); }
+		}
+
+		public static readonly DependencyProperty DisplayProperty = DependencyProperty.Register("Display", typeof(string), typeof(SessionEventViewModel), new PropertyMetadata(null));
+		public override string Display
+		{
+			get { return (string)GetValue(DisplayProperty); }
+			set { SetValue(DisplayProperty, value); }
+		}
+
+
 		public static readonly DependencyProperty StartTimeProperty = DependencyProperty.Register("StartTime", typeof(TimestampViewModel), typeof(SessionEventViewModel));
 		public TimestampViewModel StartTime
 		{
@@ -62,6 +81,12 @@ namespace SIP_o_matic.ViewModels
 			get { return (DialogEventViewModel)GetValue(DialogEventProperty); }
 			set { SetValue(DialogEventProperty, value); }
 		}
+		public static readonly DependencyProperty TransactionEventProperty = DependencyProperty.Register("TransactionEvent", typeof(TransactionEventViewModel), typeof(SessionEventViewModel));
+		public TransactionEventViewModel? TransactionEvent
+		{
+			get { return (TransactionEventViewModel)GetValue(TransactionEventProperty); }
+			set { SetValue(TransactionEventProperty, value); }
+		}
 
 
 		public string Source
@@ -72,7 +97,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => $"{DestinationAddress} {DestinationPort}";
 		}
-		public SessionEventViewModel() : base(NullLogger.Instance)
+		public SessionEventViewModel() : base()
 		{
 		}
 	}

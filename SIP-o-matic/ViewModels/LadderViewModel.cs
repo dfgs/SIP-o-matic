@@ -102,7 +102,7 @@ namespace SIP_o_matic.ViewModels
 			TimestampViewModel? newTimestamp;
 			DateTime roundedDateTime;
 
-			roundedDateTime= new DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day, Timestamp.Hour, Timestamp.Minute, Timestamp.Second);
+			roundedDateTime =   new DateTime(Timestamp.Year, Timestamp.Month, Timestamp.Day, Timestamp.Hour, Timestamp.Minute, Timestamp.Second,Timestamp.Millisecond);
 			newTimestamp = TimeStamps.FirstOrDefault(item => item.Value == roundedDateTime);
 			if (newTimestamp==null)
 			{
@@ -114,7 +114,16 @@ namespace SIP_o_matic.ViewModels
 		}
 		private void AddTimestamp(TimestampViewModel Timestamp)
 		{
-			if (!SessionTimestamps.Contains(Timestamp)) this.SessionTimestamps.Add(Timestamp);
+			if (SessionTimestamps.Contains(Timestamp)) return;
+			for(int t= 0; t<SessionTimestamps.Count;t++)
+			{
+				if (SessionTimestamps[t].Value>Timestamp.Value)
+				{
+					this.SessionTimestamps.Insert(t,Timestamp);
+					return;
+				}
+			}
+			this.SessionTimestamps.Add(Timestamp);
 		}
 
 		private DeviceViewModel FindDevice(IEnumerable<DeviceViewModel> ProjectDevices,string? Address)
@@ -240,6 +249,7 @@ namespace SIP_o_matic.ViewModels
 				DestinationAddress=Session.DestinationAddress,
 				DestinationPort=Session.DestinationPort,
 				Codec=Session.Codec,
+				Data=Session,
 			};
 
 
@@ -303,14 +313,14 @@ namespace SIP_o_matic.ViewModels
 
 						}
 					}
-
-					foreach(SessionViewModel session in dialog.Sessions)
+					foreach (SessionViewModel session in dialog.Sessions)
 					{
 						sessionEvent = CreateLadderEvent(ProjectDevices, session);
 						sessionEvent.DialogEvent = dialogEvent;
+						sessionEvent.TransactionEvent = dialogEvent.TransactionEvents.FirstOrDefault(item=>item.Data==  session.SetupTransaction);
 						SessionEvents.Add(sessionEvent);
-					}
 
+					}
 
 					dialogEvent.HasRetransmissions = dialogEvent.TransactionEvents.Any(item => item.HasRetransmissions);
 
@@ -370,6 +380,10 @@ namespace SIP_o_matic.ViewModels
 			if (dialogEvent == null) return;
 			foreach(TransactionEventViewModel transactionEvent in dialogEvent.TransactionEvents)
 			{
+				foreach(SIPMessageEventViewModel messageEvent in transactionEvent.SIPMessageEvents)
+				{
+					RemoveEvent(messageEvent);
+				}
 				RemoveEvent(transactionEvent);
 			}
 

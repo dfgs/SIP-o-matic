@@ -48,12 +48,20 @@ namespace SIP_o_matic.ViewModels
 			get { return (int)GetValue(DestinationPortProperty); }
 			set { SetValue(DestinationPortProperty, value); }
 		}
-		public static readonly DependencyProperty CodecProperty = DependencyProperty.Register("Codec", typeof(string), typeof(SessionViewModel), new PropertyMetadata("Undefined"));
+		public static readonly DependencyProperty CodecProperty = DependencyProperty.Register("Codec", typeof(string), typeof(SessionViewModel));
 		public string Codec
 		{
 			get { return (string)GetValue(CodecProperty); }
 			set { SetValue(CodecProperty, value); }
 		}
+
+		public static readonly DependencyProperty SetupTransactionProperty = DependencyProperty.Register("SetupTransaction", typeof(TransactionViewModel), typeof(SessionViewModel));
+		public TransactionViewModel SetupTransaction
+		{
+			get { return (TransactionViewModel)GetValue(SetupTransactionProperty); }
+			set { SetValue(SetupTransactionProperty, value); }
+		}
+
 
 		public SessionViewModel() : base(NullLogger.Instance)
 		{

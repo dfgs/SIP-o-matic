@@ -154,30 +154,41 @@ namespace SIP_o_matic.ViewModels
 		{
 			SessionViewModel? currentSession=null,nextSession=null;
 
+			
 			Sessions.Clear();
 
 			foreach(TransactionViewModel transaction in Transactions)
 			{
+				
 				transaction.Analyze();
 
 				switch(transaction.SessionTrigger)
 				{
-					case SessionTriggers.Init:
-						if (transaction.Session != null) nextSession = transaction.Session;
-						break;
-					case SessionTriggers.Start:
-						if ((nextSession!= null) && (transaction.StartTime.HasValue))
+					case SetupSessionTrigger setupSessionTrigger:
+						nextSession = new SessionViewModel()
 						{
-							if (currentSession != null) currentSession.StopTime = transaction.StartTime.Value;
+							SourceAddress=setupSessionTrigger.SourceAddress,
+							SourcePort=setupSessionTrigger.SourcePort,
+							DestinationAddress=setupSessionTrigger.DestinationAddress,
+							DestinationPort=setupSessionTrigger.DestinationPort,
+							Codec=setupSessionTrigger.Codec,
+							SetupTransaction=transaction,
+						};
+						break;
+					case StartSessionTrigger startSessionTrigger:
+						if (currentSession != null) currentSession.StopTime = startSessionTrigger.Timestamp;
+						if (nextSession!= null) 
+						{
 							currentSession = nextSession;
-							currentSession.StartTime = transaction.StartTime.Value;
+							nextSession = null;
+							currentSession.StartTime = startSessionTrigger.Timestamp;
 							Sessions.Add(currentSession);
 						}
 						break;
-					case SessionTriggers.Stop:
-						if ((currentSession != null) && (transaction.StopTime.HasValue))
+					case StopSessionTrigger stopSessionTrigger:
+						if (currentSession != null) 
 						{
-							currentSession.StopTime = transaction.StopTime.Value;
+							currentSession.StopTime = stopSessionTrigger.Timestamp;
 						}
 						currentSession = null;
 						break;

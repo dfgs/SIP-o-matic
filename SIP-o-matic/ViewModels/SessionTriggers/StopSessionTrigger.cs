@@ -6,5 +6,12 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.ViewModels
 {
-	public enum SessionTriggers { None,Init,Start,Stop };
+	public class StopSessionTrigger : SessionTrigger
+	{
+		
+
+		public StopSessionTrigger(DateTime Timestamp) : base(Timestamp)
+		{
+		}
+	}
 }
