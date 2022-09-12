@@ -3,7 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:views="clr-namespace:SIP_o_matic.Views"
+ 			 xmlns:root="clr-namespace:SIP_o_matic"
+            xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" >
 
@@ -34,8 +35,31 @@
 		</Style>
 
 	</UserControl.Resources>
+
+	
+
 	<DockPanel >
-		<views:TitleView DockPanel.Dock="Top" DataContext="Calls"/>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar Band="1" BandIndex="1">
+				<Button Command="{x:Static root:RoutedCommands.AddFilter}"  ToolTip="Add filter" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/textfield_add.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.RemoveFilter}" ToolTip="Remove filter" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/textfield_delete.png"  Stretch="None"/>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
+		<views:FiltersView DockPanel.Dock="Top">
+			<views:FiltersView.Style>
+				<Style TargetType="{x:Type Control}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Filters.Count}" Value="0">
+							<Setter Property="Visibility" Value="Collapsed"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</views:FiltersView.Style>
+		</views:FiltersView>
 
 		<ListView  ItemsSource="{Binding Calls}" SelectedItem="{Binding SelectedCall}">
 			<ListView.View>

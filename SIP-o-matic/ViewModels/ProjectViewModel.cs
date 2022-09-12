@@ -47,6 +47,13 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public ObservableCollection<FilterViewModel> Filters
+		{
+			get;
+			private set;
+		}
+
+
 		public static readonly DependencyProperty SelectedFileProperty = DependencyProperty.Register("SelectedFile", typeof(FileViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public FileViewModel? SelectedFile
 		{
@@ -86,6 +93,12 @@ namespace SIP_o_matic.ViewModels
 			get { return (LadderViewModel)GetValue(LadderProperty); }
 			set { SetValue(LadderProperty, value); }
 		}
+		public static readonly DependencyProperty SelectedFilterProperty = DependencyProperty.Register("SelectedFilter", typeof(FilterViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public FilterViewModel? SelectedFilter
+		{
+			get { return (FilterViewModel)GetValue(SelectedFilterProperty); }
+			set { SetValue(SelectedFilterProperty, value); }
+		}
 
 
 		public ProjectViewModel():base(NullLogger.Instance)
@@ -99,6 +112,7 @@ namespace SIP_o_matic.ViewModels
 			Files = new ObservableCollection<FileViewModel>();
 			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
+			Filters = new ObservableCollection<FilterViewModel>();
 		}
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
@@ -108,6 +122,7 @@ namespace SIP_o_matic.ViewModels
 			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
 			Devices = new ObservableCollection<DeviceViewModel>();
+			Filters = new ObservableCollection<FilterViewModel>();
 		}
 
 		protected void OnPropertiesChanged()
@@ -322,7 +337,7 @@ namespace SIP_o_matic.ViewModels
 				RemoveDevice(FileViewModel, _device);
 			}
 
-			SelectedFile = null;
+			if (SelectedFile==FileViewModel) SelectedFile = null;
 			Files.Remove(FileViewModel);
 			
 			await foreach (CallViewModel call in Calls.ToAsyncEnumerable())
@@ -334,6 +349,17 @@ namespace SIP_o_matic.ViewModels
 
 		}
 
-		
+		public async Task AddFilterAsync(FilterViewModel Filter)
+		{
+			await Task.Yield();
+			Filters.Add(Filter);
+		}
+		public async Task RemoveFilterAsync(FilterViewModel Filter)
+		{
+			await Task.Yield();
+			if (SelectedFilter == Filter) SelectedFilter = null;
+			Filters.Remove(Filter);
+		}
+
 	}
 }

@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
 using SIP_o_matic.DataSources;
+using SIP_o_matic.ViewModels.Filters;
 
 namespace SIP_o_matic
 {
@@ -154,6 +155,58 @@ namespace SIP_o_matic
 				ShowError(ex);
 			}
 		}
+
+
+
+
+		private void AddFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = applicationViewModel.SelectedProject != null;
+		}
+
+		private async void AddFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			FilterWindow filterWindow;
+			FilterViewModel filter;
+
+			if (applicationViewModel.SelectedProject == null) return;
+
+			filter = new HeaderFilterViewModel();
+			
+			filterWindow = new FilterWindow();
+			filterWindow.Owner = this.Owner;
+			filterWindow.DataContext = filter;
+
+			if (!filterWindow.ShowDialog() ?? false) return;
+			try
+			{
+				await applicationViewModel.SelectedProject.AddFilterAsync(filter);
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+		private void RemoveFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute =  applicationViewModel?.SelectedProject?.SelectedFilter != null;
+		}
+
+		private async void RemoveFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (applicationViewModel?.SelectedProject?.SelectedFilter == null) return;
+			try
+			{
+				await applicationViewModel.SelectedProject.RemoveFilterAsync(applicationViewModel.SelectedProject.SelectedFilter);
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
+
+
 
 
 		private void CopyLogsCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
