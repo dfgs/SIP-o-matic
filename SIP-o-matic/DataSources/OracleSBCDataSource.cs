@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HtmlAgilityPack;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,8 +13,9 @@ namespace SIP_o_matic.DataSources
 {
 	public class OracleSBCDataSource : IDataSource
 	{
-		private static Regex dataRegex = new Regex(@"<pre onmouseover=""mouseOverTooltip\(this\)"">(?<Timestamp>\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d.\d\d\d)[ \n]*(?<Message>[^<]+)</pre>", RegexOptions.Multiline);
+		//private static Regex dataRegex = new Regex(@"<pre onmouseover=""mouseOverTooltip\(this\)"">(?<Timestamp>\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d.\d\d\d)[ \n]*(?<Message>[^<]+)</pre>", RegexOptions.Multiline);
 		private static Regex ipRegex = new Regex(@"(?<Value>\d+\.\d+\.\d+\.\d+)");
+		private static Regex messageRegex = new Regex(@"(?<Timestamp>\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d.\d\d\d)[ \n]*(?<Message>[^<]+)");
 
 		public string Description => "Oracle SBC";
 		
@@ -38,41 +40,101 @@ namespace SIP_o_matic.DataSources
 
 		public async IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName)
 		{
-			await Task.Yield();
-			yield break;
+			HtmlDocument document;
+			HtmlNode? div, table, header;
+			int columnsCount;
 
+			await Task.Yield();
+
+			document = new HtmlDocument();
+			document.Load(FileName);
+			div = document.DocumentNode.Descendants(0).Where(n => n.HasClass("sipMsgFlowSection")).FirstOrDefault();
+			if (div == null) yield break;
+			table = div.Element("table");
+			if (table == null) yield break;
+
+			header = table.Elements("tr").ElementAt(1);
+			if (header == null) yield break;
+
+			columnsCount = header.Elements("td").Count();
+			foreach(HtmlNode node in header.Elements("td"))
+			{
+				if (string.IsNullOrEmpty(node.InnerText)) continue;
+				yield return new Device(node.InnerText, node.InnerText);	
+			}
 		}
 
 
 		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
 		{
-			string line;
-			MatchCollection matches;
 			Event _event;
 			DateTime timeStamp;
 			string sourceAddress, destinationAddress;
 			string message;
+			string[] addresses;
+			Match match;
 
-			using (StreamReader reader=new StreamReader(FileName))
+			HtmlDocument document;
+			HtmlNode? div,table,header,messageDiv,messageRow;
+			HtmlNode[] tds;
+
+			document = new HtmlDocument();
+			document.Load(FileName);
+			div = document.DocumentNode.Descendants(0).Where(n => n.HasClass("sipMsgFlowSection")).FirstOrDefault();
+			if (div == null) yield break;
+			table = div.Element("table");
+			if (table == null) yield break;
+
+			header = table.Elements("tr").ElementAt(1);
+			if (header == null) yield break;
+
+			addresses = header.Elements("td").Select(item => item.InnerText).Where(item=>!string.IsNullOrEmpty(item)).ToArray();
+
+			foreach (HtmlNode row in table.Elements("tr").Where(n => n.HasClass("sipRow")))
 			{
-				line=await reader.ReadToEndAsync();
-				matches = dataRegex.Matches(line);
-						
-				
+				messageRow = row.Elements("td").Where(item => item.HasClass("highlightRow")).FirstOrDefault();
+				if (messageRow == null) continue;
+				messageDiv = messageRow.Element("div");
+				if (messageDiv == null) continue;
+				match = messageRegex.Match(messageDiv.InnerText);
+				if (!match.Success) continue;
 
-				await foreach (Match match in matches.ToAsyncEnumerable())
+				tds = row.Elements("td").ToArray();
+				if (tds[4].HasClass("lside-arrowright"))
 				{
-
-					timeStamp = DateTime.ParseExact(match.Groups["Timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff", null);
-
-					sourceAddress ="tbd";
-					destinationAddress = "tbd2";
-					message = match.Groups["Message"].Value;
-					_event = new Event(timeStamp, sourceAddress, destinationAddress, HttpUtility.HtmlDecode(message).ReplaceLineEndings("\r\n"));
-					yield return _event;	
+					sourceAddress = addresses[0];
+					destinationAddress = addresses[1];
+				} 
+				else if (tds[3].HasClass("rside-arrowleft"))
+				{
+					sourceAddress = addresses[1];
+					destinationAddress = addresses[0];
 				}
+				else if (tds[8].HasClass("lside-arrowright"))
+				{
+					sourceAddress = addresses[2];
+					destinationAddress = addresses[3];
+				}
+				else if (tds[7].HasClass("rside-arrowleft"))
+				{
+					sourceAddress = addresses[3];
+					destinationAddress = addresses[2];
+				}
+				else
+				{
+					sourceAddress = "Undefined source";
+					destinationAddress = "Undefined destination";
+				}
+
+
+
+				timeStamp = DateTime.ParseExact(match.Groups["Timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff",null);
+				message = HttpUtility.HtmlDecode(match.Groups["Message"].Value).ReplaceLineEndings("\r\n");
+				_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+				yield return _event;
 			}
 
+			yield break;
 		}
 
 		

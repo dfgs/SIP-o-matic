@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
 			xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
 			xmlns:sys="clr-namespace:System;assembly=mscorlib"
-			mc:Ignorable="d" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" >
+			mc:Ignorable="d" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Width="650" Height="426" >
 
 	<UserControl.Resources>
 		<viewModels:ProjectViewModel x:Key="projectViewModel"/>

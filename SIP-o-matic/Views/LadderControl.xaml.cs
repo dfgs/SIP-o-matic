@@ -100,5 +100,11 @@ namespace SIP_o_matic.Views
 			RowDoubleClicked?.Invoke(this, e);
 
 		}
+
+		private void contentScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			headerScrollViewer.ScrollToHorizontalOffset(contentScrollViewer.HorizontalOffset);
+		}
+
 	}
 }

@@ -16,9 +16,9 @@
 			<TextBlock Text="{Binding}" TextAlignment="Center" />
 		</DataTemplate>
 	</UserControl.Resources>
-	<ScrollViewer VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Auto">
-		<DockPanel>
-			<ItemsControl DockPanel.Dock="Top" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate}">
+	<DockPanel>
+		<ScrollViewer x:Name="headerScrollViewer" DockPanel.Dock="Top"  VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden">
+			<ItemsControl  ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemsSource="{Binding ElementName=root,Path=Columns}" ItemTemplate="{Binding ElementName=root,Path=HeaderTemplate}">
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -30,6 +30,8 @@
 					</Style>
 				</ItemsControl.ItemContainerStyle>
 			</ItemsControl>
+		</ScrollViewer>
+		<ScrollViewer x:Name="contentScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" ScrollChanged="contentScrollViewer_ScrollChanged">
 			<Grid>
 				<ItemsControl ItemsSource="{Binding ElementName=root,Path=Columns}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ItemTemplate="{Binding ElementName=root,Path=ColumnTemplate}">
 					<ItemsControl.ItemsPanel>
@@ -55,6 +57,6 @@
 					</ListBox.ItemsPanel>
 				</ListBox>
 			</Grid>
-		</DockPanel>
-	</ScrollViewer>
+		</ScrollViewer>
+	</DockPanel>
 </UserControl>
