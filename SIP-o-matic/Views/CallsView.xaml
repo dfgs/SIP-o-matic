@@ -64,7 +64,7 @@
 			</views:FiltersView.Style>
 		</views:FiltersView>
 
-		<ListView  ItemsSource="{Binding Calls}" SelectedItem="{Binding SelectedCall}">
+		<ListView  ItemsSource="{Binding FilteredCalls}" SelectedItem="{Binding SelectedCall}">
 			<ListView.View>
 				<GridView>
 					<GridViewColumn Width="30" Header="">

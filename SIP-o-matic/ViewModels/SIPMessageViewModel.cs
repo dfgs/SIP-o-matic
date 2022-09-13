@@ -137,5 +137,8 @@ namespace SIP_o_matic.ViewModels
 			SourceFiles.Remove(FileViewModel);
 			OnPropertiesChanged();
 		}
+
+		public abstract MessageHeader? GetHeader(string Name);
+
 	}
 }

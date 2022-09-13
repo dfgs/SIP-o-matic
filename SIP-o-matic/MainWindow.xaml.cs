@@ -210,11 +210,12 @@ namespace SIP_o_matic
 			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject?.SelectedFilter != null;
 		}
 
-		private void EditFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		private async void EditFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			FilterWindow filterWindow;
 			FilterViewModel filter;
 			FilterViewModel? oldFilter;
+
 
 			oldFilter = applicationViewModel?.SelectedProject?.SelectedFilter;
 			if ( oldFilter== null) return;
@@ -229,7 +230,7 @@ namespace SIP_o_matic
 			if (!filterWindow.ShowDialog() ?? false) return;
 			try
 			{
-				oldFilter.CopyFrom(filter);
+				await applicationViewModel!.SelectedProject!.EditFilterAsync(oldFilter,filter);
 			}
 			catch (Exception ex)
 			{

@@ -66,6 +66,11 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
+		public ObservableCollection<CallViewModel> FilteredCalls
+		{
+			get;
+			private set;
+		}
 
 		public static readonly DependencyProperty SelectedCallProperty = DependencyProperty.Register("SelectedCall", typeof(CallViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public CallViewModel? SelectedCall
@@ -112,6 +117,7 @@ namespace SIP_o_matic.ViewModels
 			Files = new ObservableCollection<FileViewModel>();
 			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
+			FilteredCalls = new ObservableCollection<CallViewModel>();
 			Filters = new ObservableCollection<FilterViewModel>();
 		}
 
@@ -121,6 +127,7 @@ namespace SIP_o_matic.ViewModels
 			Files = new ObservableCollection<FileViewModel>();
 			Folders = new ObservableCollection<PathNodeViewModel>();
 			Calls = new ObservableCollection<CallViewModel>();
+			FilteredCalls = new ObservableCollection<CallViewModel>();
 			Devices = new ObservableCollection<DeviceViewModel>();
 			Filters = new ObservableCollection<FilterViewModel>();
 		}
@@ -130,6 +137,20 @@ namespace SIP_o_matic.ViewModels
 			
 		}
 
+		private bool IsCallMatch(CallViewModel CallViewModel)
+		{
+			if (Filters.Count == 0) return true;
+
+			foreach(SIPMessageViewModel messageViewModel in CallViewModel.Dialogs.SelectMany(dialog=>dialog.Transactions).SelectMany(transaction=>transaction.SIPMessages) )
+			{
+				foreach(FilterViewModel filter in Filters)
+				{
+					if (filter.Match(messageViewModel)) return true;
+				}
+			}
+
+			return false;
+		}
 
 		public CallViewModel? FindCallByUID(int UID)
 		{
@@ -143,7 +164,6 @@ namespace SIP_o_matic.ViewModels
 		{
 			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
 		}
-
 		public FolderNodeViewModel? FindFolderNode(string Name)
 		{
 			return Folders.OfType<FolderNodeViewModel>().FirstOrDefault(item => item.Name == Name);
@@ -196,7 +216,17 @@ namespace SIP_o_matic.ViewModels
 			deviceViewModel.AddSourceFile(FileViewModel);
 			
 		}
+		public void RemoveDevice(FileViewModel FileViewModel, Device Device)
+		{
+			DeviceViewModel? deviceViewModel;
 
+			deviceViewModel = FindDeviceByName(Device.Name);
+			if (deviceViewModel == null) return;
+
+			deviceViewModel.RemoveSourceFile(FileViewModel);
+
+			if (deviceViewModel.Count == 0) Devices.Remove(deviceViewModel);
+		}
 		public void AddEvent(FileViewModel FileViewModel,Event Event)
 		{
 			CallViewModel? callViewModel;
@@ -267,17 +297,6 @@ namespace SIP_o_matic.ViewModels
 			if (callViewModel.Dialogs.Count == 0) Calls.Remove(callViewModel);
 
 		}
-		public void RemoveDevice(FileViewModel FileViewModel, Device Device)
-		{
-			DeviceViewModel? deviceViewModel;
-
-			deviceViewModel = FindDeviceByName(Device.Name);
-			if (deviceViewModel == null) return;
-
-			deviceViewModel.RemoveSourceFile(FileViewModel);
-
-			if (deviceViewModel.Count == 0) Devices.Remove(deviceViewModel);
-		}
 		public async Task AddFileAsync(string Path,IDataSource DataSource)
 		{
 			string[] folders;
@@ -322,6 +341,8 @@ namespace SIP_o_matic.ViewModels
 			{
 				call.Analyze();
 			}
+
+			await RefreshCallsAsync();
 			OnPropertiesChanged();
 		}
 		public async Task RemoveFileAsync(FileViewModel FileViewModel)
@@ -345,21 +366,44 @@ namespace SIP_o_matic.ViewModels
 				call.Analyze();
 			}
 
+			await RefreshCallsAsync();
+
 			OnPropertiesChanged();
 
 		}
 
 		public async Task AddFilterAsync(FilterViewModel Filter)
 		{
-			await Task.Yield();
 			Filters.Add(Filter);
+			await RefreshCallsAsync();
 		}
 		public async Task RemoveFilterAsync(FilterViewModel Filter)
 		{
-			await Task.Yield();
 			if (SelectedFilter == Filter) SelectedFilter = null;
 			Filters.Remove(Filter);
+			await RefreshCallsAsync();
+		}
+		public async Task EditFilterAsync(FilterViewModel Filter, FilterViewModel Other)
+		{
+			Filter.CopyFrom(Other);
+			await RefreshCallsAsync();
 		}
 
+		private async Task RefreshCallsAsync()
+		{
+			bool match;
+
+			SelectedCall = null;
+			FilteredCalls.Clear();
+
+			await foreach (CallViewModel call in Calls.ToAsyncEnumerable())
+			{
+				match = IsCallMatch(call);
+				if (match) FilteredCalls.Add(call);
+			}
+
+		}
+
+		
 	}
 }

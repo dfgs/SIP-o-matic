@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SIPParserLib;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -49,6 +51,33 @@ namespace SIP_o_matic.ViewModels
 			this.Value = other.Value;
 			OnPropertyChanged("Description");
 		}
+
+		public override bool Match(SIPMessageViewModel MessageViewModel)
+		{
+			MessageHeader? header;
+			string headerValue;
+
+			header = MessageViewModel.GetHeader(Header);
+			if (header == null) return false;
+
+			headerValue = header.GetStringValue();
+			switch(Operand)
+			{
+				case FilterOperands.In:
+					foreach(string part in Value.Split(','))
+					{
+						if (headerValue.Contains(part)) return true;
+					}
+					return false;
+				case FilterOperands.Contains:
+					return headerValue.Contains(Value);
+				case FilterOperands.Regex:
+					return Regex.Match(headerValue, Value).Success;
+			}
+
+			return false;
+		}
+
 
 		public override string ToString()
 		{

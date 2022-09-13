@@ -54,6 +54,11 @@ namespace SIP_o_matic.ViewModels
 
 		}
 
+		public override MessageHeader? GetHeader(string Name)
+		{
+			return request.Headers.FirstOrDefault(item => item.Name == Name);
+		}
+
 
 
 	}

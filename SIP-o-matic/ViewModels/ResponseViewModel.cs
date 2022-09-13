@@ -76,6 +76,11 @@ namespace SIP_o_matic.ViewModels
 			}
 			OnPropertyChanged(nameof(Status));
 		}
+		public override MessageHeader? GetHeader(string Name)
+		{
+			return response.Headers.FirstOrDefault(item => item.Name == Name);
+		}
+
 
 	}
 }

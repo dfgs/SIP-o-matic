@@ -19,5 +19,6 @@ namespace SIP_o_matic.ViewModels
 
 		public abstract void CopyFrom(FilterViewModel Other);
 
+		public abstract bool Match(SIPMessageViewModel MessageViewModel);
 	}
 }
