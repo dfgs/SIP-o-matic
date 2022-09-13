@@ -19,6 +19,7 @@ namespace SIP_o_matic
 		public static RoutedCommand Cancel = new RoutedCommand();
 		public static RoutedCommand AddFilter = new RoutedCommand();
 		public static RoutedCommand RemoveFilter = new RoutedCommand();
+		public static RoutedCommand EditFilter = new RoutedCommand();
 		public static RoutedCommand AddDevice = new RoutedCommand();
 		public static RoutedCommand RemoveDevice= new RoutedCommand();
 	}

@@ -15,6 +15,7 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.CopyLogs}" CanExecute="CopyLogsCommandBinding_CanExecute" Executed="CopyLogsCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddFilter}" CanExecute="AddFilterCommandBinding_CanExecute" Executed="AddFilterCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveFilter}" CanExecute="RemoveFilterCommandBinding_CanExecute" Executed="RemoveFilterCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.EditFilter}" CanExecute="EditFilterCommandBinding_CanExecute" Executed="EditFilterCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>

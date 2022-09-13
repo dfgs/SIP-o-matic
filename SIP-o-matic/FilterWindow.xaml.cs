@@ -1,7 +1,8 @@
-﻿using SIP_o_matic.ViewModels.Filters;
+﻿using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -38,7 +39,15 @@ namespace SIP_o_matic
 		}
 		private void OKCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = true;
+			HeaderFilterViewModel? filter;
+
+			e.Handled = true;
+			filter = DataContext as HeaderFilterViewModel;
+			if (filter == null) e.CanExecute = false;
+			else
+			{
+				e.CanExecute = (!string.IsNullOrEmpty(filter.Header)) && (!string.IsNullOrEmpty(filter.Value));
+			}
 		}
 
 		private void OKCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)

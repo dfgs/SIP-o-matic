@@ -9,10 +9,15 @@ namespace SIP_o_matic.ViewModels
 {
 	public abstract class FilterViewModel : ViewModel
 	{
+		public abstract string Description
+		{
+			get;
+		}
 		protected FilterViewModel() : base(NullLogger.Instance)
 		{
 		}
 
+		public abstract void CopyFrom(FilterViewModel Other);
 
 	}
 }

@@ -17,7 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
 using SIP_o_matic.DataSources;
-using SIP_o_matic.ViewModels.Filters;
+
 
 namespace SIP_o_matic
 {
@@ -205,6 +205,37 @@ namespace SIP_o_matic
 			}
 		}
 
+		private void EditFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject?.SelectedFilter != null;
+		}
+
+		private void EditFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			FilterWindow filterWindow;
+			FilterViewModel filter;
+			FilterViewModel? oldFilter;
+
+			oldFilter = applicationViewModel?.SelectedProject?.SelectedFilter;
+			if ( oldFilter== null) return;
+
+			filter = new HeaderFilterViewModel();
+			filter.CopyFrom(oldFilter);
+
+			filterWindow = new FilterWindow();
+			filterWindow.Owner = this.Owner;
+			filterWindow.DataContext = filter;
+
+			if (!filterWindow.ShowDialog() ?? false) return;
+			try
+			{
+				oldFilter.CopyFrom(filter);
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
 
 
 

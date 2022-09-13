@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIP_o_matic.ViewModels.Filters
+namespace SIP_o_matic.ViewModels
 {
 	public enum FilterOperands { Contains,In,Regex };
 }

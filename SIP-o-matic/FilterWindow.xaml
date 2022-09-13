@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:root="clr-namespace:SIP_o_matic" x:Name="window"
         mc:Ignorable="d" ResizeMode="NoResize" SizeToContent="Height" WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow"
-        Title="Filter"  Width="320" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
+        Title="Filter"  Width="500" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 	<Window.CommandBindings>
 		<CommandBinding Command="{x:Static root:RoutedCommands.Cancel}" CanExecute="CancelCommandBinding_CanExecute" Executed="CancelCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.OK}" CanExecute="OKCommandBinding_CanExecute" Executed="OKCommandBinding_Executed"/>
@@ -21,9 +21,9 @@
 		</Grid.RowDefinitions>
 		<Grid Grid.Row="0" >
 			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="2*"/>
 				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
-				<ColumnDefinition Width="1*"/>
+				<ColumnDefinition Width="3*"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto"/>

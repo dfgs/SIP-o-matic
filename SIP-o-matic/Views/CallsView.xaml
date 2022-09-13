@@ -47,6 +47,9 @@
 				<Button Command="{x:Static root:RoutedCommands.RemoveFilter}" ToolTip="Remove filter" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/textfield_delete.png"  Stretch="None"/>
 				</Button>
+				<Button Command="{x:Static root:RoutedCommands.EditFilter}" ToolTip="Edit filter" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/textfield_rename.png"  Stretch="None"/>
+				</Button>
 			</ToolBar>
 		</ToolBarTray>
 		<views:FiltersView DockPanel.Dock="Top">

@@ -32,6 +32,7 @@
     <None Remove="Images\sound_none.png" />
     <None Remove="Images\textfield_add.png" />
     <None Remove="Images\textfield_delete.png" />
+    <None Remove="Images\textfield_rename.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,6 +61,7 @@
     <Resource Include="Images\sound_none.png" />
     <Resource Include="Images\textfield_add.png" />
     <Resource Include="Images\textfield_delete.png" />
+    <Resource Include="Images\textfield_rename.png" />
   </ItemGroup>
 
   <ItemGroup>
