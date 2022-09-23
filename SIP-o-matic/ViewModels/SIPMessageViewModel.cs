@@ -120,22 +120,22 @@ namespace SIP_o_matic.ViewModels
 			//this.From = From;this.To = To;
 		}
 
-		protected void OnPropertiesChanged()
+		/*protected void OnPropertiesChanged()
 		{
 			OnPropertyChanged(nameof(Count));
 
-		}
+		}*/
 
 		public void AddSourceFile(FileViewModel FileViewModel)
 		{
 			SourceFiles.Add(FileViewModel);
-			OnPropertiesChanged();
+			OnPropertyChanged(nameof(Count));
 		}
 
 		public void RemoveSourceFile(FileViewModel FileViewModel)
 		{
 			SourceFiles.Remove(FileViewModel);
-			OnPropertiesChanged();
+			OnPropertyChanged(nameof(Count));
 		}
 
 		public abstract MessageHeader? GetHeader(string Name);

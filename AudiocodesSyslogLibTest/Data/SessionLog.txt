@@ -1,0 +1,5 @@
+﻿15:27:04.000  172.23.239.22   local0.notice  [S=159026163] [SID=c81f29:26:631315]  (N 48312010)  SETUP_EV: (#8356)SBCCall -> (#6295)SBCEndPoint[NewCall->Initiated] 
+                                             -> (#3147)SBCController[NewCall->Establishing] 
+                                             -> (#6294)SBCEndPoint[NewCall->Initiated] 
+                                             -> (#471)CallPlacement[Idle->Initiated] 
+                                             -> (#4375)SBCCall [Time:30-05@15:27:04.429]

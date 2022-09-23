@@ -14,34 +14,57 @@ namespace SIP_o_matic.ViewModels
 	public class DialogViewModel:ViewModel
 	{
 
-		public DateTime? StartTime
+		public static readonly DependencyProperty StartTimeProperty = DependencyProperty.Register("StartTime", typeof(DateTime), typeof(DialogViewModel));
+		public DateTime StartTime
 		{
-			get => Transactions.FirstOrDefault()?.StartTime;
+			get { return (DateTime)GetValue(StartTimeProperty); }
+			set { SetValue(StartTimeProperty, value); }
 		}
 
-		public DateTime? StopTime
+		public static readonly DependencyProperty StopTimeProperty = DependencyProperty.Register("StopTime", typeof(DateTime), typeof(DialogViewModel));
+		public DateTime StopTime
 		{
-			get => Transactions.LastOrDefault()?.StopTime;
+			get { return (DateTime)GetValue(StopTimeProperty); }
+			set { SetValue(StopTimeProperty, value); }
 		}
 
-		public string? SourceAddress
+		public static readonly DependencyProperty SourceAddressProperty = DependencyProperty.Register("SourceAddress", typeof(string), typeof(DialogViewModel));
+		public string SourceAddress
 		{
-			get => Transactions.FirstOrDefault()?.SourceAddress;
+			get { return (string)GetValue(SourceAddressProperty); }
+			set { SetValue(SourceAddressProperty, value); }
 		}
 
-		public string? DestinationAddress
+		public static readonly DependencyProperty DestinationAddressProperty = DependencyProperty.Register("DestinationAddress", typeof(string), typeof(DialogViewModel));
+		public string DestinationAddress
 		{
-			get => Transactions.FirstOrDefault()?.DestinationAddress;
+			get { return (string)GetValue(DestinationAddressProperty); }
+			set { SetValue(DestinationAddressProperty, value); }
 		}
 
-		public string? FromTag
+		public static readonly DependencyProperty FromTagProperty = DependencyProperty.Register("FromTag", typeof(string), typeof(DialogViewModel));
+		public string FromTag
 		{
-			get => Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.FromTag;
+			get { return (string)GetValue(FromTagProperty); }
+			set { SetValue(FromTagProperty, value); }
 		}
-		public string? ToTag
+
+		public static readonly DependencyProperty ToTagProperty = DependencyProperty.Register("ToTag", typeof(string), typeof(DialogViewModel));
+		public string ToTag
 		{
-			get => Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault(item=>!string.IsNullOrEmpty(item.ToTag))?.ToTag;
+			get { return (string)GetValue(ToTagProperty); }
+			set { SetValue(ToTagProperty, value); }
 		}
+
+		public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(Statuses), typeof(DialogViewModel));
+		public Statuses Status
+		{
+			get { return (Statuses)GetValue(StatusProperty); }
+			set { SetValue(StatusProperty, value); }
+		}
+		
+
+
 		public ObservableCollection<TransactionViewModel> Transactions
 		{
 			get;
@@ -67,11 +90,7 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(SelectedTransactionProperty, value); }
 		}
 
-		public Statuses Status
-		{
-			get;
-			private set;
-		}
+		
 
 
 		public int UID1
@@ -98,15 +117,7 @@ namespace SIP_o_matic.ViewModels
 			this.UID2 = UID2;
 		}
 
-		protected void OnPropertiesChanged()
-		{
-			OnPropertyChanged(nameof(StartTime));
-			OnPropertyChanged(nameof(StopTime));
-			OnPropertyChanged(nameof(SourceAddress));
-			OnPropertyChanged(nameof(DestinationAddress));
-			OnPropertyChanged(nameof(FromTag));
-			OnPropertyChanged(nameof(ToTag));
-		}
+		
 
 		public TransactionViewModel? FindTransactionByUID(int UID)
 		{
@@ -132,7 +143,7 @@ namespace SIP_o_matic.ViewModels
 			transactionViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage,SDP);
 			
 
-			OnPropertiesChanged();
+			//OnPropertiesChanged();
 		}
 		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
 		{
@@ -145,7 +156,7 @@ namespace SIP_o_matic.ViewModels
 			if (transactionViewModel == null) return;
 			transactionViewModel.RemoveSIPMessage(FileViewModel, Event, SIPMessage);
 			if (transactionViewModel.SIPMessages.Count == 0) Transactions.Remove(transactionViewModel);
-			OnPropertiesChanged();
+			//OnPropertiesChanged();
 
 		}
 
@@ -196,10 +207,14 @@ namespace SIP_o_matic.ViewModels
 				}
 				
 			}
+			StartTime = Transactions.FirstOrDefault()?.StartTime??DateTime.MinValue;
+			StopTime = Transactions.FirstOrDefault()?.StopTime ?? DateTime.MaxValue;
+			SourceAddress= Transactions.FirstOrDefault()?.SourceAddress??"Undefined";
+			DestinationAddress = Transactions.FirstOrDefault()?.DestinationAddress ?? "Undefined";
+			FromTag= Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.FromTag ?? "Undefined";
+			ToTag= Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault(item => !string.IsNullOrEmpty(item.ToTag))?.ToTag ?? "Undefined";
 
-
-			this.Status = Transactions.Max(item => item.Status);
-			OnPropertyChanged(nameof(Status));
+			Status = Transactions.Max(item => item.Status);
 		}
 
 	}

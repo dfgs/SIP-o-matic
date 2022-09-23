@@ -15,31 +15,50 @@ namespace SIP_o_matic.ViewModels
 	public class CallViewModel:ViewModel
 	{
 
-		public DateTime? StartTime
-		{
-			get => Dialogs.FirstOrDefault()?.StartTime;
-		}
-
-		public DateTime? StopTime
-		{
-			get => Dialogs.LastOrDefault()?.StopTime;
-		}
-		
-
-		public string? From
-		{
-			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.From;
-		}
-		public string? To
-		{
-			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault(item=>item.ToTag!=null)?.To;
-		}
 
 
-		public string? CallID
+		public static readonly DependencyProperty StartTimeProperty = DependencyProperty.Register("StartTime", typeof(DateTime), typeof(CallViewModel));
+		public DateTime StartTime
 		{
-			get => Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.CallID;
+			get { return (DateTime)GetValue(StartTimeProperty); }
+			set { SetValue(StartTimeProperty, value); }
 		}
+		public static readonly DependencyProperty StopTimeProperty = DependencyProperty.Register("StopTime", typeof(DateTime), typeof(CallViewModel));
+		public DateTime StopTime
+		{
+			get { return (DateTime)GetValue(StopTimeProperty); }
+			set { SetValue(StopTimeProperty, value); }
+		}
+
+		public static readonly DependencyProperty FromProperty = DependencyProperty.Register("From", typeof(string), typeof(CallViewModel));
+		public string From
+		{
+			get { return (string)GetValue(FromProperty); }
+			set { SetValue(FromProperty, value); }
+		}
+
+		public static readonly DependencyProperty ToProperty = DependencyProperty.Register("To", typeof(string), typeof(CallViewModel));
+		public string To
+		{
+			get { return (string)GetValue(ToProperty); }
+			set { SetValue(ToProperty, value); }
+		}
+
+		public static readonly DependencyProperty CallIDProperty = DependencyProperty.Register("CallID", typeof(string), typeof(CallViewModel));
+		public string CallID
+		{
+			get { return (string)GetValue(CallIDProperty); }
+			set { SetValue(CallIDProperty, value); }
+		}
+
+
+		public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(Statuses), typeof(CallViewModel));
+		public Statuses Status
+		{
+			get { return (Statuses)GetValue(StatusProperty); }
+			set { SetValue(StatusProperty, value); }
+		}
+
 
 
 		public static readonly DependencyProperty SelectedDialogProperty = DependencyProperty.Register("SelectedDialog", typeof(DialogViewModel), typeof(CallViewModel), new PropertyMetadata(null));
@@ -68,11 +87,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public Statuses Status
-		{
-			get;
-			private set;
-		}
+		
 
 		public int UID
 		{
@@ -86,14 +101,15 @@ namespace SIP_o_matic.ViewModels
 			Dialogs = new ObservableCollection<DialogViewModel>();
 		}
 
-		protected void OnPropertiesChanged()
+		/*protected void OnPropertiesChanged()
 		{
 			OnPropertyChanged(nameof(StartTime));
 			OnPropertyChanged(nameof(StopTime));
 			OnPropertyChanged(nameof(From));
 			OnPropertyChanged(nameof(To));
 			OnPropertyChanged(nameof(CallID));
-		}
+			OnPropertyChanged(nameof(Status));
+		}*/
 
 
 		public DialogViewModel? FindDialogByUID1(int UID1)
@@ -132,7 +148,7 @@ namespace SIP_o_matic.ViewModels
 
 			
 			dialogViewModel.AddSIPMessage(FileViewModel, Event, SIPMessage,SDP);
-			OnPropertiesChanged();
+			//OnPropertiesChanged();
 		}
 		public void RemoveSIPMessage(FileViewModel FileViewModel, Event Event, SIPMessage SIPMessage)
 		{
@@ -152,7 +168,7 @@ namespace SIP_o_matic.ViewModels
 			dialogViewModel.RemoveSIPMessage(FileViewModel,Event, SIPMessage);
 			if (dialogViewModel.Transactions.Count == 0) Dialogs.Remove(dialogViewModel);
 
-			OnPropertiesChanged();
+			//OnPropertiesChanged();
 
 
 		}
@@ -163,8 +179,14 @@ namespace SIP_o_matic.ViewModels
 			{
 				dialog.Analyze();
 			}
-			this.Status = Dialogs.Max(item => item.Status);
-			OnPropertyChanged(nameof(Status));
+
+			StartTime = Dialogs.LastOrDefault()?.StartTime?? DateTime.MinValue;
+			StopTime = Dialogs.LastOrDefault()?.StopTime?? DateTime.MaxValue;
+			From = Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.From ?? "Undefined";
+			To = Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.To ?? "Undefined";
+			CallID = Dialogs.FirstOrDefault()?.Transactions.FirstOrDefault()?.SIPMessages.FirstOrDefault()?.CallID ?? "Undefined";
+
+			Status = Dialogs.Max(item => item.Status);
 		}
 
 

@@ -58,8 +58,9 @@ namespace SIP_o_matic.DataSources
 			do
 			{
 				line = await Reader.ReadLineAsync();
-
 				if (line == null) break;
+				line = line.Replace(@"\n", "\r\n");
+				//line = line.ReplaceLineEndings("\r\n");
 				buffer += line+"\r\n";
 				match = eolRegex.Match(line);
 			} while (!match.Success);

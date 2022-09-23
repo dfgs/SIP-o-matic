@@ -161,7 +161,7 @@ namespace SIP_o_matic.ViewModels
 
 			dialogEvent = new DialogEventViewModel()
 			{
-				Timestamp = Dialog.StartTime ?? DateTime.MinValue,
+				Timestamp = Dialog.StartTime ,
 				SourceDevice = sourceDevice,
 				DestinationDevice = destinationDevice,
 				Display = Dialog.Transactions.FirstOrDefault()?.ShortDisplay ?? "Undefined",
@@ -185,7 +185,7 @@ namespace SIP_o_matic.ViewModels
 
 			transactionEvent = new TransactionEventViewModel()
 			{
-				Timestamp = Transaction.StartTime ?? DateTime.MinValue,
+				Timestamp = Transaction.StartTime ,
 				SourceDevice = sourceDevice,
 				DestinationDevice = destinationDevice,
 				Display = Transaction.ShortDisplay ?? "Undefined",

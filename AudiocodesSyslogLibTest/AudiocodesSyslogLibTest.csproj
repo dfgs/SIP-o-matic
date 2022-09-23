@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Usings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Data\BadBlockThenTwoBlocks.txt" />
+    <None Remove="Data\BoardLog.txt" />
+    <None Remove="Data\IncomingMessagesSeveralLogs.txt" />
+    <None Remove="Data\OneBlock.txt" />
+    <None Remove="Data\OneLog.txt" />
+    <None Remove="Data\SessionLog.txt" />
+    <None Remove="Data\ThreeLogs.txt" />
+    <None Remove="Data\TwoBlocks.txt" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <EmbeddedResource Include="Data\BadBlockThenTwoBlocks.txt" />
+    <EmbeddedResource Include="Data\BoardLog.txt" />
+    <EmbeddedResource Include="Data\ThreeLogs.txt" />
+    <EmbeddedResource Include="Data\OneLog.txt" />
+    <EmbeddedResource Include="Data\SessionLog.txt" />
+    <EmbeddedResource Include="Data\IncomingMessagesSeveralLogs.txt" />
+    <EmbeddedResource Include="Data\TwoBlocks.txt" />
+    <EmbeddedResource Include="Data\OneBlock.txt" />
+    <EmbeddedResource Include="Usings.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="2.2.8" />
+    <PackageReference Include="MSTest.TestFramework" Version="2.2.8" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AudiocodesSyslogLib\AudiocodesSyslogLib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+		<EmbeddedResource Include="Data\BadBlock.txt" />
+  </ItemGroup>
+
+</Project>

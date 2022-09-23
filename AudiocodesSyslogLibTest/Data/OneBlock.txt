@@ -1,0 +1,10 @@
+﻿18:14:37.000  172.28.0.12  local0.notice  [S=2506] [BID=b0883a:27]  (N     8727) TLSSocketAPI(#2788) Socket error message: CTlsSocket::ContinueHandshake TLS handshake. i=0, err=337047686, errstr=error:1416F086:SSL routines:tls_process_server_certificate:certificate verify failed SocketName: SIPTLS#2788, FileDesc: 6 . Local IP Address = 172.31.0.11:45041, Remote IP Address = 84.14.246.203:5061 
+                                                                    (N     8728) TLSSocketAPI(#2788) Socket debug message: CTlsSocket::ContinueHandshake TLS handshake error code 19, last error: error:00000000:lib(0):func(0):reason(0)SocketName: SIPTLS#2788, FileDesc: 6
+                                                                    (N     8729) SIPSocketReliable(#2788)::Handle_AC_CB_RECV_EV(EVENT_RECEIVER_ERROR) - Peek failed err=-1
+                                                                    (N     8730) TLSSocketAPI(#2788)::DispatchQueueEvent(EVENT_RECEIVER_ERROR) - Closing connection
+                                                                    (N     8731) SIPSocketReliable(#2788)::ReleaseConnection - Closing connection
+                                                                    (N     8732) TLSSocketAPI(#2788) Released
+                                                                    (N     8733) SIPSocketReliable(#2788) Released - SocketID=241
+                                                                    (N     8734) TLSSocketAPI(#2788)::CloseConnection - Closing connection
+                                                                    (N     8735) Socket buffer released - (#2789)
+                                                                    [Time:30-06@18:14:36.723]

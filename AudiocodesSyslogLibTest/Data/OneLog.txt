@@ -1,0 +1,1 @@
+﻿09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337879] [SID=cd9263:28:29209476]  (N 17906355)  (#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER) 

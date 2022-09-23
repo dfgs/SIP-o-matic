@@ -1,0 +1,84 @@
+﻿09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337879] [SID=cd9263:28:29209476]  (N 17906355)  (#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER) 
+                                                                                         (N 17906356)  ---- Incoming SIP Message from 52.114.76.76:11136 to SIPInterface #1 (SIP_DATA_TEAMS) TLS TO(#553) SocketID(10299584) ----
+                                                                                         [Time:13-09@14:47:14.279]
+09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337880] [SID=cd9263:28:29209476]  INVITE sip:+333901@accessit-sbc01.teams-dr.nxocloudms.com:5061;user=phone;transport=tls SIP/2.0 
+                                                                                         FROM: "AccessIT"<sip:+33143901980@sip.pstnhub.microsoft.com:5061;user=phone>;tag=472a517218504e28bdb5623e05cca3ce
+                                                                                         TO: <sip:+333901@accessit-sbc01.teams-dr.nxocloudms.com:5061;user=phone>
+                                                                                         CSEQ: 1 INVITE
+                                                                                         CALL-ID: b12186e3d2f1512ca18f7126e90093c5
+                                                                                         MAX-FORWARDS: 70
+                                                                                         VIA: SIP/2.0/TLS 52.114.76.76:5061;branch=z9hG4bKd9bf710d
+                                                                                         RECORD-ROUTE: <sip:sip-du-a-eu.pstnhub.microsoft.com:5061;transport=tls;lr>
+                                                                                         CONTACT: <sip:api-du-b-euwe.pstnhub.microsoft.com:443;x-i=699d911e-d6f4-43e6-ab92-31e5d62aaca8;x-c=b12186e3d2f1512ca18f7126e90093c5/d/8/9dc86560ebc94fbfad2b0c326f49b2fd>
+                                                                                         CONTENT-LENGTH: 2245
+                                                                                         SUPPORTED: histinfo
+                                                                                         USER-AGENT: Microsoft.PSTNHub.SIPProxy v.2022.9.9.1 i.EUNO.10
+                                                                                         CONTENT-TYPE: application/sdp
+                                                                                         ALLOW: INVITE,ACK,OPTIONS,CANCEL,BYE,NOTIFY
+                                                                                         P-ASSERTED-IDENTITY: <tel:+33143902927>,<sip:ccochereau@castelis.com>
+                                                                                         PRIVACY: id
+                                                                                         
+                                                                                         v=0
+                                                                                         o=- 0 0 IN IP4 52.114.252.65
+                                                                                         s=session
+                                                                                         c=IN IP4 52.114.252.65
+                                                                                         b=CT:50000
+                                                                                         t=0 0
+                                                                                         m=audio 52527 RTP/SAVP 104 102 9 111 18 0 8 103 97 13 118 119 101
+                                                                                         a=rtcp:52506
+                                                                                         a=ice-ufrag:cpPO
+                                                                                         a=ice-pwd:yYHGTMGQNVFXPZw0Y8PdqBd1
+                                                                                         a=rtcp-mux
+                                                                                         a=candidate:4 1 UDP 1258289663 52.114.252.65 5 [Time:13-09@14:47:14.279]
+09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337881] [SID=cd9263:28:29209476]  2527 typ relay raddr 159.180.243.190 rport 50004 
+                                                                                         a=candidate:4 2 UDP 1258289150 52.114.252.65 52506 typ relay raddr 159.180.243.190 rport 50005
+                                                                                         a=candidate:1 1 UDP 2130706431 192.168.10.61 50004 typ host
+                                                                                         a=candidate:1 2 UDP 2130705918 192.168.10.61 50005 typ host
+                                                                                         a=candidate:2 1 tcp-act 2121006078 192.168.10.61 50000 typ host
+                                                                                         a=candidate:2 2 tcp-act 2121006078 192.168.10.61 50000 typ host
+                                                                                         a=candidate:3 1 UDP 1694497791 159.180.243.190 50004 typ srflx raddr 192.168.10.61 rport 50004
+                                                                                         a=candidate:3 2 UDP 1694497278 159.180.243.190 50005 typ srflx raddr 192.168.10.61 rport 50005
+                                                                                         a=candidate:5 1 tcp-act 1684796926 159.180.243.190 50016 typ srflx raddr 192.168.10.61 rport 50016
+                                                                                         a=candidate:5 2 tcp-act 1684796926 159.180.243.190 50016 typ srflx raddr 192.168.10.61 rport 50016
+                                                                                         a=candidate:6 1 tcp-pass 1248195582 52.114.252.42 53273 typ relay raddr 159.180.243.190 rport 50016
+                                                                                         a=candidate:6 2 tcp-pass 1248195582 52.114.252.42 53273 typ relay raddr 159.180.243.190 rport 50016
+                                                                                         a=candidate:7 1 tcp-act 1248588286 52.114.252.42 53273 typ relay raddr 159.180.243.190 rport 50016
+                                                                                         a=candidate:7 2 tcp-act 1248588286 52.114.252.42 53273 typ relay raddr 159.180.243.190 rport 50016
+                                                                                         a=crypto:1 AES_CM_128_HMAC_S [Time:13-09@14:47:14.279]
+09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337882] [SID=cd9263:28:29209476]  HA1_32 inline:pFSEWJNlHNCTRkYfX+NI7mbqmqo9CtoDSW2L35Ry|2^31 
+                                                                                         a=crypto:2 AES_CM_128_HMAC_SHA1_80 inline:pFSEWJNlHNCTRkYfX+NI7mbqmqo9CtoDSW2L35Ry|2^31
+                                                                                         a=crypto:3 AES_CM_128_HMAC_SHA1_80 inline:pFSEWJNlHNCTRkYfX+NI7mbqmqo9CtoDSW2L35Ry|2^31|1:1
+                                                                                         a=rtpmap:104 SILK/16000
+                                                                                         a=fmtp:104 useinbandfec=0; usedtx=0
+                                                                                         a=rtpmap:102 opus/48000/2
+                                                                                         a=fmtp:102 useinbandfec=1; minptime=10
+                                                                                         a=rtpmap:9 G722/8000
+                                                                                         a=rtpmap:111 SIREN/16000
+                                                                                         a=fmtp:111 bitrate=16000
+                                                                                         a=rtpmap:18 G729/8000
+                                                                                         a=rtpmap:0 PCMU/8000
+                                                                                         a=rtpmap:8 PCMA/8000
+                                                                                         a=rtpmap:103 SILK/8000
+                                                                                         a=fmtp:103 useinbandfec=0; usedtx=0
+                                                                                         a=rtpmap:97 RED/8000
+                                                                                         a=rtpmap:13 CN/8000
+                                                                                         a=rtpmap:118 CN/16000
+                                                                                         a=rtpmap:119 CN/24000
+                                                                                         a=rtpmap:101 telephone-event/8000
+                                                                                         a=fmtp:101 0-16
+                                                                                         a=ptime:20
+                                                                                         a=maxptime:200
+                                                                                         [Time:13-09@14:47:14.279]
+09/13 14:47:15.000  100.112.70.10  local0.notice  [S=76337883] [SID=cd9263:28:29209476]  (N 17906357)  ---- Outgoing SIP Message to 52.114.76.76:11136 from SIPInterface #1 (SIP_DATA_TEAMS) TLS TO(#553) SocketID(10299584) ---- 
+                                                                                         SIP/2.0 100 Trying
+                                                                                         Via: SIP/2.0/TLS 52.114.76.76:5061;branch=z9hG4bKd9bf710d
+                                                                                         From: "AccessIT" <sip:+33143901980@ACCESSIT-sbc01.teams-dr.nxocloudms.com:5061;user=phone>;tag=472a517218504e28bdb5623e05cca3ce
+                                                                                         To: <sip:+333901@ACCESSIT-sbc01.teams-dr.nxocloudms.com:5061;user=phone>
+                                                                                         Call-ID: b12186e3d2f1512ca18f7126e90093c5
+                                                                                         CSeq: 1 INVITE
+                                                                                         Server: NXOCLOUD - Microsoft
+                                                                                         Content-Length: 0
+                                                                                         
+                                                                                         
+                                                                                         (N 17906358)  ---- Outgoing SIP Message to 100.127.2.1:5060 from SIPInterface #0 (SIP_VOIX_LINKER) UDP TO(#0) ----
+                                                                                         [Time:13-09@14:47:14.286]

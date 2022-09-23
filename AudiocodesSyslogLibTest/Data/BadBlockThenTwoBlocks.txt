@@ -1,0 +1,15 @@
+﻿                                                                    (N     8728) TLSSocketAPI(#2788) Socket debug message: CTlsSocket::ContinueHandshake TLS handshake error code 19, last error: error:00000000:lib(0):func(0):reason(0)SocketName: SIPTLS#2788, FileDesc: 6
+                                                                    (N     8729) SIPSocketReliable(#2788)::Handle_AC_CB_RECV_EV(EVENT_RECEIVER_ERROR) - Peek failed err=-1
+                                                                    (N     8730) TLSSocketAPI(#2788)::DispatchQueueEvent(EVENT_RECEIVER_ERROR) - Closing connection
+                                                                    (N     8731) SIPSocketReliable(#2788)::ReleaseConnection - Closing connection
+                                                                    (N     8732) TLSSocketAPI(#2788) Released
+                                                                    (N     8733) SIPSocketReliable(#2788) Released - SocketID=241
+                                                                    (N     8734) TLSSocketAPI(#2788)::CloseConnection - Closing connection
+                                                                    (N     8735) Socket buffer released - (#2789)
+                                                                    [Time:30-06@18:14:36.723]
+15:27:04.000  172.23.239.22   local1.info    [S=3256744] |CALL_START     |SBC       |BW152705931300522-1195088940@10.79.21.40                        |c81f29:26:631315        |RMT  |176.161.242.37      |5060         |10.105.9.205        |5060       |UDP             |+33646543499@10.79.21.40                 |+33646543499@10.79.21.40                 |+33549400033@10.105.9.205                |+33549400033@10.105.9.205                |0       |UNKN |REASON N/A                              |UNKNOWN          |15:27:04.428  UTC Mon May 30 2022  |                                   |                                   |-1             |                                         |                                         |24             |IPG_BYTEL1                      |SRD_MAIF                        |SIP_BYTEL1                      |PS_BYTEL1                       |IPP_BYTEL                       |MR_BYTEL1                       |no         |            |                          |                                                   |                                     |Normal  |1    |                          
+15:27:04.000  172.23.239.22   local0.notice  [S=159026163] [SID=c81f29:26:631315]  (N 48312010)  SETUP_EV: (#8356)SBCCall -> (#6295)SBCEndPoint[NewCall->Initiated] 
+                                             -> (#3147)SBCController[NewCall->Establishing] 
+                                             -> (#6294)SBCEndPoint[NewCall->Initiated] 
+                                             -> (#471)CallPlacement[Idle->Initiated] 
+                                             -> (#4375)SBCCall [Time:30-05@15:27:04.429]
