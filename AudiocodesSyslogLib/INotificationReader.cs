@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace AudiocodesSyslogLib
 {
-	public interface ILogReader
+	public interface INotificationReader
 	{
 		
-		IAsyncEnumerable<string> ReadLogsAsync(Stream Stream);
+		IAsyncEnumerable<Notification> ReadNotificationsAsync(Stream Stream);
 
 	}
 }

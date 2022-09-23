@@ -7,27 +7,31 @@ using System.Threading.Tasks;
 
 namespace AudiocodesSyslogLib
 {
-	public  class LogReader: ILogReader
+	public  class NotificationReader: INotificationReader
 	{
-		private static Regex eventRegex = new Regex(@"\(N +(?<EventID>\d+)\) +(?<Message>.+)");
+		private static Regex notificationRegex = new Regex(@"\(N +(?<NotificationID>\d+)\) +(?<Message>.+)");
 
 		private ISyslogReader syslogReader;
 
-		public LogReader(ISyslogReader SyslogReader)
+		public NotificationReader(ISyslogReader SyslogReader)
 		{
 			if (SyslogReader == null) throw new ArgumentNullException(nameof(SyslogReader));
 			this.syslogReader = SyslogReader;
 		}
 
-		public async IAsyncEnumerable<string> ReadLogsAsync(Stream Stream)
+		public async IAsyncEnumerable<Notification> ReadNotificationsAsync(Stream Stream)
 		{
 			Match match;
 			SessionSyslog? sessionSyslog;
+			DateTime timeStamp;
+			ulong notificationID;
 
 			string? currentBlock = null;
 
 			if (Stream == null) throw new ArgumentNullException(nameof(Stream));
 
+			timeStamp = DateTime.MinValue;
+			notificationID = 0;
 
 			await foreach (Syslog syslog in syslogReader.ReadSyslogsAsync(Stream))
 			{
@@ -39,11 +43,13 @@ namespace AudiocodesSyslogLib
 				{
 					if (line == null) continue;
 
-					match = eventRegex.Match(line);
+					match = notificationRegex.Match(line);
 					if (match.Success)
 					{
-						if (!string.IsNullOrEmpty(currentBlock)) yield return currentBlock;
-						currentBlock = line;
+						if (!string.IsNullOrEmpty(currentBlock)) yield return new Notification(timeStamp,notificationID, currentBlock);
+						currentBlock = match.Groups["Message"].Value;
+						notificationID = ulong.Parse(match.Groups["NotificationID"].Value);
+						timeStamp = sessionSyslog.Timestamp;
 					}
 					else
 					{
@@ -52,7 +58,7 @@ namespace AudiocodesSyslogLib
 				}
 	
 			}
-			if (!string.IsNullOrEmpty(currentBlock)) yield return currentBlock;
+			if (!string.IsNullOrEmpty(currentBlock)) yield return new Notification(timeStamp, notificationID, currentBlock); ;
 		}
 
 

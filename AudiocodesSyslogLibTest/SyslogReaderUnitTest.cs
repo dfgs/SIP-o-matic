@@ -101,7 +101,7 @@ namespace AudiocodesSyslogLibTest
 			string[] lines;
 			SyslogReader reader;
 
-			using (Stream stream = GetStream("ThreeLogs.txt"))
+			using (Stream stream = GetStream("ThreeNotifications.txt"))
 			{
 				reader = new SyslogReader();
 				lines = await reader.ReadBlocksAsync(stream).ToArrayAsync();
@@ -181,7 +181,7 @@ namespace AudiocodesSyslogLibTest
 			Syslog[] logs;
 			SyslogReader reader;
 
-			using (Stream stream = GetStream("ThreeLogs.txt"))
+			using (Stream stream = GetStream("ThreeNotifications.txt"))
 			{
 				reader = new SyslogReader();
 				logs = await reader.ReadSyslogsAsync(stream).ToArrayAsync();

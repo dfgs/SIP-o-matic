@@ -17,9 +17,9 @@
     <None Remove="Data\BoardLog.txt" />
     <None Remove="Data\IncomingMessagesSeveralLogs.txt" />
     <None Remove="Data\OneBlock.txt" />
-    <None Remove="Data\OneLog.txt" />
+    <None Remove="Data\OneNotification.txt" />
     <None Remove="Data\SessionLog.txt" />
-    <None Remove="Data\ThreeLogs.txt" />
+    <None Remove="Data\ThreeNotifications.txt" />
     <None Remove="Data\TwoBlocks.txt" />
   </ItemGroup>
 
@@ -27,8 +27,8 @@
   <ItemGroup>
     <EmbeddedResource Include="Data\BadBlockThenTwoBlocks.txt" />
     <EmbeddedResource Include="Data\BoardLog.txt" />
-    <EmbeddedResource Include="Data\ThreeLogs.txt" />
-    <EmbeddedResource Include="Data\OneLog.txt" />
+    <EmbeddedResource Include="Data\ThreeNotifications.txt" />
+    <EmbeddedResource Include="Data\OneNotification.txt" />
     <EmbeddedResource Include="Data\SessionLog.txt" />
     <EmbeddedResource Include="Data\IncomingMessagesSeveralLogs.txt" />
     <EmbeddedResource Include="Data\TwoBlocks.txt" />
