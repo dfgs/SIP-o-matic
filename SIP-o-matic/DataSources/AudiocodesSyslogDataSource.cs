@@ -1,4 +1,5 @@
-﻿using PcapngFile;
+﻿using AudiocodesSyslogLib;
+using PcapngFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,11 +15,12 @@ namespace SIP_o_matic.DataSources
 {
 	public class AudiocodesSyslogDataSource : IDataSource
 	{
-		private static Regex eolRegex = new Regex(@"\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]$");
-		private static Regex inRegex = new Regex(@"Incoming SIP Message from (?<address>\d+\.\d+\.\d+\.\d+).*---- *(\r\n)?(?<content>.*)\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]", RegexOptions.Singleline);
-		private static Regex outRegex = new Regex(@"Outgoing SIP Message to (?<address>\d+\.\d+\.\d+\.\d+).*---- *(\r\n)?(?<content>.*)\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]", RegexOptions.Singleline);
+		//private static Regex eolRegex = new Regex(@"\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]$");
+		private static Regex inRegex = new Regex(@"Incoming SIP Message from (?<address>\d+\.\d+\.\d+\.\d+).*---- *(\r\n)?(?<content>.*)", RegexOptions.Singleline);
+		private static Regex outRegex = new Regex(@"Outgoing SIP Message to (?<address>\d+\.\d+\.\d+\.\d+).*---- *(\r\n)?(?<content>.*)", RegexOptions.Singleline);
 		private static Regex sdpRegex = new Regex(@"^.=");
-		private static Regex messageRegex = new Regex(@"[^ ]+\s+[^ ]+\s+[^ ]+\s+(\[[^]]+\]\s+)+(?<message>.*)\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]", RegexOptions.Singleline);
+		private static Regex timeRegex = new Regex(@" *\[Time:[^]]+\](\r\n)?");
+		//private static Regex messageRegex = new Regex(@"[^ ]+\s+[^ ]+\s+[^ ]+\s+(\[[^]]+\]\s+)+(?<message>.*)\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]", RegexOptions.Singleline);
 		public string Description => "Audiocodes syslog";
 		
 		public AudiocodesSyslogDataSource()
@@ -49,24 +51,6 @@ namespace SIP_o_matic.DataSources
 
 		}
 
-		public async Task<string> ReadLine(StreamReader Reader)
-		{
-			string buffer = "";
-			string? line;
-			Match match;
-
-			do
-			{
-				line = await Reader.ReadLineAsync();
-				if (line == null) break;
-				line = line.Replace(@"\n", "\r\n");
-				//line = line.ReplaceLineEndings("\r\n");
-				buffer += line+"\r\n";
-				match = eolRegex.Match(line);
-			} while (!match.Success);
-
-			return buffer;
-		}
 
 		// must add line feed before SDP
 		private string FixSDP(string Message)
@@ -79,101 +63,72 @@ namespace SIP_o_matic.DataSources
 			{
 				if (!firstSDP)
 				{
-					firstSDP=sdpRegex.Match(line).Success;
-					if (firstSDP) buffer += "\r\n"; 
+					if (line == "")
+					{
+						firstSDP = true;
+					}
+					else
+					{
+						firstSDP = sdpRegex.Match(line).Success;
+						if (firstSDP) buffer += "\r\n";
+					}
 				}
 				buffer += line + "\r\n";
 
 			}
 			return buffer;
 		}
-		public async Task<string?> ReadMessage(StreamReader Reader)
-		{
-			string? buffer;
-			Match messageMatch;
-			string message;
-
-			buffer = await ReadLine(Reader);
-
-			if (string.IsNullOrEmpty(buffer)) return null;
-
-			messageMatch = messageRegex.Match(buffer);
-			if (!messageMatch.Success) 
-				return null;
-			message = messageMatch.Groups["message"].Value ;
-			return FixSDP(message);
-		}
+		
 
 		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
 		{
-			string line;
 			Event _event;
-			DateTime timeStamp;
 			string sourceAddress, destinationAddress,content;
-			string? message;
 			Match inMatch, outMatch;
+			NotificationReader notificationReader;
+			string message;
 
-			using (StreamReader reader=new StreamReader(FileName))
+			using (Stream stream=new FileStream(FileName,FileMode.Open))
 			{
-				while(!reader.EndOfStream)
+				notificationReader = new NotificationReader(new SyslogReader());
+				await foreach(Notification notification in notificationReader.ReadNotificationsAsync(stream))
 				{
-					line = await ReadLine(reader);
-
-					inMatch = inRegex.Match(line);
+					inMatch = inRegex.Match(notification.Content);
 					if (inMatch.Success)
 					{
-						timeStamp = DateTime.ParseExact($"{inMatch.Groups["date"].Value} {inMatch.Groups["time"].Value}", "dd-MM HH:mm:ss.fff", null);
 						sourceAddress = inMatch.Groups["address"].Value;
 						destinationAddress = "127.0.0.1";
 						content = inMatch.Groups["content"].Value;
-						if (!string.IsNullOrWhiteSpace(content))
-						{
-							message = FixSDP(content);
-						}
-						else
-						{
-							message = await ReadMessage(reader);
-						}
+						message = timeRegex.Replace(content, "");
 						if (message != null)
 						{
-							_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+							_event = new Event(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 							yield return _event;
 						}
-						
+
 					}
 					else
 					{
-						outMatch = outRegex.Match(line);
+						outMatch = outRegex.Match(notification.Content);
 						if (outMatch.Success)
 						{
-							timeStamp = DateTime.ParseExact($"{outMatch.Groups["date"].Value} {outMatch.Groups["time"].Value}", "dd-MM HH:mm:ss.fff", null);
 							sourceAddress = "127.0.0.1";
 							destinationAddress = outMatch.Groups["address"].Value;
 							content = outMatch.Groups["content"].Value;
-							if (!string.IsNullOrWhiteSpace(content))
-							{
-								message = FixSDP(content);
-							}
-							else
-							{
-								message = await ReadMessage(reader);
-							}
+							message = timeRegex.Replace(content, "");
 							if (message != null)
 							{
-								_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+								_event = new Event(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 								yield return _event;
 							}
-							
+
 						}
-						
+
 					}
-					
-
-
 				}
+				
 			}
 
-			yield break;
 
 		}
 

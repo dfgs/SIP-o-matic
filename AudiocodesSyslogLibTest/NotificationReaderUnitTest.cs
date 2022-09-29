@@ -41,7 +41,7 @@ namespace AudiocodesSyslogLibTest
 
 			Assert.AreEqual(1, notifications.Length);
 			Assert.AreEqual((ulong)17906355, notifications[0].NotificationID);
-			Assert.AreEqual("(#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER) ", notifications[0].Content);
+			Assert.AreEqual("(#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER)", notifications[0].Content);
 		}
 		[TestMethod]
 		public async Task ShouldReadThreeNotifications()
@@ -57,7 +57,7 @@ namespace AudiocodesSyslogLibTest
 
 			Assert.AreEqual(3, notifications.Length);
 			Assert.AreEqual((ulong)17906355, notifications[0].NotificationID);
-			Assert.AreEqual("(#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER) ", notifications[0].Content);
+			Assert.AreEqual("(#268)Route found (8999), Route by IPGroup, IP Group 39 -> 0 (IPG_ACCESSIT -> IPG_VOIX_LINKER)", notifications[0].Content);
 			Assert.AreEqual((ulong)17906356, notifications[1].NotificationID);
 			Assert.AreEqual((ulong)17906357, notifications[2].NotificationID);
 		}

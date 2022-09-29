@@ -10,8 +10,8 @@ namespace AudiocodesSyslogLib
 	public  class SyslogReader: ISyslogReader
 	{
 		private static Regex logRegex = new Regex(@"(?<Timestamp>\d\d:\d\d:\d\d.\d\d\d) +(?<Address>\d+\.\d+\.\d+\.\d+) +(?<Severity>[^ ]+) +\[S=(?<SequenceID>\d+)\] +(?<Content>.*)");
-		private static Regex sessionLogRegex = new Regex(@"(?<Timestamp>\d\d:\d\d:\d\d.\d\d\d) +(?<Address>\d+\.\d+\.\d+\.\d+) +(?<Severity>[^ ]+) +\[S=(?<SequenceID>\d+)\] +\[SID=(?<SessionID>[^]]+)\] +(?<Content>.*)$", RegexOptions.Singleline);
-		private static Regex boardLogRegex = new Regex(@"(?<Timestamp>\d\d:\d\d:\d\d.\d\d\d) +(?<Address>\d+\.\d+\.\d+\.\d+) +(?<Severity>[^ ]+) +\[S=(?<SequenceID>\d+)\] +\[BID=(?<BoardID>[^]]+)\] +(?<Content>.*)$", RegexOptions.Singleline);
+		private static Regex sessionLogRegex = new Regex(@"(?<Timestamp>\d\d:\d\d:\d\d.\d\d\d) +(?<Address>\d+\.\d+\.\d+\.\d+) +(?<Severity>[^ ]+) +\[S=(?<SequenceID>\d+)\] +\[SID=(?<SessionID>[^]]+)\] +(\[[^]]+\] +)?(?<Content>.*)$", RegexOptions.Singleline);
+		private static Regex boardLogRegex = new Regex(@"(?<Timestamp>\d\d:\d\d:\d\d.\d\d\d) +(?<Address>\d+\.\d+\.\d+\.\d+) +(?<Severity>[^ ]+) +\[S=(?<SequenceID>\d+)\] +\[BID=(?<BoardID>[^]]+)\] +(\[[^]]+\] +)?(?<Content>.*)$", RegexOptions.Singleline);
 
 
 		public async IAsyncEnumerable<string> ReadBlocksAsync(Stream Stream)
@@ -28,7 +28,7 @@ namespace AudiocodesSyslogLib
 			{
 				line = await reader.ReadLineAsync();
 				if (line == null) break;
-				line = line.TrimStart();
+				line = line.TrimStart().TrimEnd();
 
 				logMatch = logRegex.Match(line);
 				if (logMatch.Success)

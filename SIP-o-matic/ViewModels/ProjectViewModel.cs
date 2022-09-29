@@ -245,7 +245,7 @@ namespace SIP_o_matic.ViewModels
 			}
 
 			sdp = null;
-			if (!string.IsNullOrEmpty(sipMessage.Body ))
+			if (!string.IsNullOrWhiteSpace(sipMessage.Body ))
 			{
 				try
 				{
