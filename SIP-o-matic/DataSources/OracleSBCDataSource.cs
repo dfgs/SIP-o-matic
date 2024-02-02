@@ -1,4 +1,5 @@
 ﻿using HtmlAgilityPack;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ using System.Web;
 
 namespace SIP_o_matic.DataSources
 {
-	public class OracleSBCDataSource : IDataSource
+    public class OracleSBCDataSource : IDataSource
 	{
 		//private static Regex dataRegex = new Regex(@"<pre onmouseover=""mouseOverTooltip\(this\)"">(?<Timestamp>\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d.\d\d\d)[ \n]*(?<Message>[^<]+)</pre>", RegexOptions.Multiline);
 		private static Regex ipRegex = new Regex(@"(?<Value>\d+\.\d+\.\d+\.\d+)");
@@ -43,6 +44,7 @@ namespace SIP_o_matic.DataSources
 			HtmlDocument document;
 			HtmlNode? div, table, header;
 			int columnsCount;
+			Device device;
 
 			await Task.Yield();
 
@@ -60,14 +62,16 @@ namespace SIP_o_matic.DataSources
 			foreach(HtmlNode node in header.Elements("td"))
 			{
 				if (string.IsNullOrEmpty(node.InnerText)) continue;
-				yield return new Device(node.InnerText, node.InnerText);	
+				device=new Device() { Name = node.InnerText };
+				device.Addresses.Add(node.InnerText);
+				yield return device;
 			}
 		}
 
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
+		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
-			Event _event;
+			Message _event;
 			DateTime timeStamp;
 			string sourceAddress, destinationAddress;
 			string message;
@@ -130,7 +134,7 @@ namespace SIP_o_matic.DataSources
 
 				timeStamp = DateTime.ParseExact(match.Groups["Timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff",null);
 				message = HttpUtility.HtmlDecode(match.Groups["Message"].Value).ReplaceLineEndings("\r\n");
-				_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+				_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
 				yield return _event;
 			}
 

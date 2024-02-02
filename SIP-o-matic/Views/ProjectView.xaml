@@ -9,7 +9,6 @@
 	
 	<DockPanel>
 		<Expander DockPanel.Dock="Bottom" Header="Errors" IsExpanded="False">
-			<views:LogsView Height="150"/>
 		</Expander>
 		<Grid>
 			<Grid.ColumnDefinitions>
@@ -28,7 +27,7 @@
 								</TextBlock.LayoutTransform>
 							</TextBlock>
 						</TabItem.Header>
-						<views:FilesView/>
+						
 					</TabItem>
 					<TabItem Padding="0,5,0,5">
 						<TabItem.Header>
@@ -38,20 +37,17 @@
 								</TextBlock.LayoutTransform>
 							</TextBlock>
 						</TabItem.Header>
-						<views:DevicesView/>
 					</TabItem>
 				</TabControl>
 			<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 			<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">
 				<TabItem Header="Calls">
-					<views:CallsView />
 				</TabItem>
 				<TabItem Header="Ladder">
-					<views:LadderView/>
 				</TabItem>
 			</TabControl>
 			<GridSplitter Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
-			<views:DetailView x:Name="detailView" Grid.Column="4"/>
+			
 		</Grid>
 	</DockPanel>
 </UserControl>

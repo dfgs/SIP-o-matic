@@ -1,63 +1,33 @@
 ﻿using LogLib;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DeviceViewModel : ViewModel
+	public class DeviceViewModel : ViewModel<Device>
 	{
 		public string Name
 		{
-			get;
-			private set;
+			get => Model?.Name??"Undefined";
 		}
-		public ObservableCollection<string> Addresses
+		public IEnumerable<string> Addresses
 		{
-			get;
-			private set;
+			get => Model?.Addresses??Enumerable.Empty<string>();
 		}
-		public ObservableCollection<FileViewModel> SourceFiles
+		
+
+		public DeviceViewModel(ILogger Logger) : base(Logger)
 		{
-			get;
-			private set;
 		}
+		
 
-		public int Count
-		{
-			get => SourceFiles.Count;
-		}
-
-
-
-		public DeviceViewModel(string Name) : base(NullLogger.Instance)
-		{
-			this.Name = Name;
-			Addresses = new ObservableCollection<string>();
-			SourceFiles = new ObservableCollection<FileViewModel>();
-		}
-		protected void OnPropertiesChanged()
-		{
-			OnPropertyChanged(nameof(Count));
-
-		}
-
-		public void AddSourceFile(FileViewModel FileViewModel)
-		{
-			if (SourceFiles.Contains(FileViewModel)) return;
-			SourceFiles.Add(FileViewModel);
-			OnPropertiesChanged();
-		}
-
-		public void RemoveSourceFile(FileViewModel FileViewModel)
-		{
-			SourceFiles.Remove(FileViewModel);
-			OnPropertiesChanged();
-		}
-
+		
 
 	}
 }

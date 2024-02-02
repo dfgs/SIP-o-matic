@@ -32,12 +32,12 @@ namespace SIP_o_matic
 		{
 			dataSourceManager= new DataSourceManager();
 			dataSourceManager.Register(new OracleOEMDataSource());
-			dataSourceManager.Register(new OracleSBCDataSource());
-			dataSourceManager.Register(new WiresharkDataSource());
-			dataSourceManager.Register(new AudiocodesSyslogDataSource());
-			dataSourceManager.Register(new AlcatelSIPTraceDataSource());
+			//dataSourceManager.Register(new OracleSBCDataSource());
+			//dataSourceManager.Register(new WiresharkDataSource());
+			//dataSourceManager.Register(new AudiocodesSyslogDataSource());
+			//dataSourceManager.Register(new AlcatelSIPTraceDataSource());
 
-			applicationViewModel = new ApplicationViewModel();
+			applicationViewModel = new ApplicationViewModel(NullLogger.Instance);
 
 
 			InitializeComponent();
@@ -91,7 +91,7 @@ namespace SIP_o_matic
 		}
 		private void AddFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = applicationViewModel.SelectedProject!=null;
+			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem!=null;
 		}
 
 		private async void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -105,7 +105,7 @@ namespace SIP_o_matic
 			dialog.Filter = "All files|*.*";
 			dialog.Title = "Add file to project";
 
-			if (applicationViewModel.SelectedProject == null) return;
+			if (applicationViewModel.Projects.SelectedItem == null) return;
 
 			if (!dialog.ShowDialog(this) ?? false) return;
 
@@ -131,136 +131,16 @@ namespace SIP_o_matic
 
 			try
 			{
-				await applicationViewModel.SelectedProject.AddFileAsync(dialog.FileName, selectedDataSource);
+				await applicationViewModel.Projects.SelectedItem.AddFileAsync(dialog.FileName, selectedDataSource);
 			}
 			catch (Exception ex)
 			{
 				ShowError(ex);
 			}
 		}
-		private void RemoveFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject?.SelectedFile != null;
-		}
+		
 
-		private async void RemoveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (applicationViewModel?.SelectedProject?.SelectedFile == null) return;
-			try
-			{
-				await applicationViewModel.SelectedProject.RemoveFileAsync(applicationViewModel.SelectedProject.SelectedFile);
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
-
-
-
-
-		private void AddFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute = applicationViewModel.SelectedProject != null;
-		}
-
-		private async void AddFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			FilterWindow filterWindow;
-			FilterViewModel filter;
-
-			if (applicationViewModel.SelectedProject == null) return;
-
-			filter = new HeaderFilterViewModel();
-			
-			filterWindow = new FilterWindow();
-			filterWindow.Owner = this.Owner;
-			filterWindow.DataContext = filter;
-
-			if (!filterWindow.ShowDialog() ?? false) return;
-			try
-			{
-				await applicationViewModel.SelectedProject.AddFilterAsync(filter);
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
-		private void RemoveFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute =  applicationViewModel?.SelectedProject?.SelectedFilter != null;
-		}
-
-		private async void RemoveFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			if (applicationViewModel?.SelectedProject?.SelectedFilter == null) return;
-			try
-			{
-				await applicationViewModel.SelectedProject.RemoveFilterAsync(applicationViewModel.SelectedProject.SelectedFilter);
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
-
-		private void EditFilterCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject?.SelectedFilter != null;
-		}
-
-		private async void EditFilterCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			FilterWindow filterWindow;
-			FilterViewModel filter;
-			FilterViewModel? oldFilter;
-
-
-			oldFilter = applicationViewModel?.SelectedProject?.SelectedFilter;
-			if ( oldFilter== null) return;
-
-			filter = new HeaderFilterViewModel();
-			filter.CopyFrom(oldFilter);
-
-			filterWindow = new FilterWindow();
-			filterWindow.Owner = this.Owner;
-			filterWindow.DataContext = filter;
-
-			if (!filterWindow.ShowDialog() ?? false) return;
-			try
-			{
-				await applicationViewModel!.SelectedProject!.EditFilterAsync(oldFilter,filter);
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
-
-
-
-
-		private void CopyLogsCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute = applicationViewModel?.SelectedProject != null;
-		}
-
-		private void CopyLogsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-			string logs;
-
-			if (applicationViewModel?.SelectedProject == null) return;
-			try
-			{
-				logs=string.Join("\r\n",((ProjectLogger)applicationViewModel.SelectedProject.Logger).Logs.Select(item=>item.Message));
-				Clipboard.SetText(logs);
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
+		
 		#endregion
 
 

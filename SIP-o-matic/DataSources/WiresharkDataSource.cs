@@ -1,5 +1,6 @@
 ﻿using EthernetFrameReaderLib;
 using PcapngFile;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.DataSources
 {
-	public class WiresharkDataSource : IDataSource
+    public class WiresharkDataSource : IDataSource
 	{
 
 		public string Description => "Wiresharp pcapng";
@@ -31,7 +32,7 @@ namespace SIP_o_matic.DataSources
 		}
 
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
+		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
 			FrameReader frameReader;
 			PacketReader packetReader;
@@ -74,7 +75,7 @@ namespace SIP_o_matic.DataSources
 					if (
 						message.StartsWith("SIP/2.0") ||
 						message.StartsWith("INVITE") || message.StartsWith("ACK") || message.StartsWith("OPTIONS") || message.StartsWith("BYE") || message.StartsWith("CANCEL") || message.StartsWith("REGISTER")
-						) yield return new Event(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp/1000).ToLocalTime(),packet.Header.SourceAddress.ToString(),packet.Header.DestinationAddress.ToString(),  message);
+						) yield return new Message(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp/1000).ToLocalTime(),packet.Header.SourceAddress.ToString(),packet.Header.DestinationAddress.ToString(),  message);
 					//await Task.Delay(2000);
 
 				}

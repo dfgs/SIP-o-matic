@@ -6,48 +6,36 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ApplicationViewModel:ViewModel
+	public class ApplicationViewModel:ViewModel<string>
 	{
 
 
-		public ObservableCollection<ProjectViewModel> Projects
+		public ViewModelCollection<ProjectViewModel> Projects
 		{
 			get;
 			private set;
 		}
 
 		
-
-		public static readonly DependencyProperty SelectedProjectProperty = DependencyProperty.Register("SelectedProject", typeof(ProjectViewModel), typeof(ApplicationViewModel), new PropertyMetadata(null));
-		public ProjectViewModel? SelectedProject
-		{
-			get { return (ProjectViewModel)GetValue(SelectedProjectProperty); }
-			set { SetValue(SelectedProjectProperty, value); }
-		}
-
-
-
-
-		public ApplicationViewModel():base(NullLogger.Instance)
+		public ApplicationViewModel(ILogger Logger):base(Logger)
 		{
 
-			Projects = new ObservableCollection<ProjectViewModel>();
+			Projects = new ViewModelCollection<ProjectViewModel>(Logger);
 		}
 
 
 		public async Task AddProjectAsync()
 		{
 			ProjectViewModel project;
-			ProjectLogger logger;
 
 			await Task.Yield();
-			logger = new ProjectLogger();
-			project = new ProjectViewModel(logger);
+			project = new ProjectViewModel(Logger);
 			Projects.Add(project);
-			SelectedProject = project;
+			Projects.SelectedItem= project; 
 		}
 
 	}

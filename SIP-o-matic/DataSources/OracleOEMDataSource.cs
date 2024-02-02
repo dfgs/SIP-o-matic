@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SIP_o_matic.Models;
+using System;
 using System.IO;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.DataSources
 {
-	public class OracleOEMDataSource : IDataSource
+    public class OracleOEMDataSource : IDataSource
 	{
 		private static Regex dataRegex = new Regex(@"var data = \((?<Value>.+)\);$", RegexOptions.Multiline);
 		private static Regex devicesRegex = new Regex(@"devices: \((?<Value>.+)\),$", RegexOptions.Multiline);
@@ -65,28 +66,29 @@ namespace SIP_o_matic.DataSources
 				{
 					name= node!["name"]!.GetValue<string>();
 					addresses = node!["ipranges"]!.GetValue<string>();
-					foreach (string address in addresses.Split('\n'))
+					_device = new Device() { Name = name };
+					foreach(string address in addresses.Split('\n'))
 					{
-						_device = new Device(name, GetIPAddress( address) );
-						yield return _device;
+						_device.Addresses.Add(GetIPAddress(address));
 					}
+					yield return _device;
 				}
 			}
 
 		}
 
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
+		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
 			string line,dataString;
 			Match match;
 			JsonNode? dataNode;
 			JsonArray? dataArray;
 			string base64Message;
-			Event _event;
+			Message message;
 			DateTime timeStamp;
 			string sourceAddress, destinationAddress;
-			string message;
+			string content;
 
 			using (StreamReader reader=new StreamReader(FileName))
 			{
@@ -109,9 +111,9 @@ namespace SIP_o_matic.DataSources
 					sourceAddress = GetIPAddress(node!["src_ip"]!.GetValue<string>());
 					destinationAddress = GetIPAddress(node!["dst_ip"]!.GetValue<string>());
 					base64Message= node!["data"]!.GetValue<string>();
-					message = Encoding.UTF8.GetString(Convert.FromBase64String(base64Message));
-					_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
-					yield return _event;	
+					content = Encoding.UTF8.GetString(Convert.FromBase64String(base64Message));
+					message = new Message(timeStamp, sourceAddress, destinationAddress, content);
+					yield return message;	
 				}
 			}
 

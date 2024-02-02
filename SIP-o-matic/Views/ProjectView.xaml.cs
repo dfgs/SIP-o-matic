@@ -33,7 +33,7 @@ namespace SIP_o_matic.Views
 			
 			listBox = e.OriginalSource as ListBox;
 			if (listBox == null) return;
-			detailView.DataContext = listBox.SelectedItem;
+			//detailView.DataContext = listBox.SelectedItem;
 		}
 	}
 }

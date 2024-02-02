@@ -1,4 +1,5 @@
 ﻿using PcapngFile;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -13,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace SIP_o_matic.DataSources
 {
-	public class AlcatelSIPTraceDataSource : IDataSource
+    public class AlcatelSIPTraceDataSource : IDataSource
 	{
 		private static Regex inRegex = new Regex(@"(?<Timestamp>\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d\.\d).*RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
 		private static Regex outRegex = new Regex(@"(?<Timestamp>\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d\.\d).*SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
@@ -42,7 +43,8 @@ namespace SIP_o_matic.DataSources
 		{
 			Device device;
 
-			device = new Device("OXE","127.0.0.1");
+			device = new Device() { Name = "OXE" };
+			device.Addresses.Add("127.0.0.1");
 			await Task.Yield();
 			yield return device ;
 
@@ -66,10 +68,10 @@ namespace SIP_o_matic.DataSources
 
 		}
 		
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
+		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
 			string? line;
-			Event _event;
+			Message _event;
 			DateTime timeStamp;
 			string sourceAddress, destinationAddress;
 			string message;
@@ -90,7 +92,7 @@ namespace SIP_o_matic.DataSources
 						timeStamp = DateTime.ParseExact(inMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 						sourceAddress = inMatch.Groups["Address"].Value;
 						destinationAddress = "127.0.0.1";
-						_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+						_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
 						yield return _event;						
 					}
 					else
@@ -102,7 +104,7 @@ namespace SIP_o_matic.DataSources
 							timeStamp = DateTime.ParseExact(outMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 							sourceAddress = "127.0.0.1";
 							destinationAddress = outMatch.Groups["Address"].Value;
-							_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
+							_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
 							yield return _event;
 
 						}

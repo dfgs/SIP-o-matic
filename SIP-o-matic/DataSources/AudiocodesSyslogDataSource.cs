@@ -1,5 +1,6 @@
 ﻿using AudiocodesSyslogLib;
 using PcapngFile;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ using System.Windows.Shapes;
 
 namespace SIP_o_matic.DataSources
 {
-	public class AudiocodesSyslogDataSource : IDataSource
+    public class AudiocodesSyslogDataSource : IDataSource
 	{
 		//private static Regex eolRegex = new Regex(@"\[Time:(?<date>\d\d-\d\d)@(?<time>\d\d:\d\d:\d\d\.\d\d\d)\]$");
 		private static Regex inRegex = new Regex(@"Incoming SIP Message from (?<address>\d+\.\d+\.\d+\.\d+).*---- *(\r\n)?(?<content>.*)", RegexOptions.Singleline);
@@ -46,7 +47,8 @@ namespace SIP_o_matic.DataSources
 		{
 			Device device;
 
-			device = new Device("Audiocodes","127.0.0.1");
+			device = new Device() { Name = "Audiocodes" };
+			device.Addresses.Add("127.0.0.1");
 			await Task.Yield();
 			yield return device ;
 
@@ -81,9 +83,9 @@ namespace SIP_o_matic.DataSources
 		}
 		
 
-		public async IAsyncEnumerable<Event> EnumerateEventsAsync(string FileName)
+		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
-			Event _event;
+			Message _event;
 			string sourceAddress, destinationAddress,content;
 			Match inMatch, outMatch;
 			NotificationReader notificationReader;
@@ -103,7 +105,7 @@ namespace SIP_o_matic.DataSources
 						message = timeRegex.Replace(content, "");
 						if (message != null)
 						{
-							_event = new Event(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
+							_event = new Message(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 							yield return _event;
 						}
 
@@ -119,7 +121,7 @@ namespace SIP_o_matic.DataSources
 							message = timeRegex.Replace(content, "");
 							if (message != null)
 							{
-								_event = new Event(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
+								_event = new Message(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 								yield return _event;
 							}
 

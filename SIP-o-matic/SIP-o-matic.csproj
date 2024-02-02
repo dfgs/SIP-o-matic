@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <RootNamespace>SIP_o_matic</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
@@ -73,6 +73,7 @@
     <ProjectReference Include="..\..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj" />
     <ProjectReference Include="..\..\LogLib\LogLib\LogLib.csproj" />
     <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
+    <ProjectReference Include="..\..\ViewModelLib\ViewModelLib\ViewModelLib.csproj" />
     <ProjectReference Include="..\AudiocodesSyslogLib\AudiocodesSyslogLib.csproj" />
   </ItemGroup>
 
