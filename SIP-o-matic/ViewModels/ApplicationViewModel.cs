@@ -1,4 +1,5 @@
 ﻿using LogLib;
+using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -28,14 +29,18 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public async Task AddProjectAsync()
+		public void AddProject()
 		{
-			ProjectViewModel project;
+			Project project;
+			ProjectViewModel projectViewModel;
 
-			await Task.Yield();
-			project = new ProjectViewModel(Logger);
-			Projects.Add(project);
-			Projects.SelectedItem= project; 
+			project = new Project();
+			
+			projectViewModel = new ProjectViewModel(Logger);
+			projectViewModel.Load(project);
+
+			Projects.Add(projectViewModel);
+			Projects.SelectedItem= projectViewModel; 
 		}
 
 	}

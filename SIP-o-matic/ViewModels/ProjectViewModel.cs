@@ -18,7 +18,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-    public class ProjectViewModel: ViewModel<string>
+    public class ProjectViewModel: ViewModel<Project>
 	{
 
 
@@ -36,7 +36,7 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(PathProperty, value); }
 		}
 
-		public ViewModelCollection<SourceFileViewModel> Files
+		public ViewModelCollection<SourceFileViewModel> SourceFiles
 		{
 			get;
 			private set;
@@ -49,19 +49,14 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		
-		
-
-	
-
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
-			Files = new ViewModelCollection<SourceFileViewModel>(Logger);
+			SourceFiles = new ViewModelCollection<SourceFileViewModel>(Logger);
 			Devices = new ViewModelCollection<DeviceViewModel>(Logger);
 		}
 
 		
-		private DeviceViewModel? FindDeviceByName(string Name)
+		/*private DeviceViewModel? FindDeviceByName(string Name)
 		{
 			return Devices.FirstOrDefault(item => item.Name == Name);
 		}
@@ -74,7 +69,6 @@ namespace SIP_o_matic.ViewModels
 		private void AddDevice(SourceFileViewModel FileViewModel, Device Device)
 		{
 			DeviceViewModel? deviceViewModel;
-			//int addressIndex;
 
 			deviceViewModel = FindDeviceByName(Device.Name);
 			if (deviceViewModel == null)
@@ -82,13 +76,8 @@ namespace SIP_o_matic.ViewModels
 				deviceViewModel = new DeviceViewModel(Logger);
 				deviceViewModel.Load(Device);
 				Devices.Add(deviceViewModel);
-				//FileViewModel.AddDevice(Device);
 			}
-
-			/*addressIndex = deviceViewModel.Addresses.IndexOf(Device.Address);
-			if (addressIndex >= 0) return;
-
-			deviceViewModel.Addresses.Add(Device.Address);*/
+			
 		}
 		private void AddDevice(SourceFileViewModel FileViewModel, string Address)
 		{
@@ -105,36 +94,36 @@ namespace SIP_o_matic.ViewModels
 				Devices.Add(deviceViewModel);
 			}
 			
-		}
+		}*/
 	
-		public async Task AddFileAsync(string Path,IDataSource DataSource)
+		public void AddSourceFile(string Path,IDataSource DataSource)
 		{
 			SourceFile sourceFile;
-			SourceFileViewModel fileViewModel;
+			SourceFileViewModel? sourceFileViewModel;
+
+			if (Model == null) throw new InvalidOperationException("Project model is not loaded");
+			if (Path == null) return;
+
+			sourceFileViewModel = SourceFiles.FirstOrDefault(item => item.Path == Path);
+			if (sourceFileViewModel != null) return;
 
 			sourceFile = new SourceFile() { Path=Path};
+			Model.SourceFiles.Add(sourceFile);
 
-			fileViewModel = new SourceFileViewModel(Logger);
-			fileViewModel.Load(sourceFile);
+			sourceFileViewModel = new SourceFileViewModel(Logger);
+			sourceFileViewModel.Load(sourceFile);
+			SourceFiles.Add(sourceFileViewModel);
+		}
+		public void RemoveSourceFile(SourceFileViewModel SourceFileViewModel)
+		{
+			if (Model == null) throw new InvalidOperationException("Project model is not loaded");
 			
-			Files.Add(fileViewModel);
-						
-			await foreach (Device device in DataSource.EnumerateDevicesAsync(Path))
-			{
-				AddDevice(fileViewModel, device);
-			}
+			if (SourceFileViewModel.Model!= null) Model.SourceFiles.Remove(SourceFileViewModel.Model);
+			SourceFiles.Remove(SourceFileViewModel);
 
-			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
-			{
-				fileViewModel.Events.Add(message);
-				AddDevice(fileViewModel, message.SourceAddress);
-				AddDevice(fileViewModel, message.DestinationAddress);
-			}
-	
 		}
 
-		
 
-		
+
 	}
 }

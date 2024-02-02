@@ -27,8 +27,8 @@
 								</TextBlock.LayoutTransform>
 							</TextBlock>
 						</TabItem.Header>
-						
-					</TabItem>
+					<views:SourceFilesView DataContext="{Binding SourceFiles}"/>
+				</TabItem>
 					<TabItem Padding="0,5,0,5">
 						<TabItem.Header>
 							<TextBlock Text="Devices">

@@ -78,23 +78,41 @@ namespace SIP_o_matic
 			e.Handled = true;e.CanExecute = true;
 		}
 
-		private async void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void NewCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			try
 			{
-				await applicationViewModel.AddProjectAsync();
+				applicationViewModel.AddProject();
 			}
 			catch (Exception ex)
 			{
 				ShowError(ex);
 			}
 		}
+
+		private void RemoveFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem?.SourceFiles.SelectedItem != null;
+		}
+
+		private void RemoveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SourceFileViewModel? sourceFileViewModel;
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+
+			sourceFileViewModel = applicationViewModel.Projects.SelectedItem.SourceFiles.SelectedItem;
+			if ( sourceFileViewModel == null) return;
+
+			applicationViewModel.Projects.SelectedItem.RemoveSourceFile(sourceFileViewModel);
+		}
+
 		private void AddFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem!=null;
 		}
 
-		private async void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
 			IDataSource[] dataSources;
@@ -131,7 +149,7 @@ namespace SIP_o_matic
 
 			try
 			{
-				await applicationViewModel.Projects.SelectedItem.AddFileAsync(dialog.FileName, selectedDataSource);
+				applicationViewModel.Projects.SelectedItem.AddSourceFile(dialog.FileName, selectedDataSource);
 			}
 			catch (Exception ex)
 			{
