@@ -21,7 +21,6 @@ namespace SIP_o_matic.ViewModels
     public class ProjectViewModel: ViewModel<Project>
 	{
 
-
 		public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(ProjectViewModel), new PropertyMetadata("new project"));
 		public string Name
 		{
@@ -36,26 +35,27 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(PathProperty, value); }
 		}
 
-		public ViewModelCollection<SourceFileViewModel> SourceFiles
+		public SourceFileViewModelCollection SourceFiles
 		{
 			get;
 			private set;
 		}
 				
 
-		public ViewModelCollection<DeviceViewModel> Devices
+		/*public ViewModelCollection<DeviceViewModel> Devices
 		{
 			get;
 			private set;
-		}
+		}*/
 
-		public ProjectViewModel(ILogger Logger):base(Logger)
+		public ProjectViewModel(ILogger Logger,Project DataSource):base(Logger,DataSource)
 		{
-			SourceFiles = new ViewModelCollection<SourceFileViewModel>(Logger);
-			Devices = new ViewModelCollection<DeviceViewModel>(Logger);
+			SourceFiles = new SourceFileViewModelCollection(Logger,DataSource.SourceFiles);
+			//Devices = new ViewModelCollection<DeviceViewModel>(Logger);
 		}
-
 		
+		
+
 		/*private DeviceViewModel? FindDeviceByName(string Name)
 		{
 			return Devices.FirstOrDefault(item => item.Name == Name);
@@ -95,33 +95,9 @@ namespace SIP_o_matic.ViewModels
 			}
 			
 		}*/
-	
-		public void AddSourceFile(string Path,IDataSource DataSource)
-		{
-			SourceFile sourceFile;
-			SourceFileViewModel? sourceFileViewModel;
 
-			if (Model == null) throw new InvalidOperationException("Project model is not loaded");
-			if (Path == null) return;
-
-			sourceFileViewModel = SourceFiles.FirstOrDefault(item => item.Path == Path);
-			if (sourceFileViewModel != null) return;
-
-			sourceFile = new SourceFile() { Path=Path};
-			Model.SourceFiles.Add(sourceFile);
-
-			sourceFileViewModel = new SourceFileViewModel(Logger);
-			sourceFileViewModel.Load(sourceFile);
-			SourceFiles.Add(sourceFileViewModel);
-		}
-		public void RemoveSourceFile(SourceFileViewModel SourceFileViewModel)
-		{
-			if (Model == null) throw new InvalidOperationException("Project model is not loaded");
-			
-			if (SourceFileViewModel.Model!= null) Model.SourceFiles.Remove(SourceFileViewModel.Model);
-			SourceFiles.Remove(SourceFileViewModel);
-
-		}
+		
+		
 
 
 

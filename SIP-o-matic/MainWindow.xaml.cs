@@ -82,7 +82,7 @@ namespace SIP_o_matic
 		{
 			try
 			{
-				applicationViewModel.AddProject();
+				applicationViewModel.Projects.AddNew();
 			}
 			catch (Exception ex)
 			{
@@ -97,14 +97,10 @@ namespace SIP_o_matic
 
 		private void RemoveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			SourceFileViewModel? sourceFileViewModel;
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 
-			sourceFileViewModel = applicationViewModel.Projects.SelectedItem.SourceFiles.SelectedItem;
-			if ( sourceFileViewModel == null) return;
-
-			applicationViewModel.Projects.SelectedItem.RemoveSourceFile(sourceFileViewModel);
+			applicationViewModel.Projects.SelectedItem.SourceFiles.RemoveSelected();
 		}
 
 		private void AddFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -149,7 +145,7 @@ namespace SIP_o_matic
 
 			try
 			{
-				applicationViewModel.Projects.SelectedItem.AddSourceFile(dialog.FileName, selectedDataSource);
+				applicationViewModel.Projects.SelectedItem.SourceFiles.Add(dialog.FileName);
 			}
 			catch (Exception ex)
 			{

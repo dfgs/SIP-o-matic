@@ -15,33 +15,21 @@ namespace SIP_o_matic.ViewModels
 	{
 
 
-		public ViewModelCollection<ProjectViewModel> Projects
+		public ProjectViewModelCollection Projects
 		{
 			get;
 			private set;
 		}
 
 		
-		public ApplicationViewModel(ILogger Logger):base(Logger)
+		public ApplicationViewModel(ILogger Logger):base(Logger,"")
 		{
 
-			Projects = new ViewModelCollection<ProjectViewModel>(Logger);
+			Projects = new ProjectViewModelCollection(Logger,new ObservableCollection<Project>());
 		}
 
 
-		public void AddProject()
-		{
-			Project project;
-			ProjectViewModel projectViewModel;
-
-			project = new Project();
-			
-			projectViewModel = new ProjectViewModel(Logger);
-			projectViewModel.Load(project);
-
-			Projects.Add(projectViewModel);
-			Projects.SelectedItem= projectViewModel; 
-		}
+		
 
 	}
 }

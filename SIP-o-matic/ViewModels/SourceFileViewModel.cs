@@ -17,13 +17,12 @@ namespace SIP_o_matic.ViewModels
 
 		public string Path
 		{
-			get => Model?.Path??"Undefined";
-			//private set;
+			get => DataSource.Path;
 		}
 
 		public string Name
 		{
-			get => Model?.Name??"Undefined";
+			get => DataSource.Name;
 		}
 
 		public ObservableCollection<Message> Events
@@ -36,7 +35,7 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}*/
-		public SourceFileViewModel(ILogger Logger):base(Logger)
+		public SourceFileViewModel(ILogger Logger,SourceFile Source):base(Logger,Source)
 		{
 			Events = new ObservableCollection<Message>();
 			//Devices = new ObservableCollection<Device>();
