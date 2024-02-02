@@ -15,8 +15,8 @@ namespace SIP_o_matic.DataSources
 {
 	public class AlcatelSIPTraceDataSource : IDataSource
 	{
-		private static Regex inRegex = new Regex(@"(?<Timestamp>... ... \d\d \d\d:\d\d:\d\d \d\d\d\d).*RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
-		private static Regex outRegex = new Regex(@"(?<Timestamp>... ... \d\d \d\d:\d\d:\d\d \d\d\d\d).*SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex inRegex = new Regex(@"(?<Timestamp>\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d\.\d).*RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex outRegex = new Regex(@"(?<Timestamp>\d\d\/\d\d\/\d\d \d\d:\d\d:\d\d\.\d).*SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
 		public string Description => "Alcatel SIP Trace";
 		
 		public AlcatelSIPTraceDataSource()
@@ -26,6 +26,7 @@ namespace SIP_o_matic.DataSources
 		public IEnumerable<string> GetSupportedFileExts()
 		{
 			yield return "log";
+			yield return "txt";
 		}
 
 		/*private string GetIPAddress(string Data)
@@ -86,7 +87,7 @@ namespace SIP_o_matic.DataSources
 					if (inMatch.Success)
 					{
 						message = await ReadMessageAsync(reader);
-						timeStamp = DateTime.ParseExact(inMatch.Groups["Timestamp"].Value, "ddd MMM dd HH:mm:ss yyyy", CultureInfo.InvariantCulture);
+						timeStamp = DateTime.ParseExact(inMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 						sourceAddress = inMatch.Groups["Address"].Value;
 						destinationAddress = "127.0.0.1";
 						_event = new Event(timeStamp, sourceAddress, destinationAddress, message);
@@ -98,7 +99,7 @@ namespace SIP_o_matic.DataSources
 						if (outMatch.Success)
 						{
 							message = await ReadMessageAsync(reader);
-							timeStamp = DateTime.ParseExact(outMatch.Groups["Timestamp"].Value, "ddd MMM dd HH:mm:ss yyyy",CultureInfo.InvariantCulture);
+							timeStamp = DateTime.ParseExact(outMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 							sourceAddress = "127.0.0.1";
 							destinationAddress = outMatch.Groups["Address"].Value;
 							_event = new Event(timeStamp, sourceAddress, destinationAddress, message);

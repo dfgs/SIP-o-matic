@@ -300,7 +300,7 @@ namespace SIP_o_matic.ViewModels
 				foreach(DialogViewModel dialog in call.Dialogs)
 				{
 					dialogEvent = CreateLadderEvent(ProjectDevices, dialog,colorManager.GetColorString());
-					AddEvent(dialogEvent);
+					//AddEvent(dialogEvent);
 
 					foreach(TransactionViewModel transaction in dialog.Transactions)
 					{
@@ -310,7 +310,7 @@ namespace SIP_o_matic.ViewModels
 						{
 							messageEvent = CreateLadderEvent(ProjectDevices, message, transactionEvent.EventColor);
 							transactionEvent.AddEvent(messageEvent);
-
+							AddEvent(messageEvent);
 						}
 					}
 					foreach (SessionViewModel session in dialog.Sessions)
@@ -319,14 +319,9 @@ namespace SIP_o_matic.ViewModels
 						sessionEvent.DialogEvent = dialogEvent;
 						sessionEvent.TransactionEvent = dialogEvent.TransactionEvents.FirstOrDefault(item=>item.Data==  session.SetupTransaction);
 						SessionEvents.Add(sessionEvent);
-
 					}
 
 					dialogEvent.HasRetransmissions = dialogEvent.TransactionEvents.Any(item => item.HasRetransmissions);
-
-
-
-
 				}
 			}
 		}

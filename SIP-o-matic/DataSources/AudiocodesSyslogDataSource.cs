@@ -29,6 +29,7 @@ namespace SIP_o_matic.DataSources
 
 		public IEnumerable<string> GetSupportedFileExts()
 		{
+			yield return "log";
 			yield return "txt";
 		}
 
