@@ -11,16 +11,11 @@ namespace SIP_o_matic
 	{
 		public static RoutedCommand AddFile = new RoutedCommand();
 		public static RoutedCommand RemoveFile = new RoutedCommand();
-		public static RoutedCommand CopyLogs = new RoutedCommand();
-		public static RoutedCommand ZoomIn = new RoutedCommand();
-		public static RoutedCommand ZoomOut = new RoutedCommand();
-		public static RoutedCommand Refresh = new RoutedCommand();
+
+		public static RoutedCommand Analyze = new RoutedCommand();
+
 		public static RoutedCommand OK = new RoutedCommand();
 		public static RoutedCommand Cancel = new RoutedCommand();
-		public static RoutedCommand AddFilter = new RoutedCommand();
-		public static RoutedCommand RemoveFilter = new RoutedCommand();
-		public static RoutedCommand EditFilter = new RoutedCommand();
-		public static RoutedCommand AddDevice = new RoutedCommand();
-		public static RoutedCommand RemoveDevice= new RoutedCommand();
+		
 	}
 }

@@ -70,9 +70,28 @@ namespace SIP_o_matic
 			MessageBox.Show(this,ex.Message, "Error");
 		}
 
-		
+
 
 		#region command bindings
+
+		private void AnalyzeCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem!=null;
+		}
+
+		private void AnalyzeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+			try
+			{
+				
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
 		private void NewCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.Handled = true;e.CanExecute = true;
@@ -99,8 +118,14 @@ namespace SIP_o_matic
 		{
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
-
-			applicationViewModel.Projects.SelectedItem.SourceFiles.RemoveSelected();
+			try
+			{ 
+				applicationViewModel.Projects.SelectedItem.SourceFiles.RemoveSelected();
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
 		}
 
 		private void AddFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -121,6 +146,7 @@ namespace SIP_o_matic
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 
+			
 			if (!dialog.ShowDialog(this) ?? false) return;
 
 			dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();

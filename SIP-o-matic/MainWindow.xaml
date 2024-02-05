@@ -12,6 +12,7 @@
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddFile}" CanExecute="AddFileCommandBinding_CanExecute" Executed="AddFileCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveFile}" CanExecute="RemoveFileCommandBinding_CanExecute" Executed="RemoveFileCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.Analyze}" CanExecute="AnalyzeCommandBinding_CanExecute" Executed="AnalyzeCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>
@@ -31,6 +32,9 @@
 				</Button>
 				<Button Command="{x:Static root:RoutedCommands.RemoveFile}"  ToolTip="Remove file" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/folder_delete.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.Analyze}"  ToolTip="Analyze project" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/bullet_go.png" Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>
