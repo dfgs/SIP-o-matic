@@ -62,7 +62,7 @@ namespace SIP_o_matic
 				Steps[0].Update(t);
 				await Task.Delay(1000);
 			}
-			Steps[0].End();
+			Steps[0].End("Error message");
 
 			Steps[1].Begin(fileCount);
 			for (int t = 0; t < fileCount; t++)

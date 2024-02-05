@@ -24,13 +24,19 @@
 						<Grid.RowDefinitions>
 							<RowDefinition Height="Auto"/>
 						</Grid.RowDefinitions>
-						<Image Grid.Row="0" Grid.Column="0" >
+						<Image Grid.Row="0" Grid.Column="0" ToolTip="{Binding ErrorMessage}" >
 							<Image.Style>
 								<Style TargetType="{x:Type Image}">
 									<Setter Property="Source" Value="/Images/hourglass.png"/>
 									<Style.Triggers>
-										<DataTrigger Binding="{Binding IsTerminated}" Value="True">
+										<DataTrigger Binding="{Binding Status}" Value="Running">
+											<Setter Property="Source" Value="/Images/bullet_go.png"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding Status}" Value="Terminated">
 											<Setter Property="Source" Value="/Images/accept.png"/>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding Status}" Value="Error">
+											<Setter Property="Source" Value="/Images/error.png"/>
 										</DataTrigger>
 									</Style.Triggers>
 								</Style>

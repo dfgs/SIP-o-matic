@@ -7,6 +7,9 @@ using System.Windows;
 
 namespace SIP_o_matic.Models
 {
+
+	public enum StepStatuses { Undefined,Running,Terminated,Error};
+
 	public class AnalysisStep:DependencyObject
 	{
 
@@ -41,13 +44,19 @@ namespace SIP_o_matic.Models
 
 
 
-		public static readonly DependencyProperty IsTerminatedProperty = DependencyProperty.Register("IsTerminated", typeof(bool), typeof(AnalysisStep), new PropertyMetadata(false));
-		public bool IsTerminated
+		public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(StepStatuses), typeof(AnalysisStep), new PropertyMetadata(StepStatuses.Undefined));
+		public StepStatuses Status
 		{
-			get { return (bool)GetValue(IsTerminatedProperty); }
-			set { SetValue(IsTerminatedProperty, value); }
+			get { return (StepStatuses)GetValue(StatusProperty); }
+			set { SetValue(StatusProperty, value); }
 		}
 
+		public static readonly DependencyProperty ErrorMessageProperty = DependencyProperty.Register("ErrorMessage", typeof(string), typeof(AnalysisStep), new PropertyMetadata(null));
+		public string? ErrorMessage
+		{
+			get { return (string?)GetValue(ErrorMessageProperty); }
+			private set { SetValue(ErrorMessageProperty, value); }
+		}
 
 
 
@@ -61,7 +70,7 @@ namespace SIP_o_matic.Models
 			this.Value = 0;
 			this.Maximum= Maximum;
 			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
-			this.IsTerminated = false;
+			this.Status = StepStatuses.Running;
 		}
 		public void Update(int Value)
 		{
@@ -70,12 +79,14 @@ namespace SIP_o_matic.Models
 			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
 			
 		}
-		public void End()
+		public void End(string? ErrorMessage=null)
 		{
 			this.Value = Maximum-1;
 			this.Maximum = Maximum;
 			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
-			this.IsTerminated = true;
+			if (ErrorMessage == null) this.Status = StepStatuses.Terminated;
+			else this.Status = StepStatuses.Error;
+			this.ErrorMessage = ErrorMessage;
 		}
 
 
