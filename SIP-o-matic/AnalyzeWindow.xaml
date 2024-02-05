@@ -3,30 +3,45 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:root="clr-namespace:SIP_o_matic"
+        xmlns:root="clr-namespace:SIP_o_matic" x:Name="root"
         mc:Ignorable="d" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-        Title="Project analysis..." Height="Auto" Width="320">
-    <StackPanel Margin="5">
-		<TextBlock Text="File 1/x" FontWeight="Bold"/>
-		<ProgressBar Height="10" Margin="5"/>
+        Title="Project analysis..." Height="Auto"  Width="320" Loaded="Window_Loaded">
+
+	<Window.CommandBindings>
+		<CommandBinding Command="{x:Static root:RoutedCommands.OK}" CanExecute="OKCommandBinding_CanExecute" Executed="OKCommandBinding_Executed"/>
+	</Window.CommandBindings>
+
+	<StackPanel Margin="5">
 		<TextBlock Text="Steps:" FontWeight="Bold"/>
-		<Grid Margin="5">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="Auto"/>
-				<ColumnDefinition Width="*"/> 
-			</Grid.ColumnDefinitions>
-			<Grid.RowDefinitions>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-				<RowDefinition Height="Auto"/>
-			</Grid.RowDefinitions>
-			<Image Grid.Row="0" Grid.Column="0" x:Name="imageStep1" Source="/Images/hourglass.png" />
-			<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" Text="Loading file" />
-			<Image Grid.Row="1" Grid.Column="0" x:Name="imageStep2" Source="/Images/hourglass.png" />
-			<TextBlock Grid.Row="1" Grid.Column="1" Margin="3" Text="Extracting sip messages" />
-		</Grid>
-		<StackPanel  Margin="10">
-			<Button HorizontalAlignment="Center" Content="OK" Width="200" Command="{x:Static root:RoutedCommands.OK}" ToolTip="Open project" ToolTipService.ShowOnDisabled="true"/>
-		</StackPanel>
+		<ItemsControl ItemsSource="{Binding ElementName=root,Path=Steps}" Margin="5">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto"/>
+						</Grid.RowDefinitions>
+						<Image Grid.Row="0" Grid.Column="0" >
+							<Image.Style>
+								<Style TargetType="{x:Type Image}">
+									<Setter Property="Source" Value="/Images/hourglass.png"/>
+									<Style.Triggers>
+										<DataTrigger Binding="{Binding IsTerminated}" Value="True">
+											<Setter Property="Source" Value="/Images/accept.png"/>
+										</DataTrigger>
+									</Style.Triggers>
+								</Style>
+							</Image.Style>
+						</Image>
+						<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding FullLabel}" />
+					</Grid>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+		
+		<Button Margin="10" HorizontalAlignment="Center" Content="OK" Width="200" Command="{x:Static root:RoutedCommands.OK}" ToolTip="Open project" ToolTipService.ShowOnDisabled="true"/>
 	</StackPanel>
 </Window>

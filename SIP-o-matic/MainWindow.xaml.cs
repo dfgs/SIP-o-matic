@@ -81,10 +81,14 @@ namespace SIP_o_matic
 
 		private void AnalyzeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
+			AnalyzeWindow analyzeWindow;
+
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 			try
 			{
-				
+				analyzeWindow = new AnalyzeWindow();
+				analyzeWindow.Owner = this;
+				analyzeWindow.ShowDialog();
 			}
 			catch (Exception ex)
 			{
