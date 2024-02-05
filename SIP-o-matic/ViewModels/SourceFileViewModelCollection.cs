@@ -1,5 +1,4 @@
 ﻿using LogLib;
-using SIP_o_matic.DataSources;
 using SIP_o_matic.Models;
 using System;
 using System.Collections.Generic;
@@ -12,10 +11,14 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class SourceFileViewModelCollection : ViewModelCollection<ObservableCollection<SourceFile>,SourceFileViewModel>
+	public class SourceFileViewModelCollection : ListViewModel<SourceFile, SourceFileViewModel>
 	{
-		public SourceFileViewModelCollection(ILogger Logger, ObservableCollection<SourceFile> Source) : base(Logger,Source)
+		public SourceFileViewModelCollection(ILogger Logger) : base(Logger)
 		{
+		}
+		protected override SourceFileViewModel OnCreateItem()
+		{
+			return new SourceFileViewModel(Logger);
 		}
 
 		public void Add(string Path)
@@ -26,26 +29,39 @@ namespace SIP_o_matic.ViewModels
 			if (Path == null) return;
 
 			sourceFileViewModel = this.FirstOrDefault(item => item.Path == Path);
-			if (sourceFileViewModel != null) return;
+			if (sourceFileViewModel != null)
+			{
+				Log(LogLevels.Warning, $"Source file with path {Path} already exists in project");
+				return;
+			}
 
 			sourceFile = new SourceFile() { Path = Path };
-			DataSource.Add(sourceFile);
+			Model.Add(sourceFile);
 
-			sourceFileViewModel = new SourceFileViewModel(Logger,sourceFile);
+			sourceFileViewModel = new SourceFileViewModel(Logger);
+			sourceFileViewModel.Load(sourceFile);
 			AddInternal(sourceFileViewModel);
+
 		}
 
 		public void RemoveSelected()
 		{
+			SourceFile? sourceFile;
+
 			if (SelectedItem == null) return;
 
-			DataSource.Remove(SelectedItem.DataSource);
+			sourceFile=Model.FirstOrDefault(item=>item.Path == SelectedItem.Path);
+			if (sourceFile == null)
+			{
+				Log(LogLevels.Warning, $"No source file with path {SelectedItem.Path} was found");
+				return;
+			}
 
+			Model.Remove(sourceFile);
 			RemoveInternal(SelectedItem);
 
 		}
 
-
-
+		
 	}
 }

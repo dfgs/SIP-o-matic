@@ -14,15 +14,15 @@ namespace SIP_o_matic.ViewModels
 	{
 		public string Name
 		{
-			get => DataSource.Name;
+			get => Model.Name;
 		}
 		public IEnumerable<string> Addresses
 		{
-			get => DataSource.Addresses;
+			get => Model.Addresses;
 		}
 
 
-		public DeviceViewModel(ILogger Logger,Device DataSource) : base(Logger,DataSource)
+		public DeviceViewModel(ILogger Logger) : base(Logger)
 		{
 		}
 		

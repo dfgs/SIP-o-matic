@@ -22,10 +22,10 @@ namespace SIP_o_matic.ViewModels
 		}
 
 		
-		public ApplicationViewModel(ILogger Logger):base(Logger,"")
+		public ApplicationViewModel(ILogger Logger):base(Logger)
 		{
-
-			Projects = new ProjectViewModelCollection(Logger,new ObservableCollection<Project>());
+			Projects = new ProjectViewModelCollection(Logger);
+			Projects.Load(new List<Project>());
 		}
 
 

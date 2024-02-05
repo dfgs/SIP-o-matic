@@ -48,13 +48,17 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}*/
 
-		public ProjectViewModel(ILogger Logger,Project DataSource):base(Logger,DataSource)
+		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
-			SourceFiles = new SourceFileViewModelCollection(Logger,DataSource.SourceFiles);
+			SourceFiles = new SourceFileViewModelCollection(Logger);
 			//Devices = new ViewModelCollection<DeviceViewModel>(Logger);
 		}
-		
-		
+
+		protected override void OnLoaded()
+		{
+			base.OnLoaded();
+			SourceFiles.Load(Model.SourceFiles);
+		}
 
 		/*private DeviceViewModel? FindDeviceByName(string Name)
 		{
@@ -96,8 +100,8 @@ namespace SIP_o_matic.ViewModels
 			
 		}*/
 
-		
-		
+
+
 
 
 

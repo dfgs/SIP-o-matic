@@ -17,12 +17,12 @@ namespace SIP_o_matic.ViewModels
 
 		public string Path
 		{
-			get => DataSource.Path;
+			get => Model.Path;
 		}
 
 		public string Name
 		{
-			get => DataSource.Name;
+			get => Model.Name;
 		}
 
 		public ObservableCollection<Message> Events
@@ -35,10 +35,15 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}*/
-		public SourceFileViewModel(ILogger Logger,SourceFile Source):base(Logger,Source)
+		public SourceFileViewModel(ILogger Logger):base(Logger)
 		{
 			Events = new ObservableCollection<Message>();
 			//Devices = new ObservableCollection<Device>();
+		}
+		protected override void OnLoaded()
+		{
+			base.OnLoaded();
+			//Events.Load(Model.Messages);
 		}
 
 		/*public void AddDevice(Device Device)

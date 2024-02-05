@@ -10,10 +10,15 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ProjectViewModelCollection : ViewModelCollection<ObservableCollection<Project>,ProjectViewModel>
+	public class ProjectViewModelCollection : ListViewModel<Project, ProjectViewModel>
 	{
-		public ProjectViewModelCollection(ILogger Logger, ObservableCollection<Project> DataSource) : base(Logger,DataSource)
+		public ProjectViewModelCollection(ILogger Logger) : base(Logger)
 		{
+		}
+
+		protected override ProjectViewModel OnCreateItem()
+		{
+			return new ProjectViewModel(Logger);
 		}
 
 		public void AddNew()
@@ -22,11 +27,14 @@ namespace SIP_o_matic.ViewModels
 			ProjectViewModel projectViewModel;
 
 			project= new Project();
-			projectViewModel = new ProjectViewModel(Logger, project);
+			projectViewModel = new ProjectViewModel(Logger);
+			projectViewModel.Load(project);
+
 			AddInternal(projectViewModel);
 
 			SelectedItem= projectViewModel;
 		}
 
+		
 	}
 }
