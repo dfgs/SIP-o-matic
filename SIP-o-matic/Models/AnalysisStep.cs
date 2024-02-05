@@ -32,7 +32,7 @@ namespace SIP_o_matic.Models
 		public string Label
 		{
 			get { return (string)GetValue(LabelProperty); }
-			set { SetValue(LabelProperty, value); }
+			set { SetValue(LabelProperty, value);UpdateFullLabel(); }
 		}
 
 		public static readonly DependencyProperty FullLabelProperty = DependencyProperty.Register("FullLabel", typeof(string), typeof(AnalysisStep), new PropertyMetadata("Step"));
@@ -65,25 +65,30 @@ namespace SIP_o_matic.Models
 
 		}
 
+		private void UpdateFullLabel()
+		{
+			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
+		}
+
 		public void Begin(int Maximum)
 		{
 			this.Value = 0;
 			this.Maximum= Maximum;
-			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
+			UpdateFullLabel();
 			this.Status = StepStatuses.Running;
 		}
 		public void Update(int Value)
 		{
 			this.Maximum = Maximum;
 			this.Value = Value;
-			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
-			
+			UpdateFullLabel();
+
 		}
 		public void End(string? ErrorMessage=null)
 		{
 			this.Value = Maximum-1;
 			this.Maximum = Maximum;
-			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
+			UpdateFullLabel();
 			if (ErrorMessage == null) this.Status = StepStatuses.Terminated;
 			else this.Status = StepStatuses.Error;
 			this.ErrorMessage = ErrorMessage;

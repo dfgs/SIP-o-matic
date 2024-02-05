@@ -3,51 +3,55 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:root="clr-namespace:SIP_o_matic" x:Name="root"
+        xmlns:root="clr-namespace:SIP_o_matic" x:Name="root" WindowStartupLocation="CenterOwner"
         mc:Ignorable="d" ResizeMode="NoResize" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
-        Title="Project analysis..." Height="Auto"  Width="320" Loaded="Window_Loaded">
+        Title="SIP-o-matic" Height="Auto"  Width="320" Loaded="Window_Loaded" SizeToContent="Height">
 
 	<Window.CommandBindings>
 		<CommandBinding Command="{x:Static root:RoutedCommands.OK}" CanExecute="OKCommandBinding_CanExecute" Executed="OKCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.Cancel}" CanExecute="CancelCommandBinding_CanExecute" Executed="CancelCommandBinding_Executed"/>
 	</Window.CommandBindings>
-
 	<StackPanel Margin="5">
-		<TextBlock Text="Steps:" FontWeight="Bold"/>
-		<ItemsControl ItemsSource="{Binding ElementName=root,Path=Steps}" Margin="5">
-			<ItemsControl.ItemTemplate>
-				<DataTemplate>
-					<Grid>
-						<Grid.ColumnDefinitions>
-							<ColumnDefinition Width="Auto"/>
-							<ColumnDefinition Width="*"/>
-						</Grid.ColumnDefinitions>
-						<Grid.RowDefinitions>
-							<RowDefinition Height="Auto"/>
-						</Grid.RowDefinitions>
-						<Image Grid.Row="0" Grid.Column="0" ToolTip="{Binding ErrorMessage}" >
-							<Image.Style>
-								<Style TargetType="{x:Type Image}">
-									<Setter Property="Source" Value="/Images/hourglass.png"/>
-									<Style.Triggers>
-										<DataTrigger Binding="{Binding Status}" Value="Running">
-											<Setter Property="Source" Value="/Images/bullet_go.png"/>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Status}" Value="Terminated">
-											<Setter Property="Source" Value="/Images/accept.png"/>
-										</DataTrigger>
-										<DataTrigger Binding="{Binding Status}" Value="Error">
-											<Setter Property="Source" Value="/Images/error.png"/>
-										</DataTrigger>
-									</Style.Triggers>
-								</Style>
-							</Image.Style>
-						</Image>
-						<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding FullLabel}" />
-					</Grid>
-				</DataTemplate>
-			</ItemsControl.ItemTemplate>
-		</ItemsControl>
-		
-		<Button Margin="10" HorizontalAlignment="Center" Content="OK" Width="200" Command="{x:Static root:RoutedCommands.OK}" ToolTip="Open project" ToolTipService.ShowOnDisabled="true"/>
+		<GroupBox Header="Analysis steps">
+			<ItemsControl   ItemsSource="{Binding ElementName=root,Path=Steps}" Margin="5">
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Grid>
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+							</Grid.RowDefinitions>
+							<Image Grid.Row="0" Grid.Column="0" ToolTip="{Binding ErrorMessage}" >
+								<Image.Style>
+									<Style TargetType="{x:Type Image}">
+										<Setter Property="Source" Value="/Images/hourglass.png"/>
+										<Style.Triggers>
+											<DataTrigger Binding="{Binding Status}" Value="Running">
+												<Setter Property="Source" Value="/Images/bullet_go.png"/>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding Status}" Value="Terminated">
+												<Setter Property="Source" Value="/Images/accept.png"/>
+											</DataTrigger>
+											<DataTrigger Binding="{Binding Status}" Value="Error">
+												<Setter Property="Source" Value="/Images/error.png"/>
+											</DataTrigger>
+										</Style.Triggers>
+									</Style>
+								</Image.Style>
+							</Image>
+							<TextBlock Grid.Row="0" Grid.Column="1" Margin="3" Text="{Binding FullLabel}" />
+						</Grid>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</GroupBox>
+		<UniformGrid Columns="2">
+			<Button Margin="10"  Content="Cancel"  Command="{x:Static root:RoutedCommands.Cancel}" ToolTip="Cancel" ToolTipService.ShowOnDisabled="true"/>
+			<Button Margin="10" Content="OK"  Command="{x:Static root:RoutedCommands.OK}" ToolTip="OK" ToolTipService.ShowOnDisabled="true"/>
+		</UniformGrid>
 	</StackPanel>
+
 </Window>

@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +24,7 @@ namespace SIP_o_matic
 	public partial class AnalyzeWindow : Window
 	{
 		private bool terminated = false;
-
+		private CancellationTokenSource? cancelToken;
 
 
 		public static readonly DependencyProperty StepsProperty = DependencyProperty.Register("Steps", typeof(List<AnalysisStep>), typeof(AnalyzeWindow), new PropertyMetadata(null));
@@ -41,40 +42,45 @@ namespace SIP_o_matic
 			Steps = new List<AnalysisStep>();
 			Steps.Add(new AnalysisStep() { Label = "Loading file" });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages" });
+			Steps.Add(new AnalysisStep() { Label = "Creating events" });
 			InitializeComponent();
 		}
 
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			e.Cancel = !terminated;
+		}
 		private async void Window_Loaded(object sender, RoutedEventArgs e)
 		{
-			await RunAnalyzisAsync();
+			cancelToken=new CancellationTokenSource();
+			await RunAnalyzisAsync(cancelToken.Token);
 		}
 
-		private async Task RunAnalyzisAsync()
+		private async Task RunAnalyzisAsync(CancellationToken CancelToken)
 		{
 			int fileCount;
+
+			if (cancelToken==null) throw new ArgumentNullException(nameof(cancelToken));
 
 			fileCount = 10;
 
 
-			Steps[0].Begin(fileCount);
-			for(int t=0;t< fileCount; t++)
-			{
-				Steps[0].Update(t);
-				await Task.Delay(1000);
+			for(int step=0; step < Steps.Count; step++) 
+			{ 
+				Steps[step].Begin(fileCount);
+				for(int t=0;t< fileCount; t++)
+				{
+					if (cancelToken.IsCancellationRequested)
+					{
+						Steps[step].End("Analysis canceled");
+						break;
+					}
+					Steps[step].Update(t);
+					await Task.Delay(1000);
+				}
+				if (Steps[step].Status!=StepStatuses.Error) Steps[step].End();
 			}
-			Steps[0].End("Error message");
-
-			Steps[1].Begin(fileCount);
-			for (int t = 0; t < fileCount; t++)
-			{
-				Steps[1].Update(t);
-				await Task.Delay(1000);
-			}
-			Steps[1].End();
-
-
-
-
+			
 
 			terminated = true;
 			System.Windows.Input.CommandManager.InvalidateRequerySuggested();
@@ -90,12 +96,19 @@ namespace SIP_o_matic
 			DialogResult = true;
 		}
 
-
-		/*private override void OnClosing(object sender, CancelEventArgs e)
+		private void CancelCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Cancel = true;
-			//Do whatever you want here..
-		}*/
+			e.CanExecute = !terminated;
+		}
+
+		private void CancelCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (cancelToken == null) return;
+			cancelToken.Cancel();
+		}
+
+
+		
 
 
 	}
