@@ -22,7 +22,7 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
-
+		
 		public Device()
 		{
 			Addresses = new List<string>();

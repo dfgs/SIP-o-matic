@@ -43,6 +43,7 @@
 			<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 			<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">
 				<TabItem Header="Calls">
+					<views:MessagesView DataContext="{Binding Messages}"/>
 				</TabItem>
 				<TabItem Header="Ladder">
 				</TabItem>

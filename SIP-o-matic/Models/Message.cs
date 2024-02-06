@@ -1,38 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SIP_o_matic.Models
 {
-    public struct Message
+    public class Message
     {
-        public DateTime Timestamp
+        public required DateTime Timestamp
         {
             get;
-            private set;
+            set;
         }
-        public string Content
+        public required string Content
         {
             get;
-            private set;
+            set;
         }
 
-        public string SourceAddress
+        public required string SourceAddress
         {
             get;
-            private set;
+            set;
         }
 
-        public string DestinationAddress
+        public required string DestinationAddress
         {
             get;
-            private set;
+            set;
         }
 
+        public Message()
+        {
 
-        public Message(DateTime Timestamp, string SourceAddress, string DestinationAddress, string Content)
+        }
+		[SetsRequiredMembers]
+		public Message(DateTime Timestamp, string SourceAddress, string DestinationAddress, string Content)
         {
             this.Timestamp = Timestamp;
             this.SourceAddress = SourceAddress;

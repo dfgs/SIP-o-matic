@@ -25,10 +25,17 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public List<Message> Messages
+		{
+			get;
+			set;
+		}
+
 		public Project()
 		{
 			SourceFiles = new List<SourceFile>();
 			Devices= new List<Device>();
+			Messages = new List<Message>();
 		}
 
 

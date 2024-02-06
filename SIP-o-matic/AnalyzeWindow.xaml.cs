@@ -79,7 +79,7 @@ namespace SIP_o_matic
 
 			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
 			{
-				Project.Devices.Add(device);
+				Project.Messages.Add(message);
 			}
 		}
 

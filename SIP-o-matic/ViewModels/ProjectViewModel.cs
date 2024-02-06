@@ -47,11 +47,17 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public MessageViewModelCollection Messages
+		{
+			get;
+			private set;
+		}
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			SourceFiles = new SourceFileViewModelCollection(Logger);
 			Devices = new DeviceViewModelCollection(Logger);
+			Messages = new MessageViewModelCollection(Logger);
 		}
 
 		protected override void OnLoaded()
@@ -59,11 +65,13 @@ namespace SIP_o_matic.ViewModels
 			base.OnLoaded();
 			SourceFiles.Load(Model.SourceFiles);
 			Devices.Load(Model.Devices);
+			Messages.Load(Model.Messages);
 		}
 
 		public void Clear()
 		{
 			Devices.Clear();
+			Messages.Clear();
 		}
 
 
