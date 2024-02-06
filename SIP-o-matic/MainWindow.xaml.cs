@@ -28,6 +28,8 @@ namespace SIP_o_matic
 	{
 		private ApplicationViewModel applicationViewModel;
 		private DataSourceManager dataSourceManager;
+		private ILogger Logger;
+
 		public MainWindow()
 		{
 			dataSourceManager= new DataSourceManager();
@@ -37,7 +39,8 @@ namespace SIP_o_matic
 			//dataSourceManager.Register(new AudiocodesSyslogDataSource());
 			//dataSourceManager.Register(new AlcatelSIPTraceDataSource());
 
-			applicationViewModel = new ApplicationViewModel(NullLogger.Instance);
+			Logger = NullLogger.Instance;
+			applicationViewModel = new ApplicationViewModel(Logger);
 
 
 			InitializeComponent();
@@ -86,7 +89,7 @@ namespace SIP_o_matic
 			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0) ) return;
 			try
 			{
-				analyzeWindow = new AnalyzeWindow();
+				analyzeWindow = new AnalyzeWindow() { Logger=this.Logger};
 				analyzeWindow.Owner = this;
 				analyzeWindow.Project = applicationViewModel.Projects.SelectedItem;
 				analyzeWindow.ShowDialog();

@@ -17,6 +17,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using SIPParserLib;
+using ParserLib;
+using LogLib;
 
 namespace SIP_o_matic
 {
@@ -44,7 +47,11 @@ namespace SIP_o_matic
 			set { SetValue(ProjectProperty, value); }
 		}
 
-
+		public required ILogger Logger
+		{
+			get;
+			set;
+		}
 
 
 
@@ -55,7 +62,7 @@ namespace SIP_o_matic
 			Steps = new List<AnalysisStep>();
 			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
-			Steps.Add(new AnalysisStep() { Label = "Creating events", TaskFactory = DelayAsync });
+			Steps.Add(new AnalysisStep() { Label = "Creating events", TaskFactory = CreateTelephonyEventsAsync });
 			InitializeComponent();
 		}
 
@@ -82,6 +89,30 @@ namespace SIP_o_matic
 				Project.Messages.Add(message);
 			}
 		}
+		private async Task CreateTelephonyEventsAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
+		{
+			StringReader reader;
+			SIPMessage sipMessage;
+			TelephonyEvent telephonyEvent;
+
+			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
+			{
+				reader = new StringReader(message.Content, ' ');
+				try
+				{
+					sipMessage = SIPGrammar.SIPMessage.Parse(reader);
+				}
+				catch(Exception ex)
+				{
+					string error = "Failed to decode SIP message:\r\n" + ex.Message + "\r\n" + message.Content;
+					throw new InvalidOperationException(error);
+				}
+				telephonyEvent = new TelephonyEvent(message.SourceAddress, message.Content, sipMessage.GetHeader<CallIDHeader>()?.Value??"Undefined");
+			}
+
+		}
+
+
 
 		private async Task RunAnalyzisAsync(CancellationToken CancellationToken, ProjectViewModel Project)
 		{
@@ -114,6 +145,7 @@ namespace SIP_o_matic
 					}
 					catch(Exception ex)
 					{
+						Logger.Log(0, "AnalyzeWindow", "RunAnalyzisAsync", ex);
 						step.End(ex.Message);
 						break;
 					}
