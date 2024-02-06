@@ -76,18 +76,19 @@ namespace SIP_o_matic
 
 		private void AnalyzeCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem!=null;
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem!=null) && (applicationViewModel.Projects.SelectedItem.SourceFiles.Count>0);
 		}
 
 		private void AnalyzeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			AnalyzeWindow analyzeWindow;
 
-			if (applicationViewModel.Projects.SelectedItem == null) return;
+			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0) ) return;
 			try
 			{
 				analyzeWindow = new AnalyzeWindow();
 				analyzeWindow.Owner = this;
+				analyzeWindow.Project = applicationViewModel.Projects.SelectedItem;
 				analyzeWindow.ShowDialog();
 			}
 			catch (Exception ex)
@@ -140,20 +141,20 @@ namespace SIP_o_matic
 		private void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
-			IDataSource[] dataSources;
+			/*IDataSource[] dataSources;
 			IDataSource selectedDataSource;
-			DataSourceWindow dataSourceWindow;
+			DataSourceWindow dataSourceWindow;*/
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
 
 			dialog = new OpenFileDialog();
 			dialog.Filter = "All files|*.*";
 			dialog.Title = "Add file to project";
+			dialog.Multiselect = true;
 
-			if (applicationViewModel.Projects.SelectedItem == null) return;
-
-			
 			if (!dialog.ShowDialog(this) ?? false) return;
 
-			dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();
+			/*dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();
 
 			if (dataSources.Length == 0)
 			{
@@ -170,12 +171,15 @@ namespace SIP_o_matic
 
 				if (!dataSourceWindow.ShowDialog() ?? false) return;
 				selectedDataSource = dataSourceWindow.SelectedDataSource;
-			}
+			}*/
 
 
 			try
 			{
-				applicationViewModel.Projects.SelectedItem.SourceFiles.Add(dialog.FileName);
+				foreach (string fileName in dialog.FileNames)
+				{
+					applicationViewModel.Projects.SelectedItem.SourceFiles.Add(fileName);
+				}
 			}
 			catch (Exception ex)
 			{

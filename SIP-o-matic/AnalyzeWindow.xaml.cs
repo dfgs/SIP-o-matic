@@ -1,4 +1,6 @@
-﻿using SIP_o_matic.Models;
+﻿using SIP_o_matic.DataSources;
+using SIP_o_matic.Models;
+using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,50 +37,88 @@ namespace SIP_o_matic
 		}
 
 
+		public static readonly DependencyProperty ProjectProperty = DependencyProperty.Register("Project", typeof(ProjectViewModel), typeof(AnalyzeWindow), new PropertyMetadata(null));
+		public ProjectViewModel Project
+		{
+			get { return (ProjectViewModel)GetValue(ProjectProperty); }
+			set { SetValue(ProjectProperty, value); }
+		}
+
+
+
 
 
 		public AnalyzeWindow()
 		{
+			cancelToken = new CancellationTokenSource();
+
 			Steps = new List<AnalysisStep>();
-			Steps.Add(new AnalysisStep() { Label = "Loading file" });
-			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages" });
-			Steps.Add(new AnalysisStep() { Label = "Creating events" });
+			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
+			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
+			Steps.Add(new AnalysisStep() { Label = "Creating events", TaskFactory = DelayAsync });
 			InitializeComponent();
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
+		
+		private async Task DelayAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
-			e.Cancel = !terminated;
-		}
-		private async void Window_Loaded(object sender, RoutedEventArgs e)
-		{
-			cancelToken=new CancellationTokenSource();
-			await RunAnalyzisAsync(cancelToken.Token);
+			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
+			await Task.Delay(1000);
 		}
 
-		private async Task RunAnalyzisAsync(CancellationToken CancelToken)
+		private async Task ExtractDevicesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
+		{
+
+			await foreach(Device device in DataSource.EnumerateDevicesAsync(Path))
+			{
+				Project.Devices.Add(device);
+			}
+		}
+		private async Task ExtractMessagesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
+		{
+
+			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
+			{
+				Project.Devices.Add(device);
+			}
+		}
+
+		private async Task RunAnalyzisAsync(CancellationToken CancellationToken, ProjectViewModel Project)
 		{
 			int fileCount;
+			AnalysisStep step;
+			IDataSource dataSource;
 
-			if (cancelToken==null) throw new ArgumentNullException(nameof(cancelToken));
+			// actually, only supported datasource
+			dataSource = new OracleOEMDataSource();
 
-			fileCount = 10;
+			fileCount = Project.SourceFiles.Count; ;
+			Project.Clear();
 
+			for (int stepIndex = 0; stepIndex < Steps.Count; stepIndex++)
+			{
+				Steps[stepIndex].Init(fileCount);
+			}
 
-			for(int step=0; step < Steps.Count; step++) 
-			{ 
-				Steps[step].Begin(fileCount);
+			for (int stepIndex = 0; stepIndex < Steps.Count; stepIndex++)
+			{
+				step = Steps[stepIndex];
+				step.Begin();
 				for(int t=0;t< fileCount; t++)
 				{
-					if (cancelToken.IsCancellationRequested)
+					step.Update(t);
+					try
 					{
-						Steps[step].End("Analysis canceled");
+						if (step.TaskFactory == null) await Task.Delay(1000);
+						else await step.TaskFactory(CancellationToken,Project,dataSource, Project.SourceFiles[t].Path);
+					}
+					catch(Exception ex)
+					{
+						step.End(ex.Message);
 						break;
 					}
-					Steps[step].Update(t);
-					await Task.Delay(1000);
 				}
-				if (Steps[step].Status!=StepStatuses.Error) Steps[step].End();
+				if (step.Status!=StepStatuses.Error) step.End();
 			}
 			
 
@@ -86,6 +126,7 @@ namespace SIP_o_matic
 			System.Windows.Input.CommandManager.InvalidateRequerySuggested();
 		}
 
+		#region events
 		private void OKCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.CanExecute = terminated;
@@ -108,7 +149,20 @@ namespace SIP_o_matic
 		}
 
 
-		
+		protected override void OnClosing(CancelEventArgs e)
+		{
+			e.Cancel = !terminated;
+		}
+		private async void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			if ((Project == null) || (cancelToken==null))
+			{
+				terminated = true;
+				return;
+			}
+			await RunAnalyzisAsync(cancelToken.Token,Project) ;
+		}
+		#endregion
 
 
 	}

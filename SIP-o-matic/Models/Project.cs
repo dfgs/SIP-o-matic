@@ -15,16 +15,20 @@ namespace SIP_o_matic.Models
 	public class Project
 	{
 		
-
-		public ObservableCollection<SourceFile> SourceFiles
+		public List<SourceFile> SourceFiles
 		{
 			get;
 			set;
 		}
-
+		public List<Device> Devices
+		{
+			get;
+			set;
+		}
 		public Project()
 		{
-			SourceFiles = new ObservableCollection<SourceFile>();
+			SourceFiles = new List<SourceFile>();
+			Devices= new List<Device>();
 		}
 
 

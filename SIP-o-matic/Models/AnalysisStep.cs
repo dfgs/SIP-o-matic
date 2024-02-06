@@ -1,7 +1,10 @@
-﻿using System;
+﻿using SIP_o_matic.DataSources;
+using SIP_o_matic.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -32,7 +35,7 @@ namespace SIP_o_matic.Models
 		public string Label
 		{
 			get { return (string)GetValue(LabelProperty); }
-			set { SetValue(LabelProperty, value);UpdateFullLabel(); }
+			set { SetValue(LabelProperty, value); }
 		}
 
 		public static readonly DependencyProperty FullLabelProperty = DependencyProperty.Register("FullLabel", typeof(string), typeof(AnalysisStep), new PropertyMetadata("Step"));
@@ -60,6 +63,16 @@ namespace SIP_o_matic.Models
 
 
 
+		public static readonly DependencyProperty TaskFactoryProperty = DependencyProperty.Register("TaskFactory", typeof(Func<CancellationToken, ProjectViewModel, IDataSource, string,  Task>), typeof(AnalysisStep), new PropertyMetadata(null));
+		public Func<CancellationToken, ProjectViewModel,IDataSource, string, Task> TaskFactory
+		{
+			get { return (Func<CancellationToken, ProjectViewModel,IDataSource, string,  Task>)GetValue(TaskFactoryProperty); }
+			set { SetValue(TaskFactoryProperty, value); }
+		}
+
+
+
+
 		public AnalysisStep()
 		{
 
@@ -70,10 +83,16 @@ namespace SIP_o_matic.Models
 			this.FullLabel = $"{Label} ({Value + 1}/{Maximum})";
 		}
 
-		public void Begin(int Maximum)
+		public void Init(int Maximum)
 		{
 			this.Value = 0;
-			this.Maximum= Maximum;
+			this.Maximum = Maximum;
+			UpdateFullLabel();
+			this.Status = StepStatuses.Undefined;
+		}
+		public void Begin()
+		{
+			this.Value = 0;
 			UpdateFullLabel();
 			this.Status = StepStatuses.Running;
 		}

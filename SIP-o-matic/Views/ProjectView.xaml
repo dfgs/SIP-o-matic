@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
  			 xmlns:views="clr-namespace:SIP_o_matic.Views"
-            mc:Ignorable="d" 
+             mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	
 	<DockPanel>
@@ -19,7 +19,7 @@
 				<ColumnDefinition Width="300"/>
 			</Grid.ColumnDefinitions>
 			<TabControl TabStripPlacement="Left" Grid.Column="0">
-					<TabItem Padding="0,5,0,5">
+				<TabItem Padding="0,5,0,5">
 						<TabItem.Header>
 							<TextBlock Text="Files">
 								<TextBlock.LayoutTransform>
@@ -27,17 +27,18 @@
 								</TextBlock.LayoutTransform>
 							</TextBlock>
 						</TabItem.Header>
-					<views:SourceFilesView DataContext="{Binding SourceFiles}"/>
-				</TabItem>
-					<TabItem Padding="0,5,0,5">
-						<TabItem.Header>
-							<TextBlock Text="Devices">
-								<TextBlock.LayoutTransform>
-									<RotateTransform Angle="-90"/>
-								</TextBlock.LayoutTransform>
-							</TextBlock>
-						</TabItem.Header>
+						<views:SourceFilesView DataContext="{Binding SourceFiles}"/>
 					</TabItem>
+				<TabItem Padding="0,5,0,5">
+					<TabItem.Header>
+						<TextBlock Text="Devices">
+							<TextBlock.LayoutTransform>
+								<RotateTransform Angle="-90"/>
+							</TextBlock.LayoutTransform>
+						</TextBlock>
+					</TabItem.Header>
+					<views:DevicesView DataContext="{Binding Devices}"/>
+				</TabItem>
 				</TabControl>
 			<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 			<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">

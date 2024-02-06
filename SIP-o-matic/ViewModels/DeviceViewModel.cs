@@ -16,17 +16,25 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Model.Name;
 		}
-		public IEnumerable<string> Addresses
+		public AddressViewModelCollection Addresses
 		{
-			get => Model.Addresses;
+			get;
+			private set;
 		}
 
 
 		public DeviceViewModel(ILogger Logger) : base(Logger)
 		{
+			Addresses = new AddressViewModelCollection(Logger);
 		}
-		
 
+		protected override void OnLoaded()
+		{
+			base.OnLoaded();
+			Addresses.Load(Model.Addresses);
+		}
+
+		
 		
 
 	}

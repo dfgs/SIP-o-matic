@@ -17,7 +17,7 @@ namespace SIP_o_matic.Models
 			set;
 		}
 		
-		public ObservableCollection<string> Addresses
+		public List<string> Addresses
 		{
 			get;
 			set;
@@ -25,7 +25,7 @@ namespace SIP_o_matic.Models
 
 		public Device()
 		{
-			Addresses = new ObservableCollection<string>();
+			Addresses = new List<string>();
 		}
 
 	}

@@ -41,68 +41,30 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 				
-
-		/*public ViewModelCollection<DeviceViewModel> Devices
+		public DeviceViewModelCollection Devices
 		{
 			get;
 			private set;
-		}*/
+		}
+
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			SourceFiles = new SourceFileViewModelCollection(Logger);
-			//Devices = new ViewModelCollection<DeviceViewModel>(Logger);
+			Devices = new DeviceViewModelCollection(Logger);
 		}
 
 		protected override void OnLoaded()
 		{
 			base.OnLoaded();
 			SourceFiles.Load(Model.SourceFiles);
+			Devices.Load(Model.Devices);
 		}
 
-		/*private DeviceViewModel? FindDeviceByName(string Name)
+		public void Clear()
 		{
-			return Devices.FirstOrDefault(item => item.Name == Name);
+			Devices.Clear();
 		}
-		private DeviceViewModel? FindDeviceByAddress(string Address)
-		{
-			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
-		}
-
-
-		private void AddDevice(SourceFileViewModel FileViewModel, Device Device)
-		{
-			DeviceViewModel? deviceViewModel;
-
-			deviceViewModel = FindDeviceByName(Device.Name);
-			if (deviceViewModel == null)
-			{
-				deviceViewModel = new DeviceViewModel(Logger);
-				deviceViewModel.Load(Device);
-				Devices.Add(deviceViewModel);
-			}
-			
-		}
-		private void AddDevice(SourceFileViewModel FileViewModel, string Address)
-		{
-			DeviceViewModel? deviceViewModel;
-			Device device;
-
-			deviceViewModel = FindDeviceByAddress(Address);
-			if (deviceViewModel == null)
-			{
-				device = new Device() { Name = Address };
-				device.Addresses.Add(Address);
-				deviceViewModel = new DeviceViewModel(Logger);
-				deviceViewModel.Load(device);
-				Devices.Add(deviceViewModel);
-			}
-			
-		}*/
-
-
-
-
 
 
 	}
