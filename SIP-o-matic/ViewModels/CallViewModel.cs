@@ -9,35 +9,25 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class TelephonyEventViewModel : ViewModel<TelephonyEvent>
+	public class CallViewModel : ViewModel<Call>
 	{
-		public DateTime Timestamp
-		{
-			get => Model.Timestamp;
-		}
 		public string CallID
 		{
 			get => Model.CallID;
 		}
+
 		public string SourceAddress
 		{
 			get=>Model.SourceAddress;
 		}
+
 		public string DestinationAddress
 		{
 			get=> Model.DestinationAddress;
 		}
-		public uint MessageIndex
-		{
-			get => Model.MessageIndex;
-		}
 
-		public TelephonyEventTypes EventType
-		{
-			get => Model.EventType;
-		}
 
-		public TelephonyEventViewModel(ILogger Logger) : base(Logger)
+		public CallViewModel(ILogger Logger) : base(Logger)
 		{
 		}
 	}

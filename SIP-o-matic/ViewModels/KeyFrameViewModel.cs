@@ -16,8 +16,22 @@ namespace SIP_o_matic.ViewModels
 			get => Model.Timestamp;
 		}
 
+		public CallViewModelCollection Calls
+		{
+			get;
+			private set;
+		}
+
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{
+			Calls = new CallViewModelCollection(Logger);
 		}
+
+		protected override void OnLoaded()
+		{
+			base.OnLoaded();
+			Calls.Load(Model.Calls);
+		}
+
 	}
 }

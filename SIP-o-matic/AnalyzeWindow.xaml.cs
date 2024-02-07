@@ -67,7 +67,32 @@ namespace SIP_o_matic
 			InitializeComponent();
 		}
 
-		
+		private TelephonyEventTypes GetTelephonyEventTypes(Request Request)
+		{
+			switch(Request.RequestLine.Method)
+			{
+				case "INVITE":return TelephonyEventTypes.CallPlaced;
+				
+			}
+			return TelephonyEventTypes.SessionRefreshed;
+		}
+		private TelephonyEventTypes GetTelephonyEventTypes(Response Response)
+		{
+			return TelephonyEventTypes.SessionRefreshed;
+		}
+
+		private TelephonyEventTypes GetTelephonyEventTypes(SIPMessage Message)
+		{
+
+			switch (Message)
+			{
+				case Request request:return GetTelephonyEventTypes(request);
+				case Response response:return GetTelephonyEventTypes(response);
+				default: throw new InvalidOperationException("Invalid SIP message type");
+			}
+
+		}
+
 		private async Task DelayAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
 			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
@@ -117,19 +142,34 @@ namespace SIP_o_matic
 					throw new InvalidOperationException(error);
 				}
 
+				
+
 				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress, message.Index );
+				telephonyEvent.EventType = GetTelephonyEventTypes(sipMessage);
 				Project.TelephonyEvents.Add(telephonyEvent);
 			}
 
 		}
 		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
-			KeyFrame keyFrame;
+			KeyFrame newKeyFrame;
+			KeyFrame? previousKeyFrame=null;
+			Call call;
 
-			await foreach (TelephonyEventViewModel telephonyEvent in Project.TelephonyEvents.ToAsyncEnumerable() )
+			await foreach (TelephonyEventViewModel telephonyEvent in Project.TelephonyEvents.OrderBy(item=>item.Timestamp).ToAsyncEnumerable() )
 			{
-				keyFrame = new KeyFrame(telephonyEvent.Timestamp);
-				Project.KeyFrames.Add(keyFrame);
+				newKeyFrame = new KeyFrame(telephonyEvent.Timestamp,previousKeyFrame);
+			
+				switch (telephonyEvent.EventType)
+				{
+					case TelephonyEventTypes.CallPlaced:
+						call = new Call(telephonyEvent.CallID, telephonyEvent.SourceAddress, telephonyEvent.DestinationAddress);
+						newKeyFrame.Calls.Add(call);
+						break;
+				}
+
+				Project.KeyFrames.Add(newKeyFrame);
+				previousKeyFrame = newKeyFrame;
 			}
 		}
 

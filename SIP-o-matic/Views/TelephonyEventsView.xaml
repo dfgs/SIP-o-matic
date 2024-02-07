@@ -18,6 +18,8 @@
 						<TextBlock Foreground="Gray" Text="{Binding SourceAddress}"/>
 						<TextBlock Foreground="Gray" Text=" -> "/>
 						<TextBlock Foreground="Gray" Text="{Binding DestinationAddress}"/>
+						<TextBlock Foreground="Gray" Text=": "/>
+						<TextBlock Foreground="Gray" Text="{Binding EventType}"/>
 					</StackPanel>
 				</StackPanel>
 			</DataTemplate>

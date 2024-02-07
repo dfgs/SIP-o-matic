@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.Models
 {
+	public enum TelephonyEventTypes {CallPlaced,CallReceived, CallRinging,CallHold,CallResumed,SessionRefreshed};
+
 	public class TelephonyEvent
 	{
 		public required DateTime Timestamp
@@ -35,7 +37,11 @@ namespace SIP_o_matic.Models
 			set;
 		}
 
-		
+		public required	TelephonyEventTypes EventType
+		{
+			get; 
+			set; 
+		}
 
 		public TelephonyEvent() 
 		{ 
