@@ -117,17 +117,19 @@ namespace SIP_o_matic
 					throw new InvalidOperationException(error);
 				}
 
-				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress, message.Content );
+				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress, message.Index );
 				Project.TelephonyEvents.Add(telephonyEvent);
 			}
 
 		}
 		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
+			KeyFrame keyFrame;
 
-			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
+			await foreach (TelephonyEventViewModel telephonyEvent in Project.TelephonyEvents.ToAsyncEnumerable() )
 			{
-				//Project.Messages.Add(message);
+				keyFrame = new KeyFrame(telephonyEvent.Timestamp);
+				Project.KeyFrames.Add(keyFrame);
 			}
 		}
 

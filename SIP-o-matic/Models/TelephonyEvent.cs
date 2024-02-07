@@ -14,40 +14,41 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public required string CallID
+		{
+			get;
+			set;
+		}
 		public required string SourceAddress
 		{
 			get;
 			set;
 		}
-		public required string DestinationAdress
+		public required string DestinationAddress
 		{
 			get;
 			set;
 		}
-		public required string Message
+		public required uint MessageIndex
 		{
 			get;
 			set;
 		}
 
-		public required string CallID
-		{
-			get; 
-			set;
-		}
+		
 
 		public TelephonyEvent() 
 		{ 
 		}
 
 		[SetsRequiredMembers]
-		public TelephonyEvent(DateTime Timestamp,string CallID,string SourceAddress,string DestinationAddress,string Message)
+		public TelephonyEvent(DateTime Timestamp,string CallID,string SourceAddress,string DestinationAddress,uint MessageIndex)
 		{
 			this.Timestamp = Timestamp;
 			this.CallID = CallID;
 			this.SourceAddress = SourceAddress;
-			this.DestinationAdress = DestinationAddress;
-			this.Message = Message;
+			this.DestinationAddress = DestinationAddress;
+			this.MessageIndex = MessageIndex;
 		}
 
 	}

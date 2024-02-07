@@ -35,6 +35,11 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public List<KeyFrame> KeyFrames
+		{
+			get;
+			set;
+		}
 
 		public Project()
 		{
@@ -42,6 +47,7 @@ namespace SIP_o_matic.Models
 			Devices= new List<Device>();
 			Messages = new List<Message>();
 			TelephonyEvents = new List<TelephonyEvent>();
+			KeyFrames = new List<KeyFrame>();
 		}
 
 

@@ -9,7 +9,13 @@ namespace SIP_o_matic.Models
 {
     public class Message
     {
-        public required DateTime Timestamp
+		public required uint Index
+		{
+			get;
+			set;
+		}
+
+		public required DateTime Timestamp
         {
             get;
             set;
@@ -36,9 +42,10 @@ namespace SIP_o_matic.Models
         {
 
         }
-		[SetsRequiredMembers]
-		public Message(DateTime Timestamp, string SourceAddress, string DestinationAddress, string Content)
+        [SetsRequiredMembers]
+        public Message(uint Index, DateTime Timestamp, string SourceAddress, string DestinationAddress, string Content)
         {
+            this.Index= Index;
             this.Timestamp = Timestamp;
             this.SourceAddress = SourceAddress;
             this.DestinationAddress = DestinationAddress;

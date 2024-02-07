@@ -89,6 +89,7 @@ namespace SIP_o_matic.DataSources
 			DateTime timeStamp;
 			string sourceAddress, destinationAddress;
 			string content;
+			uint index = 1;
 
 			using (StreamReader reader=new StreamReader(FileName))
 			{
@@ -112,7 +113,7 @@ namespace SIP_o_matic.DataSources
 					destinationAddress = GetIPAddress(node!["dst_ip"]!.GetValue<string>());
 					base64Message= node!["data"]!.GetValue<string>();
 					content = Encoding.UTF8.GetString(Convert.FromBase64String(base64Message));
-					message = new Message(timeStamp, sourceAddress, destinationAddress, content);
+					message = new Message(index++,timeStamp, sourceAddress, destinationAddress, content);
 					yield return message;	
 				}
 			}

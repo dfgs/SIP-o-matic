@@ -58,6 +58,12 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
+		public KeyFrameViewModelCollection KeyFrames
+		{
+			get;
+			private set;
+		}
+
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
@@ -65,6 +71,7 @@ namespace SIP_o_matic.ViewModels
 			Devices = new DeviceViewModelCollection(Logger);
 			Messages = new MessageViewModelCollection(Logger);
 			TelephonyEvents=new TelephonyEventViewModelCollection(Logger);
+			KeyFrames = new KeyFrameViewModelCollection(Logger);
 		}
 
 		protected override void OnLoaded()
@@ -74,6 +81,7 @@ namespace SIP_o_matic.ViewModels
 			Devices.Load(Model.Devices);
 			Messages.Load(Model.Messages);
 			TelephonyEvents.Load(Model.TelephonyEvents);
+			KeyFrames.Load(Model.KeyFrames);
 		}
 
 		public void Clear()
@@ -81,6 +89,7 @@ namespace SIP_o_matic.ViewModels
 			Devices.Clear();
 			Messages.Clear();
 			TelephonyEvents.Clear();
+			KeyFrames.Clear();
 		}
 
 

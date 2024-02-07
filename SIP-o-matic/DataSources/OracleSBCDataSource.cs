@@ -77,6 +77,7 @@ namespace SIP_o_matic.DataSources
 			string message;
 			string[] addresses;
 			Match match;
+			uint index = 0;
 
 			HtmlDocument document;
 			HtmlNode? div,table,header,messageDiv,messageRow;
@@ -134,7 +135,7 @@ namespace SIP_o_matic.DataSources
 
 				timeStamp = DateTime.ParseExact(match.Groups["Timestamp"].Value, "yyyy-MM-dd HH:mm:ss.fff",null);
 				message = HttpUtility.HtmlDecode(match.Groups["Message"].Value).ReplaceLineEndings("\r\n");
-				_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
+				_event = new Message(index++, timeStamp, sourceAddress, destinationAddress, message);
 				yield return _event;
 			}
 

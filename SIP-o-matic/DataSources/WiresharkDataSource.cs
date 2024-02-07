@@ -43,7 +43,7 @@ namespace SIP_o_matic.DataSources
 			Packet packet;
 			UDPSegment udpSegment;
 			TCPSegment tcpSegment;
-
+			uint index = 0;
 			string message;
 
 			frameReader = new FrameReader();
@@ -75,7 +75,7 @@ namespace SIP_o_matic.DataSources
 					if (
 						message.StartsWith("SIP/2.0") ||
 						message.StartsWith("INVITE") || message.StartsWith("ACK") || message.StartsWith("OPTIONS") || message.StartsWith("BYE") || message.StartsWith("CANCEL") || message.StartsWith("REGISTER")
-						) yield return new Message(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp/1000).ToLocalTime(),packet.Header.SourceAddress.ToString(),packet.Header.DestinationAddress.ToString(),  message);
+						) yield return new Message(index++, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp/1000).ToLocalTime(),packet.Header.SourceAddress.ToString(),packet.Header.DestinationAddress.ToString(),  message);
 					//await Task.Delay(2000);
 
 				}

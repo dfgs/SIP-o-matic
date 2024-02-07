@@ -76,6 +76,7 @@ namespace SIP_o_matic.DataSources
 			string sourceAddress, destinationAddress;
 			string message;
 			Match inMatch, outMatch;
+			uint index=0;
 
 			using (StreamReader reader=new StreamReader(FileName))
 			{
@@ -92,7 +93,7 @@ namespace SIP_o_matic.DataSources
 						timeStamp = DateTime.ParseExact(inMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 						sourceAddress = inMatch.Groups["Address"].Value;
 						destinationAddress = "127.0.0.1";
-						_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
+						_event = new Message(index++,timeStamp, sourceAddress, destinationAddress, message);
 						yield return _event;						
 					}
 					else
@@ -104,7 +105,7 @@ namespace SIP_o_matic.DataSources
 							timeStamp = DateTime.ParseExact(outMatch.Groups["Timestamp"].Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture);
 							sourceAddress = "127.0.0.1";
 							destinationAddress = outMatch.Groups["Address"].Value;
-							_event = new Message(timeStamp, sourceAddress, destinationAddress, message);
+							_event = new Message(index++, timeStamp, sourceAddress, destinationAddress, message);
 							yield return _event;
 
 						}

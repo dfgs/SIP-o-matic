@@ -90,6 +90,7 @@ namespace SIP_o_matic.DataSources
 			Match inMatch, outMatch;
 			NotificationReader notificationReader;
 			string message;
+			uint index = 0;
 
 			using (Stream stream=new FileStream(FileName,FileMode.Open))
 			{
@@ -105,7 +106,7 @@ namespace SIP_o_matic.DataSources
 						message = timeRegex.Replace(content, "");
 						if (message != null)
 						{
-							_event = new Message(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
+							_event = new Message(index++, notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 							yield return _event;
 						}
 
@@ -121,7 +122,7 @@ namespace SIP_o_matic.DataSources
 							message = timeRegex.Replace(content, "");
 							if (message != null)
 							{
-								_event = new Message(notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
+								_event = new Message(index++, notification.Timestamp, sourceAddress, destinationAddress, FixSDP(message));
 								yield return _event;
 							}
 
