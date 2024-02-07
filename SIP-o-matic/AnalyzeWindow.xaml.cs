@@ -121,6 +121,8 @@ namespace SIP_o_matic
 			SIPMessage sipMessage;
 			TelephonyEvent telephonyEvent;
 			string? callID;
+			Address? from;
+			Address? to;
 
 			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
 			{
@@ -138,13 +140,26 @@ namespace SIP_o_matic
 				callID = sipMessage.GetHeader<CallIDHeader>()?.Value;
 				if (callID==null)
 				{
-					string error = "CallID missing in SIP message:\r\n" + message.Content;
+					string error = "CallID header missing in SIP message:\r\n" + message.Content;
 					throw new InvalidOperationException(error);
 				}
 
-				
+				from = sipMessage.GetHeader<FromHeader>()?.Value;
+				if (from == null)
+				{
+					string error = "From header missing in SIP message:\r\n" + message.Content;
+					throw new InvalidOperationException(error);
+				}
 
-				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress, message.Index );
+				to = sipMessage.GetHeader<ToHeader>()?.Value;
+				if (to == null)
+				{
+					string error = "To header missing in SIP message:\r\n" + message.Content;
+					throw new InvalidOperationException(error);
+				}
+
+
+				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress,from.Value,to.Value,  message.Index );
 				telephonyEvent.EventType = GetTelephonyEventTypes(sipMessage);
 				Project.TelephonyEvents.Add(telephonyEvent);
 			}
@@ -163,7 +178,7 @@ namespace SIP_o_matic
 				switch (telephonyEvent.EventType)
 				{
 					case TelephonyEventTypes.CallPlaced:
-						call = new Call(telephonyEvent.CallID, telephonyEvent.SourceAddress, telephonyEvent.DestinationAddress);
+						call = new Call(telephonyEvent.CallID, telephonyEvent.SourceAddress, telephonyEvent.DestinationAddress,telephonyEvent.FromURI,telephonyEvent.ToURI);
 						newKeyFrame.Calls.Add(call);
 						break;
 				}

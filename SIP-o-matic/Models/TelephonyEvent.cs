@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIPParserLib;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -31,6 +32,17 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public required Address FromURI
+		{
+			get;
+			set;
+		}
+		public required Address ToURI
+		{
+			get;
+			set;
+		}
+
 		public required uint MessageIndex
 		{
 			get;
@@ -48,12 +60,14 @@ namespace SIP_o_matic.Models
 		}
 
 		[SetsRequiredMembers]
-		public TelephonyEvent(DateTime Timestamp,string CallID,string SourceAddress,string DestinationAddress,uint MessageIndex)
+		public TelephonyEvent(DateTime Timestamp,string CallID,string SourceAddress,string DestinationAddress, Address FromURI, Address ToURI, uint MessageIndex)
 		{
 			this.Timestamp = Timestamp;
 			this.CallID = CallID;
 			this.SourceAddress = SourceAddress;
 			this.DestinationAddress = DestinationAddress;
+			this.FromURI = FromURI;
+			this.ToURI = ToURI;
 			this.MessageIndex = MessageIndex;
 		}
 

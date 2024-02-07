@@ -1,5 +1,6 @@
 ﻿using LogLib;
 using SIP_o_matic.Models;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace SIP_o_matic.ViewModels
 		public string DestinationAddress
 		{
 			get=> Model.DestinationAddress;
+		}
+
+		public Address FromURI
+		{
+			get=>Model.FromURI;
+		}
+
+		public Address ToURI
+		{
+			get => Model.ToURI;
 		}
 
 
