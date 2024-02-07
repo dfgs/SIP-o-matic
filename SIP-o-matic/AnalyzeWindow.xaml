@@ -11,6 +11,12 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.OK}" CanExecute="OKCommandBinding_CanExecute" Executed="OKCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.Cancel}" CanExecute="CancelCommandBinding_CanExecute" Executed="CancelCommandBinding_Executed"/>
 	</Window.CommandBindings>
+
+	<Window.InputBindings>
+		<KeyBinding Key="Esc" Command="{x:Static root:RoutedCommands.Cancel}"/>
+		<KeyBinding Key="Return" Command="{x:Static root:RoutedCommands.OK}"/>
+	</Window.InputBindings>
+
 	<StackPanel Margin="5">
 		<GroupBox Header="Analysis steps">
 			<ItemsControl   ItemsSource="{Binding ElementName=root,Path=Steps}" Margin="5">

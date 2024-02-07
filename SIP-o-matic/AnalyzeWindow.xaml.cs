@@ -99,12 +99,12 @@ namespace SIP_o_matic
 					call=KeyFrame.Calls.FirstOrDefault(item=>item.CallID == callID);
 					if (call==null)
 					{
-						call=new Call(callID, Message.SourceAddress,Message.DestinationAddress, from.Value, to.Value);
+						call=new Call(callID, Message.SourceAddress,Message.DestinationAddress, from.Value, to.Value,CallStatuses.Initiated);
 						KeyFrame.Calls.Add(call);
 					}
 					else
 					{
-						// change call status
+						call.Status = CallStatuses.OnHold;
 					}
 					break;
 				

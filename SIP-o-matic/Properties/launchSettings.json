@@ -1,7 +1,8 @@
 {
   "profiles": {
     "SIP-o-matic": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\dfgs8\\Desktop\\EUROInfo\\8202929466\\message-flow_OK.html"
     }
   }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.Models
 {
+	public enum CallStatuses { Initiated,Ringing,OnHold,InProgress };
 	public class Call:ICloneable<Call>
 	{
 		public required string CallID
@@ -39,21 +40,27 @@ namespace SIP_o_matic.Models
 			set;
 		}
 
+		public required CallStatuses Status
+		{
+			get;
+			set;
+		}
 
 
 		[SetsRequiredMembers]
-		public Call(string callID, string SourceAddress,string DestinationAddress, Address FromURI, Address ToURI)
+		public Call(string callID, string SourceAddress,string DestinationAddress, Address FromURI, Address ToURI, CallStatuses Status)
 		{
 			CallID = callID;
 			this.SourceAddress = SourceAddress;
 			this.DestinationAddress = DestinationAddress;
 			this.FromURI = FromURI;
 			this.ToURI = ToURI;
+			this.Status = Status;
 		}
 
 		public Call Clone()
 		{
-			return new Call(this.CallID, this.SourceAddress, this.DestinationAddress,this.FromURI, this.ToURI);
+			return new Call(this.CallID, this.SourceAddress, this.DestinationAddress,this.FromURI, this.ToURI, this.Status);
 		}
 
 	}

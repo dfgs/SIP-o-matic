@@ -49,7 +49,7 @@ namespace SIP_o_matic
 			
 		}
 
-		/*private async void Window_Loaded(object sender, RoutedEventArgs e)
+		private void Window_Loaded(object sender, RoutedEventArgs e)
 		{
 			string[] args = Environment.GetCommandLineArgs();
 
@@ -57,8 +57,9 @@ namespace SIP_o_matic
 			{
 				try
 				{
-					await applicationViewModel.AddProjectAsync();
-					if (applicationViewModel.SelectedProject!=null) await applicationViewModel.SelectedProject.AddFileAsync(args[1]);
+					applicationViewModel.Projects.AddNew();
+					if (applicationViewModel.Projects.SelectedItem == null) return;
+					applicationViewModel.Projects.SelectedItem.SourceFiles.Add(args[1]);
 				}
 				catch (Exception ex)
 				{

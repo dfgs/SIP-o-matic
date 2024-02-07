@@ -33,6 +33,8 @@
 							<TextBlock Text="{Binding FromURI}"/>
 							<TextBlock Text=" -> "/>
 							<TextBlock Text="{Binding ToURI}"/>
+							<TextBlock Text=": "/>
+							<TextBlock Text="{Binding Status}"/>
 						</StackPanel>
 					</StackPanel>
 				</DataTemplate>
