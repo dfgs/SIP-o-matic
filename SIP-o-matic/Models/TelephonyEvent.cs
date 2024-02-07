@@ -9,13 +9,21 @@ namespace SIP_o_matic.Models
 {
 	public class TelephonyEvent
 	{
-
-		public required string Source
+		public required DateTime Timestamp
 		{
 			get;
 			set;
 		}
-
+		public required string SourceAddress
+		{
+			get;
+			set;
+		}
+		public required string DestinationAdress
+		{
+			get;
+			set;
+		}
 		public required string Message
 		{
 			get;
@@ -33,11 +41,13 @@ namespace SIP_o_matic.Models
 		}
 
 		[SetsRequiredMembers]
-		public TelephonyEvent(string Source,string Message,string CallID)
+		public TelephonyEvent(DateTime Timestamp,string CallID,string SourceAddress,string DestinationAddress,string Message)
 		{
-			this.Source = Source;	
-			this.Message = Message;
+			this.Timestamp = Timestamp;
 			this.CallID = CallID;
+			this.SourceAddress = SourceAddress;
+			this.DestinationAdress = DestinationAddress;
+			this.Message = Message;
 		}
 
 	}

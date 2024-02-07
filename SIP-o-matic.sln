@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AudiocodesSyslogLibTest", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ViewModelLib", "..\ViewModelLib\ViewModelLib\ViewModelLib.csproj", "{501D5509-7F3C-41E0-A78B-5D4A7911560D}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserLib", "..\ParserLib\ParserLib\ParserLib.csproj", "{80FEC6ED-A4AC-41FD-975C-32C0D1059B83}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{501D5509-7F3C-41E0-A78B-5D4A7911560D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{501D5509-7F3C-41E0-A78B-5D4A7911560D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{501D5509-7F3C-41E0-A78B-5D4A7911560D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -65,6 +71,7 @@ Global
 		{EF4B0001-2859-4A09-8F95-3E5BEF4A5272} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{3C0FEC63-05A7-472A-88AF-284EAA73F41D} = {6A28D05C-EF1C-4718-A428-D0E044DB2DDB}
 		{501D5509-7F3C-41E0-A78B-5D4A7911560D} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
+		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9229E506-032C-4EEB-9A4A-D9F3DC95820E}

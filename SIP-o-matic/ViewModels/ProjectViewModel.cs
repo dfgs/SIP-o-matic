@@ -53,11 +53,18 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public TelephonyEventViewModelCollection TelephonyEvents
+		{
+			get;
+			private set;
+		}
+
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			SourceFiles = new SourceFileViewModelCollection(Logger);
 			Devices = new DeviceViewModelCollection(Logger);
 			Messages = new MessageViewModelCollection(Logger);
+			TelephonyEvents=new TelephonyEventViewModelCollection(Logger);
 		}
 
 		protected override void OnLoaded()
@@ -66,12 +73,14 @@ namespace SIP_o_matic.ViewModels
 			SourceFiles.Load(Model.SourceFiles);
 			Devices.Load(Model.Devices);
 			Messages.Load(Model.Messages);
+			TelephonyEvents.Load(Model.TelephonyEvents);
 		}
 
 		public void Clear()
 		{
 			Devices.Clear();
 			Messages.Clear();
+			TelephonyEvents.Clear();
 		}
 
 

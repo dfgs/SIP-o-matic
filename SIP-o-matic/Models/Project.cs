@@ -30,12 +30,18 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public List<TelephonyEvent> TelephonyEvents
+		{
+			get;
+			set;
+		}
 
 		public Project()
 		{
 			SourceFiles = new List<SourceFile>();
 			Devices= new List<Device>();
 			Messages = new List<Message>();
+			TelephonyEvents = new List<TelephonyEvent>();
 		}
 
 

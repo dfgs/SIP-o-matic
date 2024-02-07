@@ -63,6 +63,7 @@ namespace SIP_o_matic
 			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Creating events", TaskFactory = CreateTelephonyEventsAsync });
+			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = CreateKeyFramesAsync });
 			InitializeComponent();
 		}
 
@@ -94,6 +95,7 @@ namespace SIP_o_matic
 			StringReader reader;
 			SIPMessage sipMessage;
 			TelephonyEvent telephonyEvent;
+			string? callID;
 
 			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
 			{
@@ -107,11 +109,27 @@ namespace SIP_o_matic
 					string error = "Failed to decode SIP message:\r\n" + ex.Message + "\r\n" + message.Content;
 					throw new InvalidOperationException(error);
 				}
-				telephonyEvent = new TelephonyEvent(message.SourceAddress, message.Content, sipMessage.GetHeader<CallIDHeader>()?.Value??"Undefined");
+				
+				callID = sipMessage.GetHeader<CallIDHeader>()?.Value;
+				if (callID==null)
+				{
+					string error = "CallID missing in SIP message:\r\n" + message.Content;
+					throw new InvalidOperationException(error);
+				}
+
+				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress, message.Content );
+				Project.TelephonyEvents.Add(telephonyEvent);
 			}
 
 		}
+		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
+		{
 
+			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
+			{
+				//Project.Messages.Add(message);
+			}
+		}
 
 
 		private async Task RunAnalyzisAsync(CancellationToken CancellationToken, ProjectViewModel Project)

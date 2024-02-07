@@ -25,14 +25,14 @@ namespace SIP_o_matic.ViewModels
 			ClearInternal();
 		}
 
-		public void Add(Message message)
+		public void Add(Message Message)
 		{
 			MessageViewModel messageViewModel;
 
-			Model.Add(message);
+			Model.Add(Message);
 
 			messageViewModel=new MessageViewModel(Logger);
-			messageViewModel.Load(message);
+			messageViewModel.Load(Message);
 			AddInternal(messageViewModel);
 		}
 
