@@ -62,32 +62,69 @@ namespace SIP_o_matic
 			Steps = new List<AnalysisStep>();
 			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
-			Steps.Add(new AnalysisStep() { Label = "Creating events", TaskFactory = CreateTelephonyEventsAsync });
 			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = CreateKeyFramesAsync });
 			InitializeComponent();
 		}
 
-		private TelephonyEventTypes GetTelephonyEventTypes(Request Request)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, MessageViewModel Message)
 		{
+			string? callID;
+			Address? from, to;
+			Call? call;
+
+			callID = Request.GetHeader<CallIDHeader>()?.Value;
+			if (callID == null)
+			{
+				string error = $"CallID header missing in SIP message [{Message.Index}]";
+				throw new InvalidOperationException(error);
+			}
+
+			from = Request.GetHeader<FromHeader>()?.Value;
+			if (from == null)
+			{
+				string error = $"From header missing in SIP message [{Message.Index}]";
+				throw new InvalidOperationException(error);
+			}
+
+			to = Request.GetHeader<ToHeader>()?.Value;
+			if (to == null)
+			{
+				string error = $"To header missing in SIP message [{Message.Index}]";
+				throw new InvalidOperationException(error);
+			}
+
 			switch(Request.RequestLine.Method)
 			{
-				case "INVITE":return TelephonyEventTypes.CallPlaced;
+				case "INVITE":
+					call=KeyFrame.Calls.FirstOrDefault(item=>item.CallID == callID);
+					if (call==null)
+					{
+						call=new Call(callID, Message.SourceAddress,Message.DestinationAddress, from.Value, to.Value);
+						KeyFrame.Calls.Add(call);
+					}
+					else
+					{
+						// change call status
+					}
+					break;
 				
 			}
-			return TelephonyEventTypes.SessionRefreshed;
+			
 		}
-		private TelephonyEventTypes GetTelephonyEventTypes(Response Response)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, MessageViewModel Message)
 		{
-			return TelephonyEventTypes.SessionRefreshed;
+			//return TelephonyEventTypes.SessionRefreshed;
 		}
 
-		private TelephonyEventTypes GetTelephonyEventTypes(SIPMessage Message)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
 		{
 
-			switch (Message)
+			switch (SIPMessage)
 			{
-				case Request request:return GetTelephonyEventTypes(request);
-				case Response response:return GetTelephonyEventTypes(response);
+				case Request request: UpdateKeyFrame(KeyFrame, request,Message) ;
+					break;
+				case Response response:UpdateKeyFrame(KeyFrame,response, Message);
+					break;
 				default: throw new InvalidOperationException("Invalid SIP message type");
 			}
 
@@ -115,14 +152,13 @@ namespace SIP_o_matic
 				Project.Messages.Add(message);
 			}
 		}
-		private async Task CreateTelephonyEventsAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
+		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
 			StringReader reader;
 			SIPMessage sipMessage;
-			TelephonyEvent telephonyEvent;
-			string? callID;
-			Address? from;
-			Address? to;
+			
+			KeyFrame newKeyFrame;
+			KeyFrame? previousKeyFrame=null;
 
 			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
 			{
@@ -131,57 +167,14 @@ namespace SIP_o_matic
 				{
 					sipMessage = SIPGrammar.SIPMessage.Parse(reader);
 				}
-				catch(Exception ex)
+				catch (Exception ex)
 				{
 					string error = "Failed to decode SIP message:\r\n" + ex.Message + "\r\n" + message.Content;
 					throw new InvalidOperationException(error);
 				}
-				
-				callID = sipMessage.GetHeader<CallIDHeader>()?.Value;
-				if (callID==null)
-				{
-					string error = "CallID header missing in SIP message:\r\n" + message.Content;
-					throw new InvalidOperationException(error);
-				}
 
-				from = sipMessage.GetHeader<FromHeader>()?.Value;
-				if (from == null)
-				{
-					string error = "From header missing in SIP message:\r\n" + message.Content;
-					throw new InvalidOperationException(error);
-				}
-
-				to = sipMessage.GetHeader<ToHeader>()?.Value;
-				if (to == null)
-				{
-					string error = "To header missing in SIP message:\r\n" + message.Content;
-					throw new InvalidOperationException(error);
-				}
-
-
-				telephonyEvent = new TelephonyEvent(message.Timestamp, callID,message.SourceAddress,message.DestinationAddress,from.Value,to.Value,  message.Index );
-				telephonyEvent.EventType = GetTelephonyEventTypes(sipMessage);
-				Project.TelephonyEvents.Add(telephonyEvent);
-			}
-
-		}
-		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
-		{
-			KeyFrame newKeyFrame;
-			KeyFrame? previousKeyFrame=null;
-			Call call;
-
-			await foreach (TelephonyEventViewModel telephonyEvent in Project.TelephonyEvents.OrderBy(item=>item.Timestamp).ToAsyncEnumerable() )
-			{
-				newKeyFrame = new KeyFrame(telephonyEvent.Timestamp,previousKeyFrame);
-			
-				switch (telephonyEvent.EventType)
-				{
-					case TelephonyEventTypes.CallPlaced:
-						call = new Call(telephonyEvent.CallID, telephonyEvent.SourceAddress, telephonyEvent.DestinationAddress,telephonyEvent.FromURI,telephonyEvent.ToURI);
-						newKeyFrame.Calls.Add(call);
-						break;
-				}
+				newKeyFrame = new KeyFrame(message.Timestamp,previousKeyFrame);
+				UpdateKeyFrame(newKeyFrame, sipMessage,message);
 
 				Project.KeyFrames.Add(newKeyFrame);
 				previousKeyFrame = newKeyFrame;

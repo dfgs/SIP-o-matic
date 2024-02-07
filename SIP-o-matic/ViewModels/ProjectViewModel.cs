@@ -53,11 +53,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public TelephonyEventViewModelCollection TelephonyEvents
-		{
-			get;
-			private set;
-		}
+		
 		public KeyFrameViewModelCollection KeyFrames
 		{
 			get;
@@ -70,7 +66,6 @@ namespace SIP_o_matic.ViewModels
 			SourceFiles = new SourceFileViewModelCollection(Logger);
 			Devices = new DeviceViewModelCollection(Logger);
 			Messages = new MessageViewModelCollection(Logger);
-			TelephonyEvents=new TelephonyEventViewModelCollection(Logger);
 			KeyFrames = new KeyFrameViewModelCollection(Logger);
 		}
 
@@ -80,7 +75,6 @@ namespace SIP_o_matic.ViewModels
 			SourceFiles.Load(Model.SourceFiles);
 			Devices.Load(Model.Devices);
 			Messages.Load(Model.Messages);
-			TelephonyEvents.Load(Model.TelephonyEvents);
 			KeyFrames.Load(Model.KeyFrames);
 		}
 
@@ -88,7 +82,6 @@ namespace SIP_o_matic.ViewModels
 		{
 			Devices.Clear();
 			Messages.Clear();
-			TelephonyEvents.Clear();
 			KeyFrames.Clear();
 		}
 

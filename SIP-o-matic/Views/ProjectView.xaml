@@ -43,9 +43,7 @@
 			<TabItem Header="Messages">
 				<views:MessagesView DataContext="{Binding Messages}"/>
 			</TabItem>
-			<TabItem Header="Telephony events">
-				<views:TelephonyEventsView DataContext="{Binding TelephonyEvents}"/>
-			</TabItem>
+			
 			<TabItem Header="Key Frames">
 				<views:KeyFramesView DataContext="{Binding KeyFrames}"/>
 			</TabItem>

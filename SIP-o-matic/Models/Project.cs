@@ -30,11 +30,7 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
-		public List<TelephonyEvent> TelephonyEvents
-		{
-			get;
-			set;
-		}
+		
 		public List<KeyFrame> KeyFrames
 		{
 			get;
@@ -46,7 +42,6 @@ namespace SIP_o_matic.Models
 			SourceFiles = new List<SourceFile>();
 			Devices= new List<Device>();
 			Messages = new List<Message>();
-			TelephonyEvents = new List<TelephonyEvent>();
 			KeyFrames = new List<KeyFrame>();
 		}
 
