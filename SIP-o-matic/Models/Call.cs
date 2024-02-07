@@ -63,5 +63,9 @@ namespace SIP_o_matic.Models
 			return new Call(this.CallID, this.SourceAddress, this.DestinationAddress,this.FromURI, this.ToURI, this.Status);
 		}
 
+		internal void Update(Request request)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
