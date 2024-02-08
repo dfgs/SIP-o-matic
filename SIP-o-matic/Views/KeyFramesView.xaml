@@ -35,6 +35,8 @@
 							<TextBlock Text="{Binding ToURI}"/>
 							<TextBlock Text=": "/>
 							<TextBlock Text="{Binding State}"/>
+							<TextBlock Text=" / "/>
+							<TextBlock Text="{Binding IsAck}"/>
 						</StackPanel>
 					</StackPanel>
 				</DataTemplate>

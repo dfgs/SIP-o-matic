@@ -79,41 +79,47 @@ namespace SIP_o_matic
 				throw new InvalidOperationException(error);
 			}
 
-			from = Request.GetHeader<FromHeader>()?.Value;
-			if (from == null)
+			call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
+			if (call == null) 
 			{
-				string error = $"From header missing in SIP message [{Message.Index}]";
-				throw new InvalidOperationException(error);
-			}
+				from = Request.GetHeader<FromHeader>()?.Value;
+				if (from == null)
+				{
+					string error = $"From header missing in SIP message [{Message.Index}]";
+					throw new InvalidOperationException(error);
+				}
 
-			to = Request.GetHeader<ToHeader>()?.Value;
-			if (to == null)
+				to = Request.GetHeader<ToHeader>()?.Value;
+				if (to == null)
+				{
+					string error = $"To header missing in SIP message [{Message.Index}]";
+					throw new InvalidOperationException(error);
+				}
+
+				call = new Call(callID, Message.SourceAddress, Message.DestinationAddress, from.Value, to.Value, Call.States.OnHook,false);
+				KeyFrame.Calls.Add(call);
+			}
+			// update call
+			call.Update(Request);
+
+		}
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, MessageViewModel Message)
+		{
+			string? callID;
+			Call? call;
+
+			callID = Response.GetHeader<CallIDHeader>()?.Value;
+			if (callID == null)
 			{
-				string error = $"To header missing in SIP message [{Message.Index}]";
+				string error = $"CallID header missing in SIP message [{Message.Index}]";
 				throw new InvalidOperationException(error);
 			}
 
 			call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
-			if (call != null) call.Update(Request);
-			else
-			{
-				if (Request.RequestLine.Method != "INVITE") throw new InvalidOperationException($"No call to update was found, unexpected SIP message [{Message.Index}]");
-
-				call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
-				if (call == null)
-				{
-					call = new Call(callID, Message.SourceAddress, Message.DestinationAddress, from.Value, to.Value, Call.States.OnHook);
-					KeyFrame.Calls.Add(call);
-				}
-
-				// update call
-				call.Update(Request);
-			}
+			if (call == null) throw new InvalidOperationException($"Unexpected SIP response received [{Message.Index}], no call with CallID {callID} was found");
 			
-		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, MessageViewModel Message)
-		{
-			//return TelephonyEventTypes.SessionRefreshed;
+			// update call
+			call.Update(Response);
 		}
 
 		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)

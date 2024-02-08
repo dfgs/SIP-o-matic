@@ -40,7 +40,10 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Model.State;
 		}
-
+		public bool IsAck
+		{
+			get =>Model.IsAck;
+		}
 		public CallViewModel(ILogger Logger) : base(Logger)
 		{
 		}
