@@ -36,9 +36,9 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Model.ToURI;
 		}
-		public CallStatuses Status
+		public Call.States State
 		{
-			get => Model.Status;
+			get => Model.State;
 		}
 
 		public CallViewModel(ILogger Logger) : base(Logger)

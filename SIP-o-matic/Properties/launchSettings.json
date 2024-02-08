@@ -2,7 +2,7 @@
   "profiles": {
     "SIP-o-matic": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\dfgs8\\Desktop\\EUROInfo\\8202929466\\message-flow_OK.html"
+      "commandLineArgs": "\"D:\\FTP\\Euro information\\8202929466\\message-flow_OK.html\""
     }
   }
 }

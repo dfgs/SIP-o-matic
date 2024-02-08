@@ -34,7 +34,7 @@
 							<TextBlock Text=" -> "/>
 							<TextBlock Text="{Binding ToURI}"/>
 							<TextBlock Text=": "/>
-							<TextBlock Text="{Binding Status}"/>
+							<TextBlock Text="{Binding State}"/>
 						</StackPanel>
 					</StackPanel>
 				</DataTemplate>

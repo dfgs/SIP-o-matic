@@ -98,22 +98,16 @@ namespace SIP_o_matic
 			else
 			{
 				if (Request.RequestLine.Method != "INVITE") throw new InvalidOperationException($"No call to update was found, unexpected SIP message [{Message.Index}]");
-				
-				switch (Request.RequestLine.Method)
+
+				call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
+				if (call == null)
 				{
-					case "INVITE":
-						call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
-						if (call == null)
-						{
-							call = new Call(callID, Message.SourceAddress, Message.DestinationAddress, from.Value, to.Value, CallStatuses.Initiated);
-							KeyFrame.Calls.Add(call);
-						}
-						else
-						{
-							call.Status = CallStatuses.OnHold;
-						}
-						break;
+					call = new Call(callID, Message.SourceAddress, Message.DestinationAddress, from.Value, to.Value, Call.States.OnHook);
+					KeyFrame.Calls.Add(call);
 				}
+
+				// update call
+				call.Update(Request);
 			}
 			
 		}
