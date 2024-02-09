@@ -12,7 +12,7 @@ namespace SIP_o_matic.Models.Transactions
 	{
 		public enum States
 		{
-			OnHook,
+			Undefined,
 			// INVITE transaction state machine RFC 3261
 			Calling, Proceeding, Ringing, Completed, 
 			

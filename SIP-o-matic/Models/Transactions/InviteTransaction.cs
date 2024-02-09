@@ -16,7 +16,6 @@ namespace SIP_o_matic.Models.Transactions
 		private StateMachine<States, Triggers> fsm;
 	
 		private StateMachine<States, Triggers>.TriggerWithParameters<Request> INVITETrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Request> ACKTrigger;
 
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response> Prov1xxTrigger;
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response> Prov180Trigger;
@@ -37,14 +36,13 @@ namespace SIP_o_matic.Models.Transactions
 			// OnHook => Calling => Proceeding => Ringing => In Progress 
 
 			INVITETrigger = fsm.SetTriggerParameters<Request>(Triggers.INVITE);
-			ACKTrigger = fsm.SetTriggerParameters<Request>(Triggers.ACK);
 			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
 			Prov180Trigger = fsm.SetTriggerParameters<Response>(Triggers.Prov180);
 			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
 			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
 
 
-			fsm.Configure(States.OnHook)
+			fsm.Configure(States.Undefined)
 				.PermitIf(INVITETrigger, States.Calling, (Request) => AssertMessageBelongsToTransaction(Request),"Message doesn't belong to current transaction")
 				;
 
@@ -71,9 +69,6 @@ namespace SIP_o_matic.Models.Transactions
 				//.PermitReentryIf(INVITETrigger, (Request) => CallIdIsValid(Request))
 				;
 
-			fsm.Configure(States.Terminated)
-				.PermitReentryIf(ACKTrigger, (Request) => AssertMessageBelongsToTransaction(Request), "Message doesn't belong to current transaction")//.OnEntryFrom(Triggers.ACK, () => this.IsAck = true)
-				;
 			#endregion
 
 
@@ -96,10 +91,7 @@ namespace SIP_o_matic.Models.Transactions
 				case "INVITE":
 					fsm.Fire(INVITETrigger, Request);
 					break;
-				case "ACK":
-					fsm.Fire(ACKTrigger, Request);
-					break;
-				default: throw new InvalidOperationException($"Unsupported call transition ({Request.RequestLine.Method})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}
 		}
 
@@ -116,7 +108,7 @@ namespace SIP_o_matic.Models.Transactions
 				case >= 200 and <= 299:
 					fsm.Fire(Final2xxTrigger, Response);
 					break;
-				default: throw new InvalidOperationException($"Unsupported call transition ({Response.StatusLine.StatusCode})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
 		}
 

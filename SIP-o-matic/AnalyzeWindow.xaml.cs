@@ -96,7 +96,8 @@ namespace SIP_o_matic
 
 			switch (Request.RequestLine.Method)
 			{
-				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, InviteTransaction.States.OnHook);
+				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
+				case "ACK": return new AckTransaction(callID, viaBranch, cseq,Transaction.States.Undefined);
 				default:
 					throw new NotImplementedException($"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}");
 			}
@@ -151,17 +152,10 @@ namespace SIP_o_matic
 				KeyFrame.Calls.Add(call);
 			}
 
-			try
-			{
-				// update transaction
-				transaction.Update(Request);
-				// update call
-				call.Update(transaction);
-			}
-			catch(Exception ex)
-			{
-				int t = 0;
-			}
+			// update transaction
+			transaction.Update(Request);
+			// update call
+			call.Update(transaction);
 
 		}
 		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response)
@@ -176,17 +170,12 @@ namespace SIP_o_matic
 			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response));
 			if (call == null) throw new InvalidOperationException("Cannot find matching call for response");
 
-			try
-			{
-				// update transaction
-				transaction.Update(Response);
-				// update call
-				call.Update(transaction);
-			}
-			catch (Exception ex)
-			{
-				int t = 0;
-			}
+			
+			// update transaction
+			transaction.Update(Response);
+			// update call
+			call.Update(transaction);
+			
 		}
 
 		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
