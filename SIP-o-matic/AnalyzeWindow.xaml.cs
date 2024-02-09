@@ -20,6 +20,8 @@ using System.Windows.Shapes;
 using SIPParserLib;
 using ParserLib;
 using LogLib;
+using SIP_o_matic.Models.Transactions;
+
 
 namespace SIP_o_matic
 {
@@ -65,61 +67,126 @@ namespace SIP_o_matic
 			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = CreateKeyFramesAsync });
 			InitializeComponent();
 		}
-
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, MessageViewModel Message)
+		private Transaction CreateNewTransaction(Request Request)
 		{
+			string? viaBranch;
+			string? cseq;
 			string? callID;
-			Address? from, to;
-			Call? call;
 
 			callID = Request.GetHeader<CallIDHeader>()?.Value;
 			if (callID == null)
 			{
-				string error = $"CallID header missing in SIP message [{Message.Index}]";
+				string error = $"CallID header missing in SIP message";
 				throw new InvalidOperationException(error);
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
-			if (call == null) 
+			viaBranch = Request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value;
+			if (viaBranch == null)
 			{
-				from = Request.GetHeader<FromHeader>()?.Value;
-				if (from == null)
-				{
-					string error = $"From header missing in SIP message [{Message.Index}]";
-					throw new InvalidOperationException(error);
-				}
-
-				to = Request.GetHeader<ToHeader>()?.Value;
-				if (to == null)
-				{
-					string error = $"To header missing in SIP message [{Message.Index}]";
-					throw new InvalidOperationException(error);
-				}
-
-				call = new Call(callID, Message.SourceAddress, Message.DestinationAddress, from.Value, to.Value, Call.States.OnHook,false);
-				KeyFrame.Calls.Add(call);
+				string error = $"Via branch missing in SIP message";
+				throw new InvalidOperationException(error);
 			}
-			// update call
-			call.Update(Request);
 
+			cseq = Request.GetHeader<CSeqHeader>()?.Value;
+			if (cseq == null)
+			{
+				string error = $"CSeq missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
+
+			switch (Request.RequestLine.Method)
+			{
+				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, InviteTransaction.States.OnHook);
+				default:
+					throw new NotImplementedException($"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}");
+			}
 		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, MessageViewModel Message)
+
+		private Call CreateNewCall(Request Request,string SourceAddress,string DestinationAddress)
 		{
 			string? callID;
-			Call? call;
+			Address? from, to;
 
-			callID = Response.GetHeader<CallIDHeader>()?.Value;
+			callID = Request.GetHeader<CallIDHeader>()?.Value;
 			if (callID == null)
 			{
-				string error = $"CallID header missing in SIP message [{Message.Index}]";
+				string error = $"CallID header missing in SIP message";
 				throw new InvalidOperationException(error);
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.CallID == callID);
-			if (call == null) throw new InvalidOperationException($"Unexpected SIP response received [{Message.Index}], no call with CallID {callID} was found");
+			from = Request.GetHeader<FromHeader>()?.Value;
+			if (from == null)
+			{
+				string error = $"From header missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
+
+			to = Request.GetHeader<ToHeader>()?.Value;
+			if (to == null)
+			{
+				string error = $"To header missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
+
+			return new Call(callID, SourceAddress, DestinationAddress, from.Value, to.Value, Call.States.OnHook, false);
+		}
+
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceAddress,string DestinationAddress)
+		{
+			Call? call;
+			Transaction? transaction;
+
+			transaction=KeyFrame.Transactions.FirstOrDefault(item=>item.Match(Request));
+			if (transaction==null)
+			{
+				// check if all other transactions are terminated
+				transaction = CreateNewTransaction(Request);
+				KeyFrame.Transactions.Add(transaction);
+			}
+
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request));
+			if (call == null) 
+			{
+				call = CreateNewCall(Request,SourceAddress,DestinationAddress);
+				KeyFrame.Calls.Add(call);
+			}
+
+			try
+			{
+				// update transaction
+				transaction.Update(Request);
+				// update call
+				call.Update(transaction);
+			}
+			catch(Exception ex)
+			{
+				int t = 0;
+			}
+
+		}
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response)
+		{
+			Call? call;
+			Transaction? transaction;
+
+			transaction = KeyFrame.Transactions.FirstOrDefault(item => item.Match(Response));
+			if (transaction == null) throw new InvalidOperationException("Cannot find matching transaction for response");
 			
-			// update call
-			call.Update(Response);
+
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response));
+			if (call == null) throw new InvalidOperationException("Cannot find matching call for response");
+
+			try
+			{
+				// update transaction
+				transaction.Update(Response);
+				// update call
+				call.Update(transaction);
+			}
+			catch (Exception ex)
+			{
+				int t = 0;
+			}
 		}
 
 		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
@@ -127,9 +194,9 @@ namespace SIP_o_matic
 
 			switch (SIPMessage)
 			{
-				case Request request: UpdateKeyFrame(KeyFrame, request,Message) ;
+				case Request request: UpdateKeyFrame(KeyFrame, request,Message.SourceAddress,Message.DestinationAddress) ;
 					break;
-				case Response response:UpdateKeyFrame(KeyFrame,response, Message);
+				case Response response:UpdateKeyFrame(KeyFrame,response);
 					break;
 				default: throw new InvalidOperationException("Invalid SIP message type");
 			}
@@ -175,13 +242,26 @@ namespace SIP_o_matic
 				}
 				catch (Exception ex)
 				{
-					string error = "Failed to decode SIP message:\r\n" + ex.Message + "\r\n" + message.Content;
+					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
 					throw new InvalidOperationException(error);
 				}
 
-				newKeyFrame = new KeyFrame(message.Timestamp,previousKeyFrame);
-				UpdateKeyFrame(newKeyFrame, sipMessage,message);
+				try
+				{
+					if (previousKeyFrame == null) newKeyFrame = new KeyFrame(message.Timestamp);
+					else
+					{
+						newKeyFrame = previousKeyFrame.Clone();
+						newKeyFrame.Timestamp = message.Timestamp;
+					}
 
+					UpdateKeyFrame(newKeyFrame, sipMessage, message);
+				}
+				catch(Exception ex)
+				{
+					string error = $"Failed to create key frame:\r\n" + ex.Message + $"\r\n[{message.Index}] " + message.Content;
+					throw new InvalidOperationException(error);
+				}
 				Project.KeyFrames.Add(newKeyFrame);
 				previousKeyFrame = newKeyFrame;
 			}

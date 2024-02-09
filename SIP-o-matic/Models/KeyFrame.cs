@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIP_o_matic.Models.Transactions;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 namespace SIP_o_matic.Models
 {
 
-	public class KeyFrame
+	public class KeyFrame:ICloneable<KeyFrame>
 	{
 		public required DateTime Timestamp
 		{
@@ -18,7 +19,12 @@ namespace SIP_o_matic.Models
 
 		public List<Call> Calls
 		{
-			get; 
+			get;
+			set;
+		}
+		public List<Transaction> Transactions
+		{
+			get;
 			set;
 		}
 
@@ -26,23 +32,27 @@ namespace SIP_o_matic.Models
 		public KeyFrame(DateTime Timestamp)
 		{
 			this.Calls= new List<Call>();
+			this.Transactions= new List<Transaction>();	
 			this.Timestamp = Timestamp;
 		}
 
-		[SetsRequiredMembers]
-		public KeyFrame(DateTime Timestamp,KeyFrame? PreviousKeyFrame)
+		
+		public KeyFrame Clone()
 		{
-			this.Calls = new List<Call>();
-			this.Timestamp = Timestamp;
+			KeyFrame keyFrame;
 
-			if (PreviousKeyFrame == null) return;
-
-			foreach (Call previousCall in PreviousKeyFrame.Calls)
+			keyFrame = new KeyFrame(this.Timestamp);
+			foreach (Call previousCall in this.Calls)
 			{
-				Calls.Add(previousCall.Clone());
+				keyFrame.Calls.Add(previousCall.Clone());
 			}
-
+			foreach (Transaction previousTransaction in this.Transactions)
+			{
+				keyFrame.Transactions.Add(previousTransaction.Clone());
+			}
+			return keyFrame;
 		}
+
 
 	}
 }
