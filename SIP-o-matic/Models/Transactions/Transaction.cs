@@ -25,9 +25,11 @@ namespace SIP_o_matic.Models.Transactions
 			ReferStarted, ReferProceeding, ReferError, ReferTerminated,
 			// NOTIFY transaction states
 			NotifyStarted, NotifyProceeding, NotifyError, NotifyTerminated,
+			// BYE transaction states
+			ByeStarted, ByeProceeding, ByeError, ByeTerminated,
 
 		};
-		public enum Triggers { INVITE, ACK, REFER,NOTIFY, Prov1xx, Prov180, Final2xx, Error };
+		public enum Triggers { INVITE, ACK, REFER,NOTIFY,BYE, Prov1xx, Prov180, Final2xx, Error };
 
 
 		private StateMachine<States, Triggers> fsm;
@@ -36,6 +38,7 @@ namespace SIP_o_matic.Models.Transactions
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ReferTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> AckTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> NotifyTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ByeTrigger;
 
 
 		public required string CallID
@@ -60,18 +63,29 @@ namespace SIP_o_matic.Models.Transactions
 			get;
 		}
 
+		public uint Retransmissions
+		{
+			get;
+			set;
+		}
+
 		public States State => fsm.State;
 
 		public bool IsTerminated => fsm.IsInState(TerminatedState);
 
+		 
+
 		public Transaction(States InitialState)
 		{
+			Retransmissions = 0;
+
 			fsm = new StateMachine<States, Triggers>(InitialState);
 
 			InviteTrigger = fsm.SetTriggerParameters<Request>(Triggers.INVITE);
 			AckTrigger = fsm.SetTriggerParameters<Request>(Triggers.ACK);
 			ReferTrigger = fsm.SetTriggerParameters<Request>(Triggers.REFER);
 			NotifyTrigger = fsm.SetTriggerParameters<Request>(Triggers.NOTIFY);
+			ByeTrigger = fsm.SetTriggerParameters<Request>(Triggers.BYE);
 
 			OnConfigureFSM(fsm);
 		}
@@ -125,6 +139,9 @@ namespace SIP_o_matic.Models.Transactions
 					break;
 				case "NOTIFY":
 					fsm.Fire(NotifyTrigger, Request);
+					break;
+				case "BYE":
+					fsm.Fire(ByeTrigger, Request);
 					break;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}

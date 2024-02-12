@@ -21,6 +21,7 @@ using SIPParserLib;
 using ParserLib;
 using LogLib;
 using SIP_o_matic.Models.Transactions;
+using SIP_o_matic.Modules;
 
 
 namespace SIP_o_matic
@@ -33,6 +34,7 @@ namespace SIP_o_matic
 		private bool terminated = false;
 		private CancellationTokenSource? cancelToken;
 
+		private AnalyzeModule analyzeModule;
 
 		public static readonly DependencyProperty StepsProperty = DependencyProperty.Register("Steps", typeof(List<AnalysisStep>), typeof(AnalyzeWindow), new PropertyMetadata(null));
 		public List<AnalysisStep> Steps
@@ -49,150 +51,25 @@ namespace SIP_o_matic
 			set { SetValue(ProjectProperty, value); }
 		}
 
-		public required ILogger Logger
+		private ILogger logger;
+
+
+
+		public AnalyzeWindow(ILogger Logger)
 		{
-			get;
-			set;
-		}
+			this.logger = Logger; 
 
-
-
-		public AnalyzeWindow()
-		{
 			cancelToken = new CancellationTokenSource();
+
+			analyzeModule = new AnalyzeModule(Logger);
 
 			Steps = new List<AnalysisStep>();
 			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
-			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = CreateKeyFramesAsync });
+			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = analyzeModule.CreateKeyFramesAsync });
 			InitializeComponent();
 		}
-		private Transaction CreateNewTransaction(Request Request)
-		{
-			string? viaBranch;
-			string? cseq;
-			string? callID;
 
-			callID = Request.GetHeader<CallIDHeader>()?.Value;
-			if (callID == null)
-			{
-				string error = $"CallID header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			viaBranch = Request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value;
-			if (viaBranch == null)
-			{
-				string error = $"Via branch missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			cseq = Request.GetHeader<CSeqHeader>()?.Value;
-			if (cseq == null)
-			{
-				string error = $"CSeq missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			switch (Request.RequestLine.Method)
-			{
-				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "ACK": return new AckTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "REFER": return new ReferTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				default:
-					throw new NotImplementedException($"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}");
-			}
-		}
-
-		private Call CreateNewCall(Request Request,string SourceAddress,string DestinationAddress)
-		{
-			string? callID;
-			Address? from, to;
-
-			callID = Request.GetHeader<CallIDHeader>()?.Value;
-			if (callID == null)
-			{
-				string error = $"CallID header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			from = Request.GetHeader<FromHeader>()?.Value;
-			if (from == null)
-			{
-				string error = $"From header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			to = Request.GetHeader<ToHeader>()?.Value;
-			if (to == null)
-			{
-				string error = $"To header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return new Call(callID, SourceAddress, DestinationAddress, from.Value, to.Value, Call.States.OnHook, false);
-		}
-
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceAddress,string DestinationAddress)
-		{
-			Call? call;
-			Transaction? transaction;
-
-			transaction=KeyFrame.Transactions.FirstOrDefault(item=>item.Match(Request));
-			if (transaction==null)
-			{
-				// check if all other transactions are terminated
-				transaction = CreateNewTransaction(Request);
-				KeyFrame.Transactions.Add(transaction);
-			}
-
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request));
-			if (call == null) 
-			{
-				call = CreateNewCall(Request,SourceAddress,DestinationAddress);
-				KeyFrame.Calls.Add(call);
-			}
-
-			// update transaction
-			transaction.Update(Request);
-			// update call
-			call.Update(transaction);
-
-		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response)
-		{
-			Call? call;
-			Transaction? transaction;
-
-			transaction = KeyFrame.Transactions.FirstOrDefault(item => item.Match(Response));
-			if (transaction == null) throw new InvalidOperationException("Cannot find matching transaction for response");
-			
-
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response));
-			if (call == null) throw new InvalidOperationException("Cannot find matching call for response");
-
-			
-			// update transaction
-			transaction.Update(Response);
-			// update call
-			call.Update(transaction);
-			
-		}
-
-		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
-		{
-
-			switch (SIPMessage)
-			{
-				case Request request: UpdateKeyFrame(KeyFrame, request,Message.SourceAddress,Message.DestinationAddress) ;
-					break;
-				case Response response:UpdateKeyFrame(KeyFrame,response);
-					break;
-				default: throw new InvalidOperationException("Invalid SIP message type");
-			}
-
-		}
 
 		private async Task DelayAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
@@ -214,47 +91,6 @@ namespace SIP_o_matic
 			await foreach (Message message in DataSource.EnumerateMessagesAsync(Path))
 			{
 				Project.Messages.Add(message);
-			}
-		}
-		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
-		{
-			StringReader reader;
-			SIPMessage sipMessage;
-			
-			KeyFrame newKeyFrame;
-			KeyFrame? previousKeyFrame=null;
-
-			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
-			{
-				reader = new StringReader(message.Content, ' ');
-				try
-				{
-					sipMessage = SIPGrammar.SIPMessage.Parse(reader);
-				}
-				catch (Exception ex)
-				{
-					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
-					throw new InvalidOperationException(error);
-				}
-
-				try
-				{
-					if (previousKeyFrame == null) newKeyFrame = new KeyFrame(message.Timestamp);
-					else
-					{
-						newKeyFrame = previousKeyFrame.Clone();
-						newKeyFrame.Timestamp = message.Timestamp;
-					}
-
-					UpdateKeyFrame(newKeyFrame, sipMessage, message);
-				}
-				catch(Exception ex)
-				{
-					string error = $"Failed to create key frame:\r\n" + ex.Message + $"\r\n[{message.Index}] " + message.Content;
-					throw new InvalidOperationException(error);
-				}
-				Project.KeyFrames.Add(newKeyFrame);
-				previousKeyFrame = newKeyFrame;
 			}
 		}
 
@@ -290,7 +126,7 @@ namespace SIP_o_matic
 					}
 					catch(Exception ex)
 					{
-						Logger.Log(0, "AnalyzeWindow", "RunAnalyzisAsync", ex);
+						logger.Log(0, "AnalyzeWindow", "RunAnalyzisAsync", ex);
 						step.End(ex.Message);
 						break;
 					}

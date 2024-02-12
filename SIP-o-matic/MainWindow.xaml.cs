@@ -90,7 +90,7 @@ namespace SIP_o_matic
 			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0) ) return;
 			try
 			{
-				analyzeWindow = new AnalyzeWindow() { Logger=this.Logger};
+				analyzeWindow = new AnalyzeWindow(Logger);
 				analyzeWindow.Owner = this;
 				analyzeWindow.Project = applicationViewModel.Projects.SelectedItem;
 				analyzeWindow.ShowDialog();

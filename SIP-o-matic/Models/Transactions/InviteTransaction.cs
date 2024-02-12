@@ -47,6 +47,7 @@ namespace SIP_o_matic.Models.Transactions
 
 			fsm.Configure(States.InviteStarted)
 				.PermitIf(ErrorTrigger, States.InviteError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitReentryIf(InviteTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage).OnEntry(()=>Retransmissions++) 
 				.PermitIf(Prov1xxTrigger, States.InviteProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				.PermitIf(Prov180Trigger, States.InviteRinging, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)

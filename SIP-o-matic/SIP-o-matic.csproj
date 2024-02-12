@@ -81,6 +81,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj" />
     <ProjectReference Include="..\..\LogLib\LogLib\LogLib.csproj" />
+    <ProjectReference Include="..\..\ModuleLib\ModuleLib\ModuleLib.csproj" />
     <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
     <ProjectReference Include="..\..\ViewModelLib\ViewModelLib\ViewModelLib.csproj" />
     <ProjectReference Include="..\AudiocodesSyslogLib\AudiocodesSyslogLib.csproj" />

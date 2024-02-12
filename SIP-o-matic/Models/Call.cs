@@ -15,7 +15,7 @@ namespace SIP_o_matic.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established,Transfering};
+		public  enum States { OnHook,Calling, Ringing,Established,Transfering,Terminated};
 
 		private StateMachine<States, Transaction.States> fsm;
 
@@ -76,6 +76,7 @@ namespace SIP_o_matic.Models
 				.Permit(Transaction.States.InviteStarted, States.Calling)
 				;
 			fsm.Configure(States.Calling)
+				.Ignore(Transaction.States.InviteStarted)
 				.PermitReentry(Transaction.States.InviteProceeding)
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
 				.Permit(Transaction.States.AckTerminated, States.Established)
@@ -86,7 +87,7 @@ namespace SIP_o_matic.Models
 				.Permit(Transaction.States.AckTerminated, States.Established)
 				;
 			fsm.Configure(States.Established)
-				.Ignore(Transaction.States.InviteStarted)
+				.Ignore(Transaction.States.InviteStarted)	// retransmission
 				.Ignore(Transaction.States.InviteProceeding)
 				.Ignore(Transaction.States.InviteRinging)
 				.Ignore(Transaction.States.InviteError)
@@ -97,12 +98,21 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.ReferStarted)
 				.Ignore(Transaction.States.ReferProceeding)
 				.Permit(Transaction.States.ReferTerminated, States.Transfering)
+
+				.Ignore(Transaction.States.ByeStarted)
+				.Ignore(Transaction.States.ByeProceeding)
+				.Permit(Transaction.States.ByeTerminated, States.Terminated)
 				;
 			fsm.Configure(States.Transfering)
 				.Ignore(Transaction.States.NotifyStarted)
 				.Ignore(Transaction.States.NotifyProceeding)
 				.Ignore(Transaction.States.NotifyTerminated)
-				;
+
+				.Ignore(Transaction.States.ByeStarted)
+				.Ignore(Transaction.States.ByeProceeding)
+
+				.Permit(Transaction.States.ByeTerminated, States.Terminated)
+			;
 		}
 
 		public Call Clone()

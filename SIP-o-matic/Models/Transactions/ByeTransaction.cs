@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SIP_o_matic.Models.Transactions
 {
-	public class NotifyTransaction:Transaction
+	public class ByeTransaction:Transaction
 	{
 
 	
@@ -21,11 +21,11 @@ namespace SIP_o_matic.Models.Transactions
 
 
 
-		protected override States TerminatedState => States.NotifyTerminated;
+		protected override States TerminatedState => States.ByeTerminated;
 
 
 		[SetsRequiredMembers]
-		public NotifyTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq, InitialState)
+		public ByeTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq, InitialState)
 		{
 
 		}
@@ -40,26 +40,26 @@ namespace SIP_o_matic.Models.Transactions
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(NotifyTrigger, States.NotifyStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
+				.PermitIf(ByeTrigger, States.ByeStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
 				;
 
-			fsm.Configure(States.NotifyStarted)
-				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(NotifyTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage).OnEntry(() => Retransmissions++)
-				.PermitIf(Prov1xxTrigger, States.NotifyProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+			fsm.Configure(States.ByeStarted)
+				.PermitIf(ErrorTrigger, States.ByeError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitReentryIf(ByeTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage).OnEntry(() => Retransmissions++)
+				.PermitIf(Prov1xxTrigger, States.ByeProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ByeTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 
-			fsm.Configure(States.NotifyProceeding)
-				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+			fsm.Configure(States.ByeProceeding)
+				.PermitIf(ErrorTrigger, States.ByeError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ByeTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 		}
 
 		public override Transaction Clone()
 		{
-			return new NotifyTransaction(CallID, ViaBranch, CSeq, State);
+			return new ByeTransaction(CallID, ViaBranch, CSeq, State);
 		}
 		
 		
@@ -68,7 +68,7 @@ namespace SIP_o_matic.Models.Transactions
 			switch (Response.StatusLine.StatusCode)
 			{
 				case 100:return Prov1xxTrigger!;
-				case 200: case 202:return Final2xxTrigger!;
+				case 200:return Final2xxTrigger!;
 				case >= 400 and < 699: return ErrorTrigger!;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
