@@ -13,7 +13,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-        public AckTransaction(string CallID, string ViaBranch, string CSeq, States InitialState) : base(CallID, ViaBranch, CSeq, InitialState)
+        public AckTransaction(string CallID, string SourceAddress,string DestinationAddress, string ViaBranch, string CSeq) : base(CallID, SourceAddress,DestinationAddress, ViaBranch, CSeq)
         {
 
 		}
@@ -21,17 +21,13 @@ namespace SIP_o_matic.Models.Transactions
 		protected override void OnConfigureFSM(StateMachine<States, Triggers> fsm)
 		{
 			fsm.Configure(States.Undefined)
-				.PermitIf(AckTrigger, States.AckTerminated, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
+				.PermitIf(AckTrigger, States.AckTerminated,AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 		}
 
-		public override Transaction Clone()
-		{
-			return new AckTransaction(CallID, ViaBranch, CSeq, State);
-		}
+		
 
-
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response,string,string> OnGetUpdateTrigger(Response Response)
 		{
 			throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 		}

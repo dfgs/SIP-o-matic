@@ -15,9 +15,9 @@ namespace SIP_o_matic.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? ErrorTrigger;
 
 
 
@@ -25,7 +25,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public ByeTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq, InitialState)
+		public ByeTransaction(string CallID, string SourceAddress, string DestinationAddress, string ViaBranch,string CSeq) :base(CallID,SourceAddress,DestinationAddress, ViaBranch,CSeq)
 		{
 
 		}
@@ -34,36 +34,31 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
-			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Prov1xx);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(ByeTrigger, States.ByeStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
+				.PermitIf(ByeTrigger, States.ByeStarted,AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.ByeStarted)
-				.PermitIf(ErrorTrigger, States.ByeError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(ByeTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage).OnEntry(() => Retransmissions++)
-				.PermitIf(Prov1xxTrigger, States.ByeProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.ByeTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.ByeError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Prov1xxTrigger, States.ByeProceeding, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ByeTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.ByeProceeding)
-				.PermitIf(ErrorTrigger, States.ByeError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.ByeTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.ByeError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitReentryIf(Prov1xxTrigger, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ByeTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 		}
 
-		public override Transaction Clone()
-		{
-			return new ByeTransaction(CallID, ViaBranch, CSeq, State);
-		}
 		
 		
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
 			{

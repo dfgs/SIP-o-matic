@@ -12,24 +12,33 @@ using SIP_o_matic.Models;
 using SIP_o_matic.Models.Transactions;
 using SIP_o_matic.ViewModels;
 using SIPParserLib;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SIP_o_matic.Modules
 {
 	public class AnalyzeModule : Module
 	{
+
+		private List<Transaction> Transactions;
+		
+
 		public AnalyzeModule(ILogger Logger) : base(Logger)
 		{
+			Transactions = new List<Transaction>();
 		}
-		private Transaction CreateNewTransaction(Request Request)
+		private Transaction CreateNewTransaction(Request Request,string SourceAddress, string DestinationAddress)
 		{
 			string? viaBranch;
 			string? cseq;
 			string? callID;
 
+			LogEnter();
+
 			callID = Request.GetHeader<CallIDHeader>()?.Value;
 			if (callID == null)
 			{
 				string error = $"CallID header missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
@@ -37,6 +46,7 @@ namespace SIP_o_matic.Modules
 			if (viaBranch == null)
 			{
 				string error = $"Via branch missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
@@ -44,18 +54,21 @@ namespace SIP_o_matic.Modules
 			if (cseq == null)
 			{
 				string error = $"CSeq missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
 			switch (Request.RequestLine.Method)
 			{
-				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "ACK": return new AckTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "REFER": return new ReferTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
-				case "BYE": return new ByeTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
+				case "INVITE": return new InviteTransaction(callID,SourceAddress,DestinationAddress, viaBranch, cseq);
+				case "ACK": return new AckTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
+				case "REFER": return new ReferTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
+				case "NOTIFY": return new NotifyTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
+				case "BYE": return new ByeTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
 				default:
-					throw new NotImplementedException($"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}");
+					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
+					Log(LogLevels.Error, error);
+					throw new NotImplementedException(error);
 			}
 		}
 
@@ -64,10 +77,13 @@ namespace SIP_o_matic.Modules
 			string? callID;
 			Address? from, to;
 
+			LogEnter();
+
 			callID = Request.GetHeader<CallIDHeader>()?.Value;
 			if (callID == null)
 			{
 				string error = $"CallID header missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
@@ -75,6 +91,7 @@ namespace SIP_o_matic.Modules
 			if (from == null)
 			{
 				string error = $"From header missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
@@ -82,6 +99,7 @@ namespace SIP_o_matic.Modules
 			if (to == null)
 			{
 				string error = $"To header missing in SIP message";
+				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
 
@@ -93,49 +111,77 @@ namespace SIP_o_matic.Modules
 			Call? call;
 			Transaction? transaction;
 
-			transaction = KeyFrame.Transactions.FirstOrDefault(item => item.Match(Request));
+			LogEnter();
+
+			transaction = Transactions.FirstOrDefault(item => item.Match(Request,SourceAddress,DestinationAddress));
 			if (transaction == null)
 			{
 				// check if all other transactions are terminated
-				transaction = CreateNewTransaction(Request);
-				KeyFrame.Transactions.Add(transaction);
+				transaction = CreateNewTransaction(Request,SourceAddress,DestinationAddress);
+				Transactions.Add(transaction);
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request));
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request, SourceAddress, DestinationAddress));
 			if (call == null)
 			{
 				call = CreateNewCall(Request, SourceAddress, DestinationAddress);
 				KeyFrame.Calls.Add(call);
 			}
 
+
 			// update transaction
-			transaction.Update(Request);
-			// update call
-			call.Update(transaction);
+			if (transaction.Update(Request,SourceAddress,DestinationAddress))
+			{
+				// update call
+				call.Update(transaction);
+			}
 
 		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceAddress, string DestinationAddress)
 		{
 			Call? call;
 			Transaction? transaction;
 
-			transaction = KeyFrame.Transactions.FirstOrDefault(item => item.Match(Response));
-			if (transaction == null) throw new InvalidOperationException("Cannot find matching transaction for response");
+			LogEnter();
+
+			transaction = Transactions.FirstOrDefault(item => item.Match(Response, SourceAddress, DestinationAddress));
+			if (transaction == null)
+			{
+				string error = "Cannot find matching transaction for response";
+				Log(LogLevels.Error, error);
+				throw new InvalidOperationException(error);
+
+			}
 
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response));
-			if (call == null) throw new InvalidOperationException("Cannot find matching call for response");
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response, SourceAddress, DestinationAddress));
+			if (call == null)
+			{
+				string error = "Cannot find matching call for response";
+				Log(LogLevels.Error, error);
+				throw new InvalidOperationException(error);
+			}
 
 
 			// update transaction
-			transaction.Update(Response);
-			// update call
-			call.Update(transaction);
+			if (transaction.Update(Response, SourceAddress, DestinationAddress))
+			{
+				// update call
+				call.Update(transaction);
+			}
 
 		}
 
 		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
 		{
+
+			LogEnter();
+
+			/*if (Message.Index==100)
+			{
+				int t = 0;
+			}
+			//*/
 
 			switch (SIPMessage)
 			{
@@ -143,9 +189,12 @@ namespace SIP_o_matic.Modules
 					UpdateKeyFrame(KeyFrame, request, Message.SourceAddress, Message.DestinationAddress);
 					break;
 				case Response response:
-					UpdateKeyFrame(KeyFrame, response);
+					UpdateKeyFrame(KeyFrame, response, Message.SourceAddress, Message.DestinationAddress);
 					break;
-				default: throw new InvalidOperationException("Invalid SIP message type");
+				default:
+					string error = "Invalid SIP message type";
+					Log(LogLevels.Error, error);
+					throw new InvalidOperationException(error);
 			}
 
 		}
@@ -157,8 +206,15 @@ namespace SIP_o_matic.Modules
 			KeyFrame newKeyFrame;
 			KeyFrame? previousKeyFrame = null;
 
+			LogEnter();
+
 			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
 			{
+				/*if (message.Index==124)
+				{
+					int t = 0;
+				}//*/
+
 				reader = new StringReader(message.Content, ' ');
 				try
 				{
@@ -167,6 +223,7 @@ namespace SIP_o_matic.Modules
 				catch (Exception ex)
 				{
 					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
+					Log(LogLevels.Error, error);
 					throw new InvalidOperationException(error);
 				}
 
@@ -184,6 +241,7 @@ namespace SIP_o_matic.Modules
 				catch (Exception ex)
 				{
 					string error = $"Failed to create key frame:\r\n" + ex.Message + $"\r\n[{message.Index}] " + message.Content;
+					Log(LogLevels.Error, error);
 					throw new InvalidOperationException(error);
 				}
 				Project.KeyFrames.Add(newKeyFrame);

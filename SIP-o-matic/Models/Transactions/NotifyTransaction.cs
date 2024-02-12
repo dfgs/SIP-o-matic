@@ -15,9 +15,9 @@ namespace SIP_o_matic.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? ErrorTrigger;
 
 
 
@@ -25,7 +25,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public NotifyTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq, InitialState)
+		public NotifyTransaction(string CallID, string SourceAddress, string DestinationAddress, string ViaBranch,string CSeq) :base(CallID,SourceAddress,DestinationAddress, ViaBranch,CSeq)
 		{
 
 		}
@@ -34,36 +34,32 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
-			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Prov1xx);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(NotifyTrigger, States.NotifyStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
+				.PermitIf(NotifyTrigger, States.NotifyStarted, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.NotifyStarted)
-				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(NotifyTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage).OnEntry(() => Retransmissions++)
-				.PermitIf(Prov1xxTrigger, States.NotifyProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.NotifyError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Prov1xxTrigger, States.NotifyProceeding,  AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.NotifyProceeding)
-				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.NotifyError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitReentryIf(Prov1xxTrigger,AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 		}
 
-		public override Transaction Clone()
-		{
-			return new NotifyTransaction(CallID, ViaBranch, CSeq, State);
-		}
 		
 		
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
+		
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
 			{

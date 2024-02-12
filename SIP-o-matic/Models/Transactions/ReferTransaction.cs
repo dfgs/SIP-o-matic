@@ -15,9 +15,9 @@ namespace SIP_o_matic.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? ErrorTrigger;
 
 
 
@@ -25,7 +25,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public ReferTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq,InitialState)
+		public ReferTransaction(string CallID, string SourceAddress, string DestinationAddress, string ViaBranch,string CSeq ) :base(CallID,SourceAddress,DestinationAddress, ViaBranch,CSeq)
 		{
 
 		}
@@ -34,37 +34,34 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
-			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Prov1xx);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(ReferTrigger, States.ReferStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
+				.PermitIf(ReferTrigger, States.ReferStarted, (Request,SourceAddress,DestinationAddress) => AssertMessageBelongsToTransaction(Request,SourceAddress,DestinationAddress), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.ReferStarted)
-				.PermitIf(ErrorTrigger, States.ReferError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Prov1xxTrigger, States.ReferProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.ReferTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.ReferError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Prov1xxTrigger, States.ReferProceeding, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ReferTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.ReferProceeding)
-				.PermitIf(ErrorTrigger, States.ReferError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
-				.PermitIf(Final2xxTrigger, States.ReferTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(ErrorTrigger, States.ReferError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitReentryIf(Prov1xxTrigger, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.ReferTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 		}
 
-		public override Transaction Clone()
-		{
-			return new ReferTransaction(CallID, ViaBranch, CSeq, State);
-		}
+		
 		
 
 	
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
 			{

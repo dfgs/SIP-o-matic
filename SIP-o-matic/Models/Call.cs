@@ -79,21 +79,21 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.InviteStarted)
 				.PermitReentry(Transaction.States.InviteProceeding)
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
-				.Permit(Transaction.States.AckTerminated, States.Established)
+				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
-				.Ignore(Transaction.States.InviteTerminated)
-				.Permit(Transaction.States.AckTerminated, States.Established)
+				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
+
 			fsm.Configure(States.Established)
-				.Ignore(Transaction.States.InviteStarted)	// retransmission
+				.Ignore(Transaction.States.InviteStarted)   // réinvite
 				.Ignore(Transaction.States.InviteProceeding)
 				.Ignore(Transaction.States.InviteRinging)
 				.Ignore(Transaction.States.InviteError)
 				.Ignore(Transaction.States.InviteTerminated)
-				
-				.Ignore(Transaction.States.AckTerminated)
+
+				.PermitReentry(Transaction.States.AckTerminated).OnEntry(() => { IsAck = true; })
 
 				.Ignore(Transaction.States.ReferStarted)
 				.Ignore(Transaction.States.ReferProceeding)
@@ -103,6 +103,7 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.ByeProceeding)
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
 				;
+
 			fsm.Configure(States.Transfering)
 				.Ignore(Transaction.States.NotifyStarted)
 				.Ignore(Transaction.States.NotifyProceeding)
@@ -112,7 +113,18 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.ByeProceeding)
 
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
-			;
+				;
+
+			fsm.Configure(States.Terminated)
+				.OnEntry(() =>
+					{
+						if (CallID == "SDo2pg901-c155e675bb01dc8ff7638df0e6c6c83f-v300g00")
+						{
+							int t = 0;
+						}
+					}
+				)
+				;
 		}
 
 		public Call Clone()
@@ -120,14 +132,18 @@ namespace SIP_o_matic.Models
 			return new Call(this.CallID, this.SourceAddress, this.DestinationAddress,this.FromURI, this.ToURI, this.State,this.IsAck);
 						
 		}
-
-		public bool Match(Request Request)
+		private bool SourceAndDestinationMatch(string SourceAddress, string DestinationAddress)
 		{
-			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) ;
+			return ((this.SourceAddress == SourceAddress) && (this.DestinationAddress == DestinationAddress))
+				|| ((this.SourceAddress == DestinationAddress) && (this.DestinationAddress == SourceAddress));
 		}
-		public bool Match(Response Response)
+		public bool Match(Request Request, string SourceAddress, string DestinationAddress)
 		{
-			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) ;
+			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceAddress,DestinationAddress) ;
+		}
+		public bool Match(Response Response, string SourceAddress, string DestinationAddress)
+		{
+			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceAddress, DestinationAddress);
 		}
 
 

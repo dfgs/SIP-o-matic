@@ -22,17 +22,12 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
-		public List<Transaction> Transactions
-		{
-			get;
-			set;
-		}
+		
 
 		[SetsRequiredMembers]
 		public KeyFrame(DateTime Timestamp)
 		{
 			this.Calls= new List<Call>();
-			this.Transactions= new List<Transaction>();	
 			this.Timestamp = Timestamp;
 		}
 
@@ -46,10 +41,7 @@ namespace SIP_o_matic.Models
 			{
 				keyFrame.Calls.Add(previousCall.Clone());
 			}
-			foreach (Transaction previousTransaction in this.Transactions)
-			{
-				keyFrame.Transactions.Add(previousTransaction.Clone());
-			}
+			
 			return keyFrame;
 		}
 
