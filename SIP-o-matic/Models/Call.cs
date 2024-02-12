@@ -73,26 +73,36 @@ namespace SIP_o_matic.Models
 
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
 			fsm.Configure(States.OnHook)
-				.Permit(Transaction.States.Calling, States.Calling)
+				.Permit(Transaction.States.InviteStarted, States.Calling)
 				;
 			fsm.Configure(States.Calling)
-				.PermitReentry(Transaction.States.Proceeding)
-				.Permit(Transaction.States.Ringing, States.Ringing)
-				.Permit(Transaction.States.Terminated, States.Established)
+				.PermitReentry(Transaction.States.InviteProceeding)
+				.Permit(Transaction.States.InviteRinging, States.Ringing)
+				.Permit(Transaction.States.AckTerminated, States.Established)
 				;
 			fsm.Configure(States.Ringing)
-				.PermitReentry(Transaction.States.Ringing)
-				.Permit(Transaction.States.Terminated, States.Established)
+				.PermitReentry(Transaction.States.InviteRinging)
+				.Ignore(Transaction.States.InviteTerminated)
+				.Permit(Transaction.States.AckTerminated, States.Established)
 				;
 			fsm.Configure(States.Established)
-				.Ignore(Transaction.States.Calling)
-				.Ignore(Transaction.States.Proceeding)
-				.Ignore(Transaction.States.Ringing)
-				.Ignore(Transaction.States.Completed)
-				.Ignore(Transaction.States.Terminated)
-				.Permit(Transaction.States.Transfering, States.Transfering)
-				;
+				.Ignore(Transaction.States.InviteStarted)
+				.Ignore(Transaction.States.InviteProceeding)
+				.Ignore(Transaction.States.InviteRinging)
+				.Ignore(Transaction.States.InviteCompleted)
+				.Ignore(Transaction.States.InviteTerminated)
+				
+				.Ignore(Transaction.States.AckTerminated)
 
+				.Ignore(Transaction.States.ReferStarted)
+				.Ignore(Transaction.States.ReferProceeding)
+				.Permit(Transaction.States.ReferTerminated, States.Transfering)
+				;
+			fsm.Configure(States.Transfering)
+				.Ignore(Transaction.States.NotifyStarted)
+				.Ignore(Transaction.States.NotifyProceeding)
+				.Ignore(Transaction.States.NotifyTerminated)
+				;
 		}
 
 		public Call Clone()

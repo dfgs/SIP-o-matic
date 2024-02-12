@@ -1,4 +1,6 @@
 ﻿using SIPParserLib;
+using Stateless;
+using Stateless.Graph;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -13,14 +15,25 @@ namespace SIP_o_matic.Models.Transactions
 		public enum States
 		{
 			Undefined,
-			// INVITE transaction state machine RFC 3261
-			Calling, Proceeding, Ringing, Completed,
-			// REFER transaction state
-			Transfering,
-			// Global terminated state
-			Terminated
+			// INVITE transaction states
+			InviteStarted, InviteProceeding, InviteRinging, InviteCompleted, InviteTerminated,
+			// ACK transaction states 
+			AckTerminated,
+			// REFER transaction states
+			ReferStarted, ReferProceeding, ReferTerminated,
+			// Notify transaction states
+			NotifyStarted, NotifyProceeding, NotifyTerminated,
+
 		};
-		public enum Triggers { INVITE, ACK, Prov1xx, Prov180, Final2xx, Error };
+		public enum Triggers { INVITE, ACK, REFER,NOTIFY, Prov1xx, Prov180, Final2xx, Error };
+
+
+		private StateMachine<States, Triggers> fsm;
+		
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> InviteTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ReferTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> AckTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> NotifyTrigger;
 
 
 		public required string CallID
@@ -40,27 +53,36 @@ namespace SIP_o_matic.Models.Transactions
 			set;
 		}
 
-		public abstract States State
-		{
-			get;
-		}
-		public abstract bool IsTerminated
+		protected abstract States TerminatedState
 		{
 			get;
 		}
 
-		public Transaction()
-		{
+		public States State => fsm.State;
 
+		public bool IsTerminated => fsm.IsInState(TerminatedState);
+
+		public Transaction(States InitialState)
+		{
+			fsm = new StateMachine<States, Triggers>(InitialState);
+
+			InviteTrigger = fsm.SetTriggerParameters<Request>(Triggers.INVITE);
+			AckTrigger = fsm.SetTriggerParameters<Request>(Triggers.ACK);
+			ReferTrigger = fsm.SetTriggerParameters<Request>(Triggers.REFER);
+			NotifyTrigger = fsm.SetTriggerParameters<Request>(Triggers.NOTIFY);
+
+			OnConfigureFSM(fsm);
 		}
 
 		[SetsRequiredMembers]
-		public Transaction(string CallID, string ViaBranch, string CSeq)
+		public Transaction(string CallID, string ViaBranch, string CSeq, States InitialState):this(InitialState)
 		{
 			this.CallID = CallID;
 			this.ViaBranch = ViaBranch;
 			this.CSeq = CSeq;
 		}
+
+		protected abstract void OnConfigureFSM(StateMachine<States, Triggers> fsm);
 
 		public bool Match(Request Request)
 		{
@@ -80,11 +102,37 @@ namespace SIP_o_matic.Models.Transactions
 			return Match(Response);
 		}
 
-		public abstract string GetGraph();
+		public string GetGraph()
+		{
+			return UmlDotGraph.Format(fsm.GetInfo());
+		}
 
 		public abstract Transaction Clone();
-		public abstract void Update(Request Request);
-		public abstract void Update(Response Response);
-		
+		public void Update(Request Request)
+		{
+			switch (Request.RequestLine.Method)
+			{
+				case "INVITE":
+					fsm.Fire(InviteTrigger, Request);
+					break;
+				case "ACK":
+					fsm.Fire(AckTrigger, Request);
+					break;
+				case "REFER":
+					fsm.Fire(ReferTrigger, Request);
+					break;
+				case "NOTIFY":
+					fsm.Fire(NotifyTrigger, Request);
+					break;
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
+			}
+		}
+		public void Update(Response Response)
+		{
+			fsm.Fire(OnGetUpdateTrigger(Response),Response);
+		}
+
+		protected abstract StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response);
+
 	}
 }

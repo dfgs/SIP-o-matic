@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SIP_o_matic.Models.Transactions
 {
-	public class ReferTransaction:Transaction
+	public class NotifyTransaction:Transaction
 	{
 
 	
@@ -21,11 +21,11 @@ namespace SIP_o_matic.Models.Transactions
 
 
 
-		protected override States TerminatedState => States.ReferTerminated;
+		protected override States TerminatedState => States.NotifyTerminated;
 
 
 		[SetsRequiredMembers]
-		public ReferTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq,InitialState)
+		public NotifyTransaction(string CallID,string ViaBranch,string CSeq, States InitialState) :base(CallID,ViaBranch,CSeq, InitialState)
 		{
 
 		}
@@ -40,28 +40,26 @@ namespace SIP_o_matic.Models.Transactions
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(ReferTrigger, States.ReferStarted, (Request) => AssertMessageBelongsToTransaction(Request), "Message doesn't belong to current transaction")
+				.PermitIf(NotifyTrigger, States.NotifyStarted, (Request) => AssertMessageBelongsToTransaction(Request), "Message doesn't belong to current transaction")
 				;
 
-			fsm.Configure(States.ReferStarted)
-				.PermitIf(Prov1xxTrigger, States.ReferProceeding, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.ReferTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+			fsm.Configure(States.NotifyStarted)
+				.PermitIf(Prov1xxTrigger, States.NotifyProceeding, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
 				;
 
-			fsm.Configure(States.ReferProceeding)
+			fsm.Configure(States.NotifyProceeding)
 				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.ReferTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
 				;
 		}
 
 		public override Transaction Clone()
 		{
-			return new ReferTransaction(CallID, ViaBranch, CSeq, State);
+			return new NotifyTransaction(CallID, ViaBranch, CSeq, State);
 		}
 		
-
-	
-
+		
 		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)

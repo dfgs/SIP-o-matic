@@ -99,6 +99,7 @@ namespace SIP_o_matic
 				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
 				case "ACK": return new AckTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
 				case "REFER": return new ReferTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
+				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq, Transaction.States.Undefined);
 				default:
 					throw new NotImplementedException($"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}");
 			}
