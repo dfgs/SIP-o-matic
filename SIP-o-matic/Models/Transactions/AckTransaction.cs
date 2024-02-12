@@ -34,7 +34,7 @@ namespace SIP_o_matic.Models.Transactions
 
 		public override Transaction Clone()
 		{
-			throw new System.NotImplementedException();
+			return new AckTransaction(CallID, ViaBranch, CSeq, State);
 		}
 
 		public override string GetGraph()

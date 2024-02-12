@@ -15,7 +15,7 @@ namespace SIP_o_matic.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established};
+		public  enum States { OnHook,Calling, Ringing,Established,Transfering};
 
 		private StateMachine<States, Transaction.States> fsm;
 
@@ -90,7 +90,9 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.Ringing)
 				.Ignore(Transaction.States.Completed)
 				.Ignore(Transaction.States.Terminated)
+				.Permit(Transaction.States.Transfering, States.Transfering)
 				;
+
 		}
 
 		public Call Clone()

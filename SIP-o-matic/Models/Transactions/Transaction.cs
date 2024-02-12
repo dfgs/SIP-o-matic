@@ -14,8 +14,9 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			Undefined,
 			// INVITE transaction state machine RFC 3261
-			Calling, Proceeding, Ringing, Completed, 
-			
+			Calling, Proceeding, Ringing, Completed,
+			// REFER transaction state
+			Transfering,
 			// Global terminated state
 			Terminated
 		};
