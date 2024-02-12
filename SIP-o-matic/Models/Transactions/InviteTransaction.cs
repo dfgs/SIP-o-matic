@@ -42,26 +42,28 @@ namespace SIP_o_matic.Models.Transactions
 			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(InviteTrigger, States.InviteStarted, (Request) => AssertMessageBelongsToTransaction(Request), "Message doesn't belong to current transaction")
+				.PermitIf(InviteTrigger, States.InviteStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.InviteStarted)
-				.PermitIf(Prov1xxTrigger, States.InviteProceeding, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Prov180Trigger, States.InviteRinging, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(ErrorTrigger, States.InviteError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Prov1xxTrigger, States.InviteProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Prov180Trigger, States.InviteRinging, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.InviteProceeding)
-				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Prov180Trigger, States.InviteRinging, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(ErrorTrigger, States.InviteError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Prov180Trigger, States.InviteRinging, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.InviteRinging)
+				.PermitIf(ErrorTrigger, States.InviteError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				.SubstateOf(States.InviteProceeding)
-				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(Final2xxTrigger, States.InviteTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
-
 
 		}
 
@@ -70,9 +72,6 @@ namespace SIP_o_matic.Models.Transactions
 			return new InviteTransaction(CallID, ViaBranch, CSeq, State);
 		}
 		
-
-
-
 		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
@@ -80,6 +79,7 @@ namespace SIP_o_matic.Models.Transactions
 				case 180: return Prov180Trigger!;
 				case >= 100 and <= 199:return Prov1xxTrigger!;
 				case >= 200 and <= 299:return Final2xxTrigger!;
+				case >= 400 and < 699: return ErrorTrigger!;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
 		}

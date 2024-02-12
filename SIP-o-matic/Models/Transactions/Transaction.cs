@@ -12,17 +12,19 @@ namespace SIP_o_matic.Models.Transactions
 {
 	public abstract class Transaction:ICloneable<Transaction>, ISIPMessageMatch
 	{
+		protected static string TransactionErrorMessage = "Message doesn't belong to current transaction";
+
 		public enum States
 		{
 			Undefined,
 			// INVITE transaction states
-			InviteStarted, InviteProceeding, InviteRinging, InviteCompleted, InviteTerminated,
+			InviteStarted, InviteProceeding, InviteRinging, InviteError, InviteTerminated,
 			// ACK transaction states 
 			AckTerminated,
 			// REFER transaction states
-			ReferStarted, ReferProceeding, ReferTerminated,
-			// Notify transaction states
-			NotifyStarted, NotifyProceeding, NotifyTerminated,
+			ReferStarted, ReferProceeding, ReferError, ReferTerminated,
+			// NOTIFY transaction states
+			NotifyStarted, NotifyProceeding, NotifyError, NotifyTerminated,
 
 		};
 		public enum Triggers { INVITE, ACK, REFER,NOTIFY, Prov1xx, Prov180, Final2xx, Error };

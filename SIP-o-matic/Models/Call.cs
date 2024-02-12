@@ -89,7 +89,7 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.InviteStarted)
 				.Ignore(Transaction.States.InviteProceeding)
 				.Ignore(Transaction.States.InviteRinging)
-				.Ignore(Transaction.States.InviteCompleted)
+				.Ignore(Transaction.States.InviteError)
 				.Ignore(Transaction.States.InviteTerminated)
 				
 				.Ignore(Transaction.States.AckTerminated)

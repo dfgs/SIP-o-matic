@@ -40,17 +40,19 @@ namespace SIP_o_matic.Models.Transactions
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(NotifyTrigger, States.NotifyStarted, (Request) => AssertMessageBelongsToTransaction(Request), "Message doesn't belong to current transaction")
+				.PermitIf(NotifyTrigger, States.NotifyStarted, (Request) => AssertMessageBelongsToTransaction(Request), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.NotifyStarted)
-				.PermitIf(Prov1xxTrigger, States.NotifyProceeding, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Prov1xxTrigger, States.NotifyProceeding, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.NotifyProceeding)
-				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
-				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), "Message doesn't belong to current transaction")
+				.PermitIf(ErrorTrigger, States.NotifyError, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitReentryIf(Prov1xxTrigger, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.NotifyTerminated, (Response) => AssertMessageBelongsToTransaction(Response), TransactionErrorMessage)
 				;
 		}
 
@@ -66,6 +68,7 @@ namespace SIP_o_matic.Models.Transactions
 			{
 				case 100:return Prov1xxTrigger!;
 				case 202:return Final2xxTrigger!;
+				case >= 400 and < 699: return ErrorTrigger!;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
 		}
