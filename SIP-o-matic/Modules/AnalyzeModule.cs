@@ -71,7 +71,7 @@ namespace SIP_o_matic.Modules
 					throw new NotImplementedException(error);
 			}
 		}
-
+		
 		private Call CreateNewCall(Request Request, string SourceDevice, string DestinationDevice)
 		{
 			string? callID;
