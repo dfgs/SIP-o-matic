@@ -22,10 +22,15 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		private DeviceViewModel? FindDeviceByName(string Name)
+		public DeviceViewModel? FindDeviceByName(string Name)
 		{
 			return this.FirstOrDefault(item => item.Name == Name);
 		}
+		public DeviceViewModel? FindDeviceByAddress(string Address)
+		{
+			return this.FirstOrDefault(item => item.Addresses.Contains( Address));
+		}
+
 		/*private DeviceViewModel? FindDeviceByAddress(string Address)
 		{
 			return this.FirstOrDefault(item => item.Addresses.Contains(Address));

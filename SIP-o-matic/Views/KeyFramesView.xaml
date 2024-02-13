@@ -25,9 +25,9 @@
 				<DataTemplate>
 					<StackPanel>
 						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding SourceAddress}"/>
+							<TextBlock Text="{Binding SourceDevice}"/>
 							<TextBlock Text=" -> "/>
-							<TextBlock Text="{Binding DestinationAddress}"/>
+							<TextBlock Text="{Binding DestinationDevice}"/>
 						</StackPanel>
 						<StackPanel Orientation="Horizontal">
 							<TextBlock Text="{Binding FromURI}"/>

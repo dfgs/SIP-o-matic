@@ -26,7 +26,7 @@ namespace SIP_o_matic.Modules
 		{
 			Transactions = new List<Transaction>();
 		}
-		private Transaction CreateNewTransaction(Request Request,string SourceAddress, string DestinationAddress)
+		private Transaction CreateNewTransaction(Request Request,string SourceDevice, string DestinationDevice)
 		{
 			string? viaBranch;
 			string? cseq;
@@ -60,11 +60,11 @@ namespace SIP_o_matic.Modules
 
 			switch (Request.RequestLine.Method)
 			{
-				case "INVITE": return new InviteTransaction(callID,SourceAddress,DestinationAddress, viaBranch, cseq);
-				case "ACK": return new AckTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
-				case "REFER": return new ReferTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
-				case "NOTIFY": return new NotifyTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
-				case "BYE": return new ByeTransaction(callID, SourceAddress,DestinationAddress, viaBranch, cseq);
+				case "INVITE": return new InviteTransaction(callID,SourceDevice,DestinationDevice, viaBranch, cseq);
+				case "ACK": return new AckTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
+				case "REFER": return new ReferTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
+				case "NOTIFY": return new NotifyTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
+				case "BYE": return new ByeTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
 				default:
 					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
 					Log(LogLevels.Error, error);
@@ -72,7 +72,7 @@ namespace SIP_o_matic.Modules
 			}
 		}
 
-		private Call CreateNewCall(Request Request, string SourceAddress, string DestinationAddress)
+		private Call CreateNewCall(Request Request, string SourceDevice, string DestinationDevice)
 		{
 			string? callID;
 			Address? from, to;
@@ -103,48 +103,50 @@ namespace SIP_o_matic.Modules
 				throw new InvalidOperationException(error);
 			}
 
-			return new Call(callID, SourceAddress, DestinationAddress, from.Value, to.Value, Call.States.OnHook, false);
+			return new Call(callID, SourceDevice, DestinationDevice, from.Value, to.Value, Call.States.OnHook, false);
 		}
 
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceAddress, string DestinationAddress)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice)
 		{
 			Call? call;
 			Transaction? transaction;
 
 			LogEnter();
 
-			transaction = Transactions.FirstOrDefault(item => item.Match(Request,SourceAddress,DestinationAddress));
+			transaction = Transactions.FirstOrDefault(item => item.Match(Request,SourceDevice,DestinationDevice));
 			if (transaction == null)
 			{
 				// check if all other transactions are terminated
-				transaction = CreateNewTransaction(Request,SourceAddress,DestinationAddress);
+				transaction = CreateNewTransaction(Request,SourceDevice,DestinationDevice);
 				Transactions.Add(transaction);
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request, SourceAddress, DestinationAddress));
+			
+
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request, SourceDevice, DestinationDevice));
 			if (call == null)
 			{
-				call = CreateNewCall(Request, SourceAddress, DestinationAddress);
+				call = CreateNewCall(Request, SourceDevice, DestinationDevice);
 				KeyFrame.Calls.Add(call);
 			}
 
 
 			// update transaction
-			if (transaction.Update(Request,SourceAddress,DestinationAddress))
+			if (transaction.Update(Request,SourceDevice,DestinationDevice))
 			{
 				// update call
 				call.Update(transaction);
 			}
 
 		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceAddress, string DestinationAddress)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice)
 		{
 			Call? call;
 			Transaction? transaction;
 
 			LogEnter();
 
-			transaction = Transactions.FirstOrDefault(item => item.Match(Response, SourceAddress, DestinationAddress));
+			transaction = Transactions.FirstOrDefault(item => item.Match(Response, SourceDevice, DestinationDevice));
 			if (transaction == null)
 			{
 				string error = "Cannot find matching transaction for response";
@@ -154,7 +156,7 @@ namespace SIP_o_matic.Modules
 			}
 
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response, SourceAddress, DestinationAddress));
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response, SourceDevice, DestinationDevice));
 			if (call == null)
 			{
 				string error = "Cannot find matching call for response";
@@ -164,7 +166,7 @@ namespace SIP_o_matic.Modules
 
 
 			// update transaction
-			if (transaction.Update(Response, SourceAddress, DestinationAddress))
+			if (transaction.Update(Response, SourceDevice, DestinationDevice))
 			{
 				// update call
 				call.Update(transaction);
@@ -172,8 +174,9 @@ namespace SIP_o_matic.Modules
 
 		}
 
-		private void UpdateKeyFrame(KeyFrame KeyFrame, SIPMessage SIPMessage, MessageViewModel Message)
+		private void UpdateKeyFrame( KeyFrame KeyFrame, ProjectViewModel Project, SIPMessage SIPMessage, MessageViewModel Message)
 		{
+			string sourceDevice,destinationDevice;
 
 			LogEnter();
 
@@ -183,13 +186,16 @@ namespace SIP_o_matic.Modules
 			}
 			//*/
 
+			sourceDevice = Project.Devices.FindDeviceByAddress(Message.SourceAddress)?.Name ?? Message.SourceAddress;
+			destinationDevice = Project.Devices.FindDeviceByAddress(Message.DestinationAddress)?.Name ?? Message.DestinationAddress;
+
 			switch (SIPMessage)
 			{
 				case Request request:
-					UpdateKeyFrame(KeyFrame, request, Message.SourceAddress, Message.DestinationAddress);
+					UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice);
 					break;
 				case Response response:
-					UpdateKeyFrame(KeyFrame, response, Message.SourceAddress, Message.DestinationAddress);
+					UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice);
 					break;
 				default:
 					string error = "Invalid SIP message type";
@@ -236,7 +242,7 @@ namespace SIP_o_matic.Modules
 						newKeyFrame.Timestamp = message.Timestamp;
 					}
 
-					UpdateKeyFrame(newKeyFrame, sipMessage, message);
+					UpdateKeyFrame(newKeyFrame,Project, sipMessage, message);
 				}
 				catch (Exception ex)
 				{

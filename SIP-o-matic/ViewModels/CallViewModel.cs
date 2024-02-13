@@ -17,14 +17,14 @@ namespace SIP_o_matic.ViewModels
 			get => Model.CallID;
 		}
 
-		public string SourceAddress
+		public string SourceDevice
 		{
-			get=>Model.SourceAddress;
+			get=>Model.SourceDevice;
 		}
 
-		public string DestinationAddress
+		public string DestinationDevice
 		{
-			get=> Model.DestinationAddress;
+			get=> Model.DestinationDevice;
 		}
 
 		public Address FromURI

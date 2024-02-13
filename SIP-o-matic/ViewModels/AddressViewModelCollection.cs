@@ -32,6 +32,11 @@ namespace SIP_o_matic.ViewModels
 			AddInternal(addressViewModel);
 		}
 
+		public bool Contains(string Address)
+		{
+			return Model.Contains(Address);
+		}
+
 
 	}
 }

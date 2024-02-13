@@ -9,7 +9,7 @@ namespace SIP_o_matic.Models
 {
 	public interface ISIPMessageMatch
 	{
-		bool Match(Request Request,string SourceAddress,string DestinationAddress);
-		bool Match(Response Response, string SourceAddress, string DestinationAddress);
+		bool Match(Request Request,string SourceDevice,string DestinationDevice);
+		bool Match(Response Response, string SourceDevice, string DestinationDevice);
 	}
 }

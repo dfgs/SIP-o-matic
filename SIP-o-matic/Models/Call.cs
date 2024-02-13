@@ -25,13 +25,13 @@ namespace SIP_o_matic.Models
 			set;
 		}
 
-		public required string SourceAddress
+		public required string SourceDevice
 		{
 			get;
 			set;
 		}
 
-		public required string DestinationAddress
+		public required string DestinationDevice
 		{
 			get;
 			set;
@@ -61,12 +61,12 @@ namespace SIP_o_matic.Models
 
 		
 		[SetsRequiredMembers]
-		public Call(string callID, string SourceAddress,string DestinationAddress, Address FromURI, Address ToURI, States InitialState,bool IsAck)
+		public Call(string callID, string SourceDevice,string DestinationDevice, Address FromURI, Address ToURI, States InitialState,bool IsAck)
 		{
 	
 			CallID = callID;
-			this.SourceAddress = SourceAddress;
-			this.DestinationAddress = DestinationAddress;
+			this.SourceDevice = SourceDevice;
+			this.DestinationDevice = DestinationDevice;
 			this.FromURI = FromURI;
 			this.ToURI = ToURI;
 			this.IsAck = IsAck;
@@ -93,7 +93,7 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.InviteError)
 				.Ignore(Transaction.States.InviteTerminated)
 
-				.PermitReentry(Transaction.States.AckTerminated).OnEntry(() => { IsAck = true; })
+				.PermitReentry(Transaction.States.AckTerminated)
 
 				.Ignore(Transaction.States.ReferStarted)
 				.Ignore(Transaction.States.ReferProceeding)
@@ -102,6 +102,8 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.ByeStarted)
 				.Ignore(Transaction.States.ByeProceeding)
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
+
+				.OnEntryFrom(Transaction.States.AckTerminated, () => {IsAck = true;})
 				;
 
 			fsm.Configure(States.Transfering)
@@ -115,7 +117,7 @@ namespace SIP_o_matic.Models
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
 				;
 
-			fsm.Configure(States.Terminated)
+			/*fsm.Configure(States.Terminated)
 				.OnEntry(() =>
 					{
 						if (CallID == "SDo2pg901-c155e675bb01dc8ff7638df0e6c6c83f-v300g00")
@@ -124,26 +126,26 @@ namespace SIP_o_matic.Models
 						}
 					}
 				)
-				;
+				;*/
 		}
 
 		public Call Clone()
 		{
-			return new Call(this.CallID, this.SourceAddress, this.DestinationAddress,this.FromURI, this.ToURI, this.State,this.IsAck);
+			return new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.FromURI, this.ToURI, this.State,this.IsAck);
 						
 		}
-		private bool SourceAndDestinationMatch(string SourceAddress, string DestinationAddress)
+		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)
 		{
-			return ((this.SourceAddress == SourceAddress) && (this.DestinationAddress == DestinationAddress))
-				|| ((this.SourceAddress == DestinationAddress) && (this.DestinationAddress == SourceAddress));
+			return ((this.SourceDevice == SourceDevice) && (this.DestinationDevice == DestinationDevice))
+				|| ((this.SourceDevice == DestinationDevice) && (this.DestinationDevice == SourceDevice));
 		}
-		public bool Match(Request Request, string SourceAddress, string DestinationAddress)
+		public bool Match(Request Request, string SourceDevice, string DestinationDevice)
 		{
-			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceAddress,DestinationAddress) ;
+			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceDevice,DestinationDevice) ;
 		}
-		public bool Match(Response Response, string SourceAddress, string DestinationAddress)
+		public bool Match(Response Response, string SourceDevice, string DestinationDevice)
 		{
-			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceAddress, DestinationAddress);
+			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceDevice, DestinationDevice);
 		}
 
 

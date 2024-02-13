@@ -52,13 +52,13 @@ namespace SIP_o_matic.Models.Transactions
 			set;
 		}
 
-		public required string SourceAddress
+		public required string SourceDevice
 		{
 			get;
 			set;
 		}
 
-		public required string DestinationAddress
+		public required string DestinationDevice
 		{
 			get;
 			set;
@@ -92,11 +92,11 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public Transaction(string CallID, string SourceAddress, string DestinationAddress, string ViaBranch, string CSeq)
+		public Transaction(string CallID, string SourceDevice, string DestinationDevice, string ViaBranch, string CSeq)
 		{
 			this.CallID = CallID;
-			this.SourceAddress = SourceAddress;
-			this.DestinationAddress=DestinationAddress;
+			this.SourceDevice = SourceDevice;
+			this.DestinationDevice=DestinationDevice;
 			this.ViaBranch = ViaBranch;
 			this.CSeq = CSeq;
 
@@ -117,30 +117,30 @@ namespace SIP_o_matic.Models.Transactions
 
 		protected abstract void OnConfigureFSM(StateMachine<States, Triggers> fsm);
 
-		private bool SourceAndDestinationMatch(string SourceAddress, string DestinationAddress)
+		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)
 		{
-			return ((this.SourceAddress == SourceAddress) && (this.DestinationAddress == DestinationAddress))
-				|| ((this.SourceAddress == DestinationAddress) && (this.DestinationAddress == SourceAddress));
+			return ((this.SourceDevice == SourceDevice) && (this.DestinationDevice == DestinationDevice))
+				|| ((this.SourceDevice == DestinationDevice) && (this.DestinationDevice == SourceDevice));
 		}
 
-		public bool Match(Request Request, string SourceAddress, string DestinationAddress)
+		public bool Match(Request Request, string SourceDevice, string DestinationDevice)
 		{
 			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && (ViaBranch == Request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value) && (CSeq == Request.GetHeader<CSeqHeader>()?.Value)
-				&& SourceAndDestinationMatch(SourceAddress, DestinationAddress);
+				&& SourceAndDestinationMatch(SourceDevice, DestinationDevice);
 		}
-		public bool Match(Response Response, string SourceAddress, string DestinationAddress)
+		public bool Match(Response Response, string SourceDevice, string DestinationDevice)
 		{
 			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && (ViaBranch == Response.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value) && (CSeq == Response.GetHeader<CSeqHeader>()?.Value)
-				&& SourceAndDestinationMatch(SourceAddress, DestinationAddress);
+				&& SourceAndDestinationMatch(SourceDevice, DestinationDevice);
 		}
 
-		protected bool AssertMessageBelongsToTransaction(Request Request,string SourceAddress, string DestinationAddress)
+		protected bool AssertMessageBelongsToTransaction(Request Request,string SourceDevice, string DestinationDevice)
 		{
-			return Match(Request,SourceAddress,DestinationAddress);
+			return Match(Request,SourceDevice,DestinationDevice);
 		}
-		protected bool AssertMessageBelongsToTransaction(Response Response, string SourceAddress, string DestinationAddress)
+		protected bool AssertMessageBelongsToTransaction(Response Response, string SourceDevice, string DestinationDevice)
 		{
-			return Match(Response, SourceAddress, DestinationAddress);
+			return Match(Response, SourceDevice, DestinationDevice);
 		}
 
 		public string GetGraph()
@@ -148,7 +148,7 @@ namespace SIP_o_matic.Models.Transactions
 			return UmlDotGraph.Format(fsm.GetInfo());
 		}
 
-		public bool Update(Request Request, string SourceAddress, string DestinationAddress)
+		public bool Update(Request Request, string SourceDevice, string DestinationDevice)
 		{
 			if ((previousRequest!=null) && (previousRequest.RequestLine.Method== Request.RequestLine.Method))
 			{
@@ -160,25 +160,25 @@ namespace SIP_o_matic.Models.Transactions
 			switch (Request.RequestLine.Method)
 			{
 				case "INVITE":
-					fsm.Fire(InviteTrigger, Request,SourceAddress,DestinationAddress);
+					fsm.Fire(InviteTrigger, Request,SourceDevice,DestinationDevice);
 					break;
 				case "ACK":
-					fsm.Fire(AckTrigger, Request, SourceAddress, DestinationAddress);
+					fsm.Fire(AckTrigger, Request, SourceDevice, DestinationDevice);
 					break;
 				case "REFER":
-					fsm.Fire(ReferTrigger, Request, SourceAddress, DestinationAddress);
+					fsm.Fire(ReferTrigger, Request, SourceDevice, DestinationDevice);
 					break;
 				case "NOTIFY":
-					fsm.Fire(NotifyTrigger, Request, SourceAddress, DestinationAddress);
+					fsm.Fire(NotifyTrigger, Request, SourceDevice, DestinationDevice);
 					break;
 				case "BYE":
-					fsm.Fire(ByeTrigger, Request, SourceAddress, DestinationAddress);
+					fsm.Fire(ByeTrigger, Request, SourceDevice, DestinationDevice);
 					break;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}
 			return true;
 		}
-		public bool Update(Response Response,string SourceAddress,string DestinationAddress)
+		public bool Update(Response Response,string SourceDevice,string DestinationDevice)
 		{
 			if ((previousResponse!=null) && (previousResponse.StatusLine.StatusCode==Response.StatusLine.StatusCode))
 			{
@@ -187,7 +187,7 @@ namespace SIP_o_matic.Models.Transactions
 			}
 			previousResponse = Response;
 
-			fsm.Fire(OnGetUpdateTrigger(Response),Response, SourceAddress, DestinationAddress);
+			fsm.Fire(OnGetUpdateTrigger(Response),Response, SourceDevice, DestinationDevice);
 			return true;
 		}
 
