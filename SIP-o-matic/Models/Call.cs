@@ -37,12 +37,12 @@ namespace SIP_o_matic.Models
 			set;
 		}
 
-		public required Address FromURI
+		public required string Caller
 		{
 			get;
 			set;
 		}
-		public required Address ToURI
+		public required string Callee
 		{
 			get;
 			set;
@@ -61,14 +61,14 @@ namespace SIP_o_matic.Models
 
 		
 		[SetsRequiredMembers]
-		public Call(string callID, string SourceDevice,string DestinationDevice, Address FromURI, Address ToURI, States InitialState,bool IsAck)
+		public Call(string callID, string SourceDevice,string DestinationDevice, string Caller, string Callee, States InitialState,bool IsAck)
 		{
 	
 			CallID = callID;
 			this.SourceDevice = SourceDevice;
 			this.DestinationDevice = DestinationDevice;
-			this.FromURI = FromURI;
-			this.ToURI = ToURI;
+			this.Caller = Caller;
+			this.Callee = Callee;
 			this.IsAck = IsAck;
 
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
@@ -138,7 +138,7 @@ namespace SIP_o_matic.Models
 
 		public Call Clone()
 		{
-			return new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.FromURI, this.ToURI, this.State,this.IsAck);
+			return new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.Caller, this.Callee, this.State,this.IsAck);
 						
 		}
 		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)

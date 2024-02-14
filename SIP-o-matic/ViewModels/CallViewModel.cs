@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
@@ -27,14 +28,22 @@ namespace SIP_o_matic.ViewModels
 			get=> Model.DestinationDevice;
 		}
 
-		public Address FromURI
+		public IEnumerable<string> Devices
 		{
-			get=>Model.FromURI;
+			get
+			{
+				yield return SourceDevice;
+				yield return DestinationDevice;
+			}
+		}
+		public string Caller
+		{
+			get=>Model.Caller;
 		}
 
-		public Address ToURI
+		public string Callee
 		{
-			get => Model.ToURI;
+			get => Model.Callee;
 		}
 		public Call.States State
 		{
@@ -43,6 +52,14 @@ namespace SIP_o_matic.ViewModels
 		public bool IsAck
 		{
 			get =>Model.IsAck;
+		}
+
+
+		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));
+		public bool IsFlipped
+		{
+			get { return (bool)GetValue(IsFlippedProperty); }
+			set { SetValue(IsFlippedProperty, value); }
 		}
 		public CallViewModel(ILogger Logger) : base(Logger)
 		{

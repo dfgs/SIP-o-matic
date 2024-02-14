@@ -22,6 +22,11 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
+		public IEnumerable<string> Devices
+		{
+			get => Calls.SelectMany(call=>call.Devices).Distinct();
+		}
+
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{
 			Calls = new CallViewModelCollection(Logger);
@@ -31,6 +36,8 @@ namespace SIP_o_matic.ViewModels
 		{
 			base.OnLoaded();
 			Calls.Load(Model.Calls);
+
+			
 		}
 
 	}

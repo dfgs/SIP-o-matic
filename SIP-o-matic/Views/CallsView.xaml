@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="SIP_o_matic.Views.CallsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:SIP_o_matic.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+		<StackPanel >
+			<ItemsControl ItemsSource="{Binding Devices}" >
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border BorderBrush="Black" BorderThickness="1" Width="250">
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<ListBox ItemsSource="{Binding Calls}" SelectedItem="{Binding Calls.SelectedItem}" HorizontalAlignment="Left" >
+				<ListBox.ItemsPanel>
+					<ItemsPanelTemplate>
+						<views:LadderPanel Devices="{Binding Devices}" ColumnWidth="250" />
+					</ItemsPanelTemplate>
+				</ListBox.ItemsPanel>
+				<ListBox.ItemContainerStyle>
+					<Style TargetType="{x:Type ListBoxItem}">
+						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+						<Setter Property="views:LadderPanel.SourceDevice" Value="{Binding SourceDevice}"/>
+						<Setter Property="views:LadderPanel.DestinationDevice" Value="{Binding DestinationDevice}"/>
+						<Setter Property="views:LadderPanel.IsFlipped" Value="{Binding IsFlipped}"/>
+					</Style>
+				</ListBox.ItemContainerStyle>
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<views:CallView/>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</StackPanel>
+	</ScrollViewer>
+</UserControl>

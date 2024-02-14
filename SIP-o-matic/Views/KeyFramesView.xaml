@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:SIP_o_matic.Views"
+             xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	<Grid>
@@ -20,27 +20,6 @@
 			</ListBox.ItemTemplate>
 		</ListBox>
 		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-		<ListBox Grid.Column="2" ItemsSource="{Binding SelectedItem.Calls}" SelectedItem="{Binding SelectedItem.Calls.SelectedItem}">
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding SourceDevice}"/>
-							<TextBlock Text=" -> "/>
-							<TextBlock Text="{Binding DestinationDevice}"/>
-						</StackPanel>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Text="{Binding FromURI}"/>
-							<TextBlock Text=" -> "/>
-							<TextBlock Text="{Binding ToURI}"/>
-							<TextBlock Text=": "/>
-							<TextBlock Text="{Binding State}"/>
-							<TextBlock Text=" / "/>
-							<TextBlock Text="{Binding IsAck}"/>
-						</StackPanel>
-					</StackPanel>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-		</ListBox>
+		<views:CallsView Grid.Column="2" DataContext="{Binding SelectedItem}"/>
 	</Grid>
 </UserControl>

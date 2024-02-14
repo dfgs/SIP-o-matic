@@ -103,7 +103,7 @@ namespace SIP_o_matic.Modules
 				throw new InvalidOperationException(error);
 			}
 
-			return new Call(callID, SourceDevice, DestinationDevice, from.Value, to.Value, Call.States.OnHook, false);
+			return new Call(callID, SourceDevice, DestinationDevice, from.Value.ToHumanString()??"Undefined", to.Value.ToHumanString() ?? "Undefined", Call.States.OnHook, false);
 		}
 
 		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice)
