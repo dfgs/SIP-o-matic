@@ -8,6 +8,10 @@
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized" Loaded="Window_Loaded"
         Title="SIP-o-matic" Height="640" Width="800" >
 
+	<Window.InputBindings>
+		<KeyBinding Key="F5" Command="{x:Static root:RoutedCommands.Analyze}"/>
+	</Window.InputBindings>
+
 	<Window.CommandBindings>
 		<CommandBinding Command="New" CanExecute="NewCommandBinding_CanExecute" Executed="NewCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddFile}" CanExecute="AddFileCommandBinding_CanExecute" Executed="AddFileCommandBinding_Executed"/>

@@ -15,7 +15,7 @@ namespace SIP_o_matic.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established,Transfering,Terminated};
+		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated };
 
 		private StateMachine<States, Transaction.States> fsm;
 
@@ -107,6 +107,24 @@ namespace SIP_o_matic.Models
 				;
 
 			fsm.Configure(States.Transfering)
+				.Ignore(Transaction.States.InviteStarted)   // réinvite
+				.Ignore(Transaction.States.InviteProceeding)
+				.Ignore(Transaction.States.InviteRinging)
+				.Ignore(Transaction.States.InviteError)
+				.Ignore(Transaction.States.InviteTerminated)
+
+				.Ignore(Transaction.States.AckTerminated)
+
+				.Ignore(Transaction.States.NotifyStarted)
+				.Ignore(Transaction.States.NotifyProceeding)
+				.Permit(Transaction.States.NotifyTerminated,States.Transfered)
+
+				.Ignore(Transaction.States.ByeStarted)
+				.Ignore(Transaction.States.ByeProceeding)
+				.Permit(Transaction.States.ByeTerminated, States.Terminated)
+				;
+
+			fsm.Configure(States.Transfered)
 				.Ignore(Transaction.States.InviteStarted)   // réinvite
 				.Ignore(Transaction.States.InviteProceeding)
 				.Ignore(Transaction.States.InviteRinging)

@@ -204,6 +204,7 @@ namespace SIP_o_matic.Modules
 			}
 
 		}
+
 		public async Task CreateKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
 			StringReader reader;
@@ -216,10 +217,11 @@ namespace SIP_o_matic.Modules
 
 			await foreach (MessageViewModel message in Project.Messages.ToAsyncEnumerable())
 			{
-				/*if (message.Index==124)
+				if (CancellationToken.IsCancellationRequested)
 				{
-					int t = 0;
-				}//*/
+					Log(LogLevels.Information, "Task cancelled");
+					break;
+				}
 
 				reader = new StringReader(message.Content, ' ');
 				try

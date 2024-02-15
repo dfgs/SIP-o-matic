@@ -10,7 +10,6 @@ namespace SIP_o_matic
 	public class ColorManager
 	{
 		private Color[] colors;
-		private int request;
 
 		/// <summary>
 		/// Convert HSV to RGB
@@ -131,7 +130,6 @@ namespace SIP_o_matic
 			float h, s, v;
 			int r, g, b;
 
-			request = 0;
 
 			delta = 360.0f / Count;
 
@@ -151,24 +149,15 @@ namespace SIP_o_matic
 		{
 			return colors[Index%colors.Length];
 		}*/
-		public string GetColorString()
+		public string GetColorString(int index)
 		{
-			//int div;
-			//int rest;
-			int index;
-			//int step;
-
 			Color color;
 
-			//div = request /2;
-			//rest = request % colors.Length;
-			//step = colors.Length / 2;
-
-			index = request;// rest * step+div;
 			color= colors[index % colors.Length];
 
-			request++;
 			return $"#{color.Name}"; ; 
 		}
+	
+
 	}
 }

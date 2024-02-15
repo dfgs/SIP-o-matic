@@ -35,6 +35,7 @@ namespace SIP_o_matic
 		private CancellationTokenSource? cancelToken;
 
 		private AnalyzeModule analyzeModule;
+		private CallFormatModule callFormatModule;
 
 		public static readonly DependencyProperty StepsProperty = DependencyProperty.Register("Steps", typeof(List<AnalysisStep>), typeof(AnalyzeWindow), new PropertyMetadata(null));
 		public List<AnalysisStep> Steps
@@ -62,11 +63,13 @@ namespace SIP_o_matic
 			cancelToken = new CancellationTokenSource();
 
 			analyzeModule = new AnalyzeModule(Logger);
+			callFormatModule = new CallFormatModule(Logger);
 
 			Steps = new List<AnalysisStep>();
 			Steps.Add(new AnalysisStep() { Label = "Extracting devices",TaskFactory= ExtractDevicesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Extracting sip messages",TaskFactory= ExtractMessagesAsync });
 			Steps.Add(new AnalysisStep() { Label = "Creating key frames", TaskFactory = analyzeModule.CreateKeyFramesAsync });
+			Steps.Add(new AnalysisStep() { Label = "Formatting calls", TaskFactory = callFormatModule.FormatKeyFramesAsync});
 			InitializeComponent();
 		}
 
