@@ -22,6 +22,10 @@
     <None Remove="Images\bullet_pink.png" />
     <None Remove="Images\bullet_red.png" />
     <None Remove="Images\bullet_yellow.png" />
+    <None Remove="Images\control_end_blue.png" />
+    <None Remove="Images\control_fastforward_blue.png" />
+    <None Remove="Images\control_rewind_blue.png" />
+    <None Remove="Images\control_start_blue.png" />
     <None Remove="Images\error.png" />
     <None Remove="Images\folder.png" />
     <None Remove="Images\folder_add.png" />
@@ -55,6 +59,10 @@
     <Resource Include="Images\bullet_pink.png" />
     <Resource Include="Images\bullet_red.png" />
     <Resource Include="Images\bullet_yellow.png" />
+    <Resource Include="Images\control_end_blue.png" />
+    <Resource Include="Images\control_fastforward_blue.png" />
+    <Resource Include="Images\control_rewind_blue.png" />
+    <Resource Include="Images\control_start_blue.png" />
     <Resource Include="Images\error.png" />
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\folder_add.png" />

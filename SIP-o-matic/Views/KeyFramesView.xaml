@@ -16,18 +16,6 @@
 		<views:CallsView Grid.Row="0" DataContext="{Binding SelectedItem}"/>
 		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
-		<ListBox Grid.Row="2" ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}" Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
-			<ListBox.ItemsPanel>
-				<ItemsPanelTemplate>
-					<StackPanel Orientation="Horizontal"/>
-				</ItemsPanelTemplate>
-			</ListBox.ItemsPanel>
-			<ListBox.ItemTemplate>
-				<DataTemplate>
-					<TextBlock Text="{Binding Timestamp}"/>
-				</DataTemplate>
-			</ListBox.ItemTemplate>
-			
-		</ListBox>
+		<views:FrameNavigatorView Grid.Row="2"/>
 	</Grid>
 </UserControl>
