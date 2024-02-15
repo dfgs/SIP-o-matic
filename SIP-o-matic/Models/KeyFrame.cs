@@ -23,6 +23,11 @@ namespace SIP_o_matic.Models
 			set;
 		}
 		
+		public uint MessageIndex
+		{
+			get;
+			set;
+		}
 
 		[SetsRequiredMembers]
 		public KeyFrame(DateTime Timestamp)

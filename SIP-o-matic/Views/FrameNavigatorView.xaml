@@ -33,7 +33,10 @@
 			</ListBox.ItemsPanel>
 			<ListBox.ItemTemplate>
 				<DataTemplate>
-					<TextBlock Text="{Binding Timestamp}"/>
+					<StackPanel>
+						<TextBlock Text="{Binding MessageIndex,StringFormat='[{0}]'}" HorizontalAlignment="Center" FontWeight="Bold"/>
+						<TextBlock Text="{Binding TimeSpan,StringFormat='mm\\:ss\\.fff'}" HorizontalAlignment="Center"/>
+					</StackPanel>
 				</DataTemplate>
 			</ListBox.ItemTemplate>
 

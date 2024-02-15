@@ -70,8 +70,11 @@ namespace SIP_o_matic.Modules
 		}
 
 
-		private async Task FormatKeyFrameAsync(CancellationToken CancellationToken, ProjectViewModel Project,KeyFrameViewModel KeyFrame)
+		private async Task FormatKeyFrameAsync(CancellationToken CancellationToken, ProjectViewModel Project,KeyFrameViewModel KeyFrame,DateTime FirstEvent)
 		{
+
+			KeyFrame.TimeSpan = KeyFrame.Timestamp - FirstEvent;
+
 			await foreach (CallViewModel call in KeyFrame.Calls.ToAsyncEnumerable())
 			{
 				if (CancellationToken.IsCancellationRequested)
@@ -88,18 +91,7 @@ namespace SIP_o_matic.Modules
 
 				call.MessageIndicesDescription = string.Join(',', call.MessageIndices.Select(index=>$"[{index}]"));
 
-				/*reader = new StringReader(message.Content, ' ');
-				try
-				{
-					sipMessage = SIPGrammar.SIPMessage.Parse(reader);
-				}
-				catch (Exception ex)
-				{
-					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
-					Log(LogLevels.Error, error);
-					throw new InvalidOperationException(error);
-				}//*/
-
+				
 			}
 		}
 	
@@ -107,8 +99,12 @@ namespace SIP_o_matic.Modules
 
 		public async Task FormatKeyFramesAsync(CancellationToken CancellationToken, ProjectViewModel Project, IDataSource DataSource, string Path)
 		{
+			DateTime firstEvent;
 
 			LogEnter();
+
+			if (Project.KeyFrames.Count == 0) return;
+			firstEvent = Project.KeyFrames[0].Timestamp;
 
 			await foreach (KeyFrameViewModel keyFrame in Project.KeyFrames.ToAsyncEnumerable())
 			{
@@ -117,7 +113,7 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					break;
 				}
-				await FormatKeyFrameAsync(CancellationToken, Project, keyFrame);
+				await FormatKeyFrameAsync(CancellationToken, Project, keyFrame,firstEvent);
 			}
 		
 		}

@@ -27,6 +27,18 @@ namespace SIP_o_matic.ViewModels
 			get => Calls.SelectMany(call=>call.Devices).Distinct();
 		}
 
+		
+		public TimeSpan TimeSpan
+		{
+			get;
+			set;
+		}
+
+		public uint MessageIndex
+		{
+			get => Model.MessageIndex;
+		}
+
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{
 			Calls = new CallViewModelCollection(Logger);

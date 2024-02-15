@@ -235,6 +235,8 @@ namespace SIP_o_matic.Modules
 						newKeyFrame.Timestamp = message.Timestamp;
 					}
 
+					newKeyFrame.MessageIndex = message.Index;
+
 					UpdateKeyFrame(newKeyFrame,Project, sipMessage, message);
 				}
 				catch (Exception ex)
