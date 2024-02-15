@@ -38,7 +38,7 @@
 				</ListBox.ItemContainerStyle>
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<views:CallView Margin="0,0,0,32"/>
+						<views:CallView Margin="0,0,0,32" ToolTip="{Binding MessageIndicesDescription}"/>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

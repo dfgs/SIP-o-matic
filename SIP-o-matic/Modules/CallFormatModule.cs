@@ -77,6 +77,9 @@ namespace SIP_o_matic.Modules
 				call.LegDescription = call.LegName;
 
 				call.Color = GetColor(call.Caller, call.Callee);
+
+				call.MessageIndicesDescription = string.Join(',', call.MessageIndices.Select(index=>$"[{index}]"));
+
 				/*reader = new StringReader(message.Content, ' ');
 				try
 				{

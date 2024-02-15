@@ -72,6 +72,16 @@ namespace SIP_o_matic.ViewModels
 			set;
 		}
 
+		public uint[] MessageIndices
+		{
+			get => Model.MessageIndices;
+		}
+
+		public string MessageIndicesDescription
+		{
+			get;
+			set;
+		}
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));
 		public bool IsFlipped
@@ -84,6 +94,7 @@ namespace SIP_o_matic.ViewModels
 			LegName = "Undefined";
 			LegDescription = "Undefined";
 			Color = "Black";
+			MessageIndicesDescription = "";
 		}
 	}
 }

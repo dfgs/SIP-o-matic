@@ -106,7 +106,7 @@ namespace SIP_o_matic.Modules
 			return new Call(callID, SourceDevice, DestinationDevice, from.Value.ToHumanString()??"Undefined", to.Value.ToHumanString() ?? "Undefined", Call.States.OnHook, false);
 		}
 
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -121,8 +121,6 @@ namespace SIP_o_matic.Modules
 				Transactions.Add(transaction);
 			}
 
-			
-
 			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request, SourceDevice, DestinationDevice));
 			if (call == null)
 			{
@@ -132,14 +130,14 @@ namespace SIP_o_matic.Modules
 
 
 			// update transaction
-			if (transaction.Update(Request,SourceDevice,DestinationDevice))
+			if (transaction.Update(Request,SourceDevice,DestinationDevice,MessageIndex))
 			{
 				// update call
 				call.Update(transaction);
 			}
 
 		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice)
+		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice,uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -155,7 +153,6 @@ namespace SIP_o_matic.Modules
 
 			}
 
-
 			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response, SourceDevice, DestinationDevice));
 			if (call == null)
 			{
@@ -164,9 +161,8 @@ namespace SIP_o_matic.Modules
 				throw new InvalidOperationException(error);
 			}
 
-
 			// update transaction
-			if (transaction.Update(Response, SourceDevice, DestinationDevice))
+			if (transaction.Update(Response, SourceDevice, DestinationDevice, MessageIndex))
 			{
 				// update call
 				call.Update(transaction);
@@ -179,23 +175,18 @@ namespace SIP_o_matic.Modules
 			string sourceDevice,destinationDevice;
 
 			LogEnter();
-
-			/*if (Message.Index==100)
-			{
-				int t = 0;
-			}
-			//*/
-
+			
+			
 			sourceDevice = Project.Devices.FindDeviceByAddress(Message.SourceAddress)?.Name ?? Message.SourceAddress;
 			destinationDevice = Project.Devices.FindDeviceByAddress(Message.DestinationAddress)?.Name ?? Message.DestinationAddress;
 
 			switch (SIPMessage)
 			{
 				case Request request:
-					UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice);
+					UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice,Message.Index);
 					break;
 				case Response response:
-					UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice);
+					UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice,Message.Index);
 					break;
 				default:
 					string error = "Invalid SIP message type";

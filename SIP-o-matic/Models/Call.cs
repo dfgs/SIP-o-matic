@@ -59,6 +59,11 @@ namespace SIP_o_matic.Models
 			get => fsm.State;
 		}
 
+		public uint[] MessageIndices
+		{
+			get;
+			set;
+		}
 		
 		[SetsRequiredMembers]
 		public Call(string callID, string SourceDevice,string DestinationDevice, string Caller, string Callee, States InitialState,bool IsAck)
@@ -70,6 +75,7 @@ namespace SIP_o_matic.Models
 			this.Caller = Caller;
 			this.Callee = Callee;
 			this.IsAck = IsAck;
+			MessageIndices = new uint[] { };
 
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
 			fsm.Configure(States.OnHook)
@@ -156,7 +162,12 @@ namespace SIP_o_matic.Models
 
 		public Call Clone()
 		{
-			return new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.Caller, this.Callee, this.State,this.IsAck);
+			Call newCall;
+
+			newCall = new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.Caller, this.Callee, this.State,this.IsAck);
+			newCall.MessageIndices = (uint[])this.MessageIndices.Clone();
+
+			return newCall;
 						
 		}
 		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)
@@ -178,6 +189,7 @@ namespace SIP_o_matic.Models
 		public void Update(Transaction Transaction)
 		{
 			fsm.Fire(Transaction.State);
+			this.MessageIndices = Transaction.MessagesIndices.ToArray();
 		}
 		
 

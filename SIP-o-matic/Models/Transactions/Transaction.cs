@@ -83,6 +83,13 @@ namespace SIP_o_matic.Models.Transactions
 
 		public States State => fsm.State;
 
+
+		public List<uint> MessagesIndices
+		{
+			get;
+			private set;
+		}
+
 		public bool IsTerminated => fsm.IsInState(TerminatedState);
 
 
@@ -100,7 +107,9 @@ namespace SIP_o_matic.Models.Transactions
 			this.ViaBranch = ViaBranch;
 			this.CSeq = CSeq;
 
-			previousRequest= null; ;
+			MessagesIndices = new List<uint>();
+				
+			previousRequest = null;
 			previousResponse = null;
 			Retransmissions = 0;
 
@@ -148,7 +157,7 @@ namespace SIP_o_matic.Models.Transactions
 			return UmlDotGraph.Format(fsm.GetInfo());
 		}
 
-		public bool Update(Request Request, string SourceDevice, string DestinationDevice)
+		public bool Update(Request Request, string SourceDevice, string DestinationDevice,uint MessageIndex)
 		{
 			if ((previousRequest!=null) && (previousRequest.RequestLine.Method== Request.RequestLine.Method))
 			{
@@ -156,6 +165,8 @@ namespace SIP_o_matic.Models.Transactions
 				return false;
 			}
 			previousRequest = Request;
+
+			MessagesIndices.Add(MessageIndex);
 
 			switch (Request.RequestLine.Method)
 			{
@@ -178,7 +189,7 @@ namespace SIP_o_matic.Models.Transactions
 			}
 			return true;
 		}
-		public bool Update(Response Response,string SourceDevice,string DestinationDevice)
+		public bool Update(Response Response,string SourceDevice,string DestinationDevice,uint MessageIndex)
 		{
 			if ((previousResponse!=null) && (previousResponse.StatusLine.StatusCode==Response.StatusLine.StatusCode))
 			{
@@ -186,6 +197,8 @@ namespace SIP_o_matic.Models.Transactions
 				return false;
 			}
 			previousResponse = Response;
+
+			MessagesIndices.Add(MessageIndex);
 
 			fsm.Fire(OnGetUpdateTrigger(Response),Response, SourceDevice, DestinationDevice);
 			return true;
