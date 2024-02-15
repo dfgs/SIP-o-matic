@@ -7,19 +7,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
 namespace SIP_o_matic.Models.Transactions
 {
 	public class ReferTransaction:Transaction
 	{
 
-	
+		private static Regex callIDRegex = new Regex(@"(?<CallID>[^;]*);.*");
 
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Prov1xxTrigger;
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Final2xxTrigger;
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? ErrorTrigger;
 
-
+		public string? ReplacedCallID
+		{
+			get;
+			set;
+		}
 
 		protected override States TerminatedState => States.ReferTerminated;
 
@@ -40,13 +45,14 @@ namespace SIP_o_matic.Models.Transactions
 
 
 			fsm.Configure(States.Undefined)
-				.PermitIf(ReferTrigger, States.ReferStarted, (Request,SourceAddress,DestinationAddress) => AssertMessageBelongsToTransaction(Request,SourceAddress,DestinationAddress), TransactionErrorMessage)
+				.PermitIf(ReferTrigger, States.ReferStarted,  AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
 			fsm.Configure(States.ReferStarted)
 				.PermitIf(ErrorTrigger, States.ReferError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitIf(Prov1xxTrigger, States.ReferProceeding, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitIf(Final2xxTrigger, States.ReferTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.OnEntry(CheckReplacedCallID)
 				;
 
 			fsm.Configure(States.ReferProceeding)
@@ -56,6 +62,37 @@ namespace SIP_o_matic.Models.Transactions
 				;
 		}
 
+		
+
+		private void CheckReplacedCallID(StateMachine<States, Triggers>.Transition Transition)
+		{
+			Request? request;
+			ReferToHeader? header;
+			SIPURL? uri;
+			Header? uriHeader;
+			Match match;
+
+			request=Transition.Parameters[0] as Request;
+			if (request == null) return;
+
+			header = request.GetHeader<ReferToHeader>();
+			if (header == null) return;
+
+			uri = header.Value.URI as SIPURL;
+			if (uri== null) return;
+
+			uriHeader = uri.Headers.FirstOrDefault(item => item.Name == "Replaces");
+			if (uriHeader == null) return;
+
+			if (string.IsNullOrEmpty(uriHeader?.Value)) return;
+			
+			match = callIDRegex.Match(uriHeader.Value.Value);
+			if (!match.Success) return;
+
+			ReplacedCallID = match.Groups["CallID"].Value;
+
+
+		}
 		
 		
 

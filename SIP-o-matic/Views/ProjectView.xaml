@@ -13,8 +13,6 @@
 			<ColumnDefinition Width="200"/>
 			<ColumnDefinition Width="5"/>
 			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="5"/>
-			<ColumnDefinition Width="300"/>
 		</Grid.ColumnDefinitions>
 		<TabControl TabStripPlacement="Left" Grid.Column="0">
 			<TabItem Padding="0,5,0,5">
@@ -40,15 +38,14 @@
 			</TabControl>
 		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 		<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">
-			<TabItem Header="Messages">
-				<views:MessagesView DataContext="{Binding Messages}"/>
-			</TabItem>
-			
 			<TabItem Header="Key Frames">
 				<views:KeyFramesView DataContext="{Binding KeyFrames}"/>
 			</TabItem>
+			<TabItem Header="Messages">
+				<views:MessagesView DataContext="{Binding Messages}"/>
+			</TabItem>
+		
 		</TabControl>
-		<GridSplitter Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 			
 	</Grid>
 </UserControl>

@@ -122,14 +122,14 @@ namespace SIP_o_matic.Views
 
 				if (sourceColumn>destinationColumn)
 				{
-					x1 = destinationColumn * ColumnWidth;
-					x2 = sourceColumn * ColumnWidth + ColumnWidth;
+					x1 = destinationColumn * ColumnWidth + ColumnWidth/2.0f;
+					x2 = sourceColumn * ColumnWidth + +ColumnWidth / 2.0f;
 					SetIsFlipped(element, true);
 				}
 				else
 				{
-					x1 = sourceColumn * ColumnWidth;
-					x2 = destinationColumn * ColumnWidth + ColumnWidth;
+					x1 = sourceColumn * ColumnWidth + ColumnWidth / 2.0f;
+					x2 = destinationColumn * ColumnWidth + +ColumnWidth / 2.0f;
 					SetIsFlipped(element, false);
 				}
 

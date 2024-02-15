@@ -4,11 +4,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SIP_o_matic.Views"
-             mc:Ignorable="d" x:Name="root"
+             mc:Ignorable="d" x:Name="root" Height="15"
              d:DesignWidth="800">
 	
 
-	<DockPanel Height="15" VerticalAlignment="Center">
+	<DockPanel VerticalAlignment="Center">
 		<Path Width="15" DockPanel.Dock="Right" Stroke="{Binding ElementName=root,Path=Foreground}" Fill="{Binding ElementName=root,Path=Foreground}" Data="M0,0 L15,7.5 L0,15 Z" />
 		<Rectangle Fill="{Binding ElementName=root,Path=Foreground}" Height="2" />
 	</DockPanel>

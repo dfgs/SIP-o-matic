@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using static SIP_o_matic.Models.Transactions.Transaction;
@@ -64,7 +65,13 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
-		
+
+		public string? ReplacedCallID
+		{
+			get;
+			set;
+		}
+
 		[SetsRequiredMembers]
 		public Call(string callID, string SourceDevice,string DestinationDevice, string Caller, string Callee, States InitialState,bool IsAck)
 		{
@@ -128,6 +135,7 @@ namespace SIP_o_matic.Models
 				.Ignore(Transaction.States.ByeStarted)
 				.Ignore(Transaction.States.ByeProceeding)
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
+				.OnEntry(CheckReplacedCallID)
 				;
 
 			fsm.Configure(States.Transfered)
@@ -160,12 +168,28 @@ namespace SIP_o_matic.Models
 				;*/
 		}
 
+		private void CheckReplacedCallID(StateMachine<States, Transaction.States>.Transition Transition)
+		{
+			ReferTransaction? transaction;
+
+			if (Transition.Parameters.Length == 0) return;
+
+			transaction = Transition.Parameters[0] as ReferTransaction;
+			if (transaction== null) return;
+
+			this.ReplacedCallID = transaction.ReplacedCallID;
+
+
+		}
+
+
 		public Call Clone()
 		{
 			Call newCall;
 
 			newCall = new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.Caller, this.Callee, this.State,this.IsAck);
 			newCall.MessageIndices = (uint[])this.MessageIndices.Clone();
+			newCall.ReplacedCallID=this.ReplacedCallID;
 
 			return newCall;
 						
@@ -188,7 +212,10 @@ namespace SIP_o_matic.Models
 
 		public void Update(Transaction Transaction)
 		{
-			fsm.Fire(Transaction.State);
+			StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction.States, Transaction> trigger;
+
+			trigger = new StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction.States, Transaction>(Transaction.State);
+			fsm.Fire(trigger,Transaction);
 			this.MessageIndices = Transaction.MessagesIndices.ToArray();
 		}
 		

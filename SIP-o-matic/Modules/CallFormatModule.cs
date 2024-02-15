@@ -26,12 +26,18 @@ namespace SIP_o_matic.Modules
 			colorManager = new ColorManager(10);
 		}
 
-		private string GetLegName(string CallID,string SourceDevice)
+		private string GetLegName(string CallID,string SourceDevice,string DestinationDevice)
 		{
 			int index;
 			string key;
+			int hash; ;
 
-			key = CallID+"/"+SourceDevice;
+			int hash1,hash2;
+			hash1 = 23 * 31 + SourceDevice.GetHashCode();
+			hash2 = 23 * 31 + DestinationDevice.GetHashCode();
+			hash=hash1 ^ hash2;
+
+			key = $"{CallID}/{hash}" ;
 
 			index=legs.IndexOf(key);
 			if (index==-1)
@@ -73,8 +79,10 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					break;
 				}
-				call.LegName = GetLegName(call.CallID,call.SourceDevice);
-				call.LegDescription = call.LegName;
+				call.LegName = GetLegName(call.CallID,call.SourceDevice,call.DestinationDevice);
+
+				if (call.ReplacedCallID == null) call.LegDescription = call.LegName;
+				else call.LegDescription = $"{call.LegName} (replaces {GetLegName(call.ReplacedCallID,call.SourceDevice, call.DestinationDevice)})";
 
 				call.Color = GetColor(call.Caller, call.Callee);
 

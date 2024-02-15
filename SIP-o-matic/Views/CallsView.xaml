@@ -4,11 +4,22 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
+			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
-		<StackPanel >
-			<ItemsControl ItemsSource="{Binding Devices}" >
+
+	<UserControl.Resources>
+		<x:Array x:Key="devices" Type="sys:String">
+			<sys:String>Device #1</sys:String>
+			<sys:String>Device #2</sys:String>
+			<sys:String>Device #3</sys:String>
+		</x:Array>
+	</UserControl.Resources>
+	
+
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
+		<DockPanel >
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Devices,FallbackValue={StaticResource devices}}" x:Name="headerPanel"  >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -16,32 +27,53 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Border BorderBrush="Black" BorderThickness="1" Width="250">
-							<TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+						<Border BorderBrush="Gray" Background="WhiteSmoke" BorderThickness="1" Width="300" CornerRadius="5" Margin="5" ToolTip="{Binding}" >
+							<Border.Effect>
+								<DropShadowEffect  BlurRadius="5" Opacity="0.25"/>
+							</Border.Effect>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"  FontSize="20"/>
 						</Border>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
-			<ListBox ItemsSource="{Binding Calls}" SelectedItem="{Binding Calls.SelectedItem}" HorizontalAlignment="Left" >
-				<ListBox.ItemsPanel>
-					<ItemsPanelTemplate>
-						<views:LadderPanel Devices="{Binding Devices}" ColumnWidth="250" />
-					</ItemsPanelTemplate>
-				</ListBox.ItemsPanel>
-				<ListBox.ItemContainerStyle>
-					<Style TargetType="{x:Type ListBoxItem}">
-						<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-						<Setter Property="views:LadderPanel.SourceDevice" Value="{Binding SourceDevice}"/>
-						<Setter Property="views:LadderPanel.DestinationDevice" Value="{Binding DestinationDevice}"/>
-						<Setter Property="views:LadderPanel.IsFlipped" Value="{Binding IsFlipped}"/>
-					</Style>
-				</ListBox.ItemContainerStyle>
-				<ListBox.ItemTemplate>
-					<DataTemplate>
-						<views:CallView Margin="0,0,0,32" ToolTip="{Binding MessageIndicesDescription}"/>
-					</DataTemplate>
-				</ListBox.ItemTemplate>
-			</ListBox>
-		</StackPanel>
+			<Grid>
+
+				<ItemsControl ItemsSource="{Binding Devices,FallbackValue={StaticResource devices}}" Background="Transparent"  >
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal"/>
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<ContentControl Width="300">
+								<Line X1="0.5" Y1="0" X2="0" Y2="10000" Stroke="Gray" StrokeDashArray="5 5" StrokeThickness="1" HorizontalAlignment="Center"  />
+							</ContentControl>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<ListBox ItemsSource="{Binding Calls}" SelectedItem="{Binding Calls.SelectedItem}" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0">
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<views:LadderPanel Devices="{Binding Devices}" ColumnWidth="300"  HorizontalAlignment="Left" VerticalAlignment="Top"  />
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="{x:Type ListBoxItem}">
+							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+							<Setter Property="views:LadderPanel.SourceDevice" Value="{Binding SourceDevice}"/>
+							<Setter Property="views:LadderPanel.DestinationDevice" Value="{Binding DestinationDevice}"/>
+							<Setter Property="views:LadderPanel.IsFlipped" Value="{Binding IsFlipped}"/>
+						</Style>
+					</ListBox.ItemContainerStyle>
+					<ListBox.ItemTemplate>
+						<DataTemplate>
+							<views:CallView Margin="0,0,0,16" ToolTip="{Binding MessageIndicesDescription}"/>
+						</DataTemplate>
+					</ListBox.ItemTemplate>
+				</ListBox>
+			</Grid>
+		</DockPanel>
 	</ScrollViewer>
 </UserControl>

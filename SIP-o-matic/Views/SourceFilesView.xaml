@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <ListBox ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}">
+	<ListBox ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}"  BorderThickness="0">
 		<ListBox.ItemTemplate>
 			<DataTemplate>
 				<TextBlock Text="{Binding Name}"/>

@@ -15,8 +15,8 @@
 			<TextBlock Text="{Binding Value}"/>
 		</DataTemplate>
 	</UserControl.Resources>
-	
-    <TreeView ItemsSource="{Binding}"/>
+
+	<TreeView ItemsSource="{Binding}"  BorderThickness="0"/>
 
 
 </UserControl>
