@@ -11,6 +11,7 @@ namespace SIP_o_matic.Models
 {
 	public class Device
 	{
+		[XmlAttribute]
 		public required string Name
 		{
 			get;

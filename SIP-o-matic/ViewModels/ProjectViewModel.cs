@@ -83,6 +83,24 @@ namespace SIP_o_matic.ViewModels
 			KeyFrames.Clear();
 		}
 
+		public async Task SaveAsync(string Path)
+		{
+			if (Path == null) throw new ArgumentNullException(nameof(Path));
+
+			this.Path = Path;
+			this.Name = System.IO.Path.GetFileName(Path);
+			await TryAsync(() => Model.SaveAsync(Path)).OrThrow("Failed to save project file");
+
+		}
+
+		public async Task LoadAsync(string Path)
+		{
+			Project? project = null;
+
+			await TryAsync(() => Project.LoadAsync(Path)).Then(result => project = result).OrThrow("Failed to open project");
+			Load(project!);
+		}
+
 
 	}
 }

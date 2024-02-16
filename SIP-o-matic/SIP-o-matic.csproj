@@ -26,6 +26,9 @@
     <None Remove="Images\control_fastforward_blue.png" />
     <None Remove="Images\control_rewind_blue.png" />
     <None Remove="Images\control_start_blue.png" />
+    <None Remove="Images\cross.png" />
+    <None Remove="Images\disk.png" />
+    <None Remove="Images\disk_multiple.png" />
     <None Remove="Images\error.png" />
     <None Remove="Images\folder.png" />
     <None Remove="Images\folder_add.png" />
@@ -63,6 +66,9 @@
     <Resource Include="Images\control_fastforward_blue.png" />
     <Resource Include="Images\control_rewind_blue.png" />
     <Resource Include="Images\control_start_blue.png" />
+    <Resource Include="Images\cross.png" />
+    <Resource Include="Images\disk.png" />
+    <Resource Include="Images\disk_multiple.png" />
     <Resource Include="Images\error.png" />
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\folder_add.png" />

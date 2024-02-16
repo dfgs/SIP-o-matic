@@ -4,17 +4,20 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace SIP_o_matic.Models
 {
     public class Message
     {
+		[XmlAttribute]
 		public required uint Index
 		{
 			get;
 			set;
 		}
 
+		[XmlAttribute]
 		public required DateTime Timestamp
         {
             get;
@@ -26,13 +29,15 @@ namespace SIP_o_matic.Models
             set;
         }
 
-        public required string SourceAddress
+		[XmlAttribute]
+		public required string SourceAddress
         {
             get;
             set;
         }
 
-        public required string DestinationAddress
+		[XmlAttribute]
+		public required string DestinationAddress
         {
             get;
             set;

@@ -27,9 +27,15 @@ namespace SIP_o_matic.ViewModels
 			Projects = new ProjectViewModelCollection(Logger);
 			Projects.Load(new List<Project>());
 		}
+		public async Task OpenProjectAsync(string Path)
+		{
+			await Projects.AddAsync(Path);
+		}
 
-
-		
-
+		public void CloseCurrentProject()
+		{
+			if (Projects.SelectedItem == null) return;
+			Projects.Remove(Projects.SelectedItem);
+		}
 	}
 }

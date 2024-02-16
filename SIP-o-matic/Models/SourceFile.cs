@@ -9,6 +9,7 @@ namespace SIP_o_matic.Models
 {
 	public class SourceFile
 	{
+		[XmlAttribute]
 		public required string Path
 		{
 			get;

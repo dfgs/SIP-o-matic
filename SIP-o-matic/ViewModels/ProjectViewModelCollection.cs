@@ -35,6 +35,22 @@ namespace SIP_o_matic.ViewModels
 			SelectedItem= projectViewModel;
 		}
 
-		
+		public void Remove(ProjectViewModel Item)
+		{
+			if (Item == null) return;
+			RemoveInternal(Item);
+			SelectedItem = this.FirstOrDefault();
+		}
+		public async Task AddAsync(string Path)
+		{
+			ProjectViewModel projectViewModel;
+
+			projectViewModel = new ProjectViewModel(Logger);
+			AddInternal(projectViewModel);
+			SelectedItem = projectViewModel;
+
+			await projectViewModel.LoadAsync(Path);
+		}
+
 	}
 }

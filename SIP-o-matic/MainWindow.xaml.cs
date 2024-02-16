@@ -141,6 +141,52 @@ namespace SIP_o_matic
 				ShowError(ex);
 			}
 		}
+		private void CloseCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem != null) ;
+		}
+
+		private void CloseCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			try
+			{
+				applicationViewModel.CloseCurrentProject();
+			}
+			catch(Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
+		private void OpenFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = true;
+		}
+
+		private async void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			OpenFileDialog dialog;
+
+			dialog = new OpenFileDialog();
+			dialog.Title = "Open xml file";
+			dialog.DefaultExt = "xml";
+			dialog.Filter = "xml files|*.xml|All files|*.*";
+			dialog.Multiselect = false;
+
+			if (dialog.ShowDialog(this) ?? false)
+			{
+				try
+				{
+					await applicationViewModel.OpenProjectAsync(dialog.FileName);
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
+			}
+
+
+		}
 
 		private void RemoveFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
@@ -204,9 +250,69 @@ namespace SIP_o_matic
 			
 
 		}
-		
 
-		
+		private void SaveCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem != null) ;
+		}
+
+		private async void SaveCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+			if (applicationViewModel.Projects.SelectedItem.Path == null) await SaveProjectAsAsync();
+			else await SaveProjectAsync();
+		}
+		private void SaveAsCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem != null);
+		}
+
+		private async void SaveAsCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+			await SaveProjectAsAsync();
+		}
+
+
+
+		private async Task SaveProjectAsync()
+		{
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+			try
+			{
+				await applicationViewModel.Projects.SelectedItem.SaveAsync(applicationViewModel.Projects.SelectedItem.Path);
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
+		private async Task SaveProjectAsAsync()
+		{
+			SaveFileDialog dialog;
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+
+			dialog = new SaveFileDialog();
+			dialog.Title = "Save project as";
+			dialog.DefaultExt = "xml";
+			dialog.Filter = "xml files|*.xml|All files|*.*";
+
+			if (dialog.ShowDialog(this) ?? false)
+			{
+				try
+				{
+					await applicationViewModel.Projects.SelectedItem.SaveAsync(dialog.FileName);
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
+			}
+
+		}
+
 		#endregion
 
 
