@@ -210,13 +210,22 @@ namespace SIP_o_matic.Models
 
 
 
-		public void Update(Transaction Transaction)
+		public bool Update(Transaction Transaction)
 		{
+			bool oldAck;
+			States oldState;
 			StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction.States, Transaction> trigger;
+
+
+			oldAck = IsAck;
+			oldState = State;
 
 			trigger = new StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction.States, Transaction>(Transaction.State);
 			fsm.Fire(trigger,Transaction);
 			this.MessageIndices = Transaction.MessagesIndices.ToArray();
+
+			return (oldAck != IsAck) || (oldState != State);
+
 		}
 		
 

@@ -88,7 +88,16 @@ namespace SIP_o_matic.ViewModels
 			get => Model.ReplacedCallID;
 		}
 
-		
+		public string StateDisplay
+		{
+			get
+			{
+				if (IsAck) return $"{State} (ACK)";
+				else return State.ToString();
+			}
+		}
+
+			
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));
 		public bool IsFlipped

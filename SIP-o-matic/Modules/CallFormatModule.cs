@@ -74,6 +74,23 @@ namespace SIP_o_matic.Modules
 		{
 
 			KeyFrame.TimeSpan = KeyFrame.Timestamp - FirstEvent;
+			if (KeyFrame.TimeSpan.TotalSeconds < 1)
+			{
+				KeyFrame.TimeSpanDisplay = $"{KeyFrame.TimeSpan.Milliseconds}ms";
+			}
+			else if (KeyFrame.TimeSpan.TotalMinutes < 1)
+			{
+				KeyFrame.TimeSpanDisplay = $"{KeyFrame.TimeSpan.Seconds}.{KeyFrame.TimeSpan.Milliseconds}s";
+			}
+			else if (KeyFrame.TimeSpan.TotalHours < 1)
+			{
+				KeyFrame.TimeSpanDisplay = $"{KeyFrame.TimeSpan.Minutes}m{KeyFrame.TimeSpan.Seconds}.{KeyFrame.TimeSpan.Milliseconds}s";
+			}
+			else
+			{
+				KeyFrame.TimeSpanDisplay = $"{KeyFrame.TimeSpan.Hours}h{KeyFrame.TimeSpan.Minutes}m{KeyFrame.TimeSpan.Seconds}.{KeyFrame.TimeSpan.Milliseconds}s";
+			}
+
 
 			await foreach (CallViewModel call in KeyFrame.Calls.ToAsyncEnumerable())
 			{

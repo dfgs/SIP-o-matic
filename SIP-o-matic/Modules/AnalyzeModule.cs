@@ -106,7 +106,7 @@ namespace SIP_o_matic.Modules
 			return new Call(callID, SourceDevice, DestinationDevice, from.Value.ToHumanString()??"Undefined", to.Value.ToHumanString() ?? "Undefined", Call.States.OnHook, false);
 		}
 
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
+		private bool UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -130,14 +130,15 @@ namespace SIP_o_matic.Modules
 
 
 			// update transaction
-			if (transaction.Update(Request,SourceDevice,DestinationDevice,MessageIndex))
+			if (transaction.Update(Request, SourceDevice, DestinationDevice, MessageIndex))
 			{
 				// update call
-				call.Update(transaction);
+				return call.Update(transaction);
 			}
+			else return false;
 
 		}
-		private void UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice,uint MessageIndex)
+		private bool UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice,uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -165,12 +166,13 @@ namespace SIP_o_matic.Modules
 			if (transaction.Update(Response, SourceDevice, DestinationDevice, MessageIndex))
 			{
 				// update call
-				call.Update(transaction);
+				return call.Update(transaction);
 			}
+			else return false;
 
 		}
 
-		private void UpdateKeyFrame( KeyFrame KeyFrame, ProjectViewModel Project, SIPMessage SIPMessage, MessageViewModel Message)
+		private bool UpdateKeyFrame( KeyFrame KeyFrame, ProjectViewModel Project, SIPMessage SIPMessage, MessageViewModel Message)
 		{
 			string sourceDevice,destinationDevice;
 
@@ -182,12 +184,8 @@ namespace SIP_o_matic.Modules
 
 			switch (SIPMessage)
 			{
-				case Request request:
-					UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice,Message.Index);
-					break;
-				case Response response:
-					UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice,Message.Index);
-					break;
+				case Request request:return UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice,Message.Index);
+				case Response response:return UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice,Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
@@ -237,7 +235,13 @@ namespace SIP_o_matic.Modules
 
 					newKeyFrame.MessageIndex = message.Index;
 
-					UpdateKeyFrame(newKeyFrame,Project, sipMessage, message);
+					if (UpdateKeyFrame(newKeyFrame,Project, sipMessage, message))
+					{
+						Project.KeyFrames.Add(newKeyFrame);
+					}
+
+					previousKeyFrame = newKeyFrame;
+
 				}
 				catch (Exception ex)
 				{
@@ -245,8 +249,6 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Error, error);
 					throw new InvalidOperationException(error);
 				}
-				Project.KeyFrames.Add(newKeyFrame);
-				previousKeyFrame = newKeyFrame;
 			}
 		}
 

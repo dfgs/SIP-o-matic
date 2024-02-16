@@ -33,7 +33,11 @@ namespace SIP_o_matic.ViewModels
 			get;
 			set;
 		}
-
+		public string TimeSpanDisplay
+		{
+			get;
+			set;
+		}
 		public uint MessageIndex
 		{
 			get => Model.MessageIndex;
@@ -42,6 +46,7 @@ namespace SIP_o_matic.ViewModels
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{
 			Calls = new CallViewModelCollection(Logger);
+			TimeSpanDisplay = "";
 		}
 
 		protected override void OnLoaded()

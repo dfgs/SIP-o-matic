@@ -19,7 +19,7 @@
 
 	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
 		<DockPanel >
-			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Devices,FallbackValue={StaticResource devices}}" x:Name="headerPanel"  >
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Devices}" x:Name="headerPanel"  >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -38,7 +38,7 @@
 			</ItemsControl>
 			<Grid>
 
-				<ItemsControl ItemsSource="{Binding Devices,FallbackValue={StaticResource devices}}" Background="Transparent"  >
+				<ItemsControl ItemsSource="{Binding Devices}" Background="Transparent"  >
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
 							<StackPanel Orientation="Horizontal"/>
