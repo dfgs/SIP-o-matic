@@ -97,7 +97,7 @@ namespace SIP_o_matic
 			AnalyzeModule module;
 
 
-			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0)) return;
+			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.Messages.Count == 0)) return;
 			try
 			{
 				module = new AnalyzeModule(Logger, applicationViewModel.Projects.SelectedItem);
@@ -117,7 +117,7 @@ namespace SIP_o_matic
 
 		private void AnalyzeCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
-			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem!=null) && (applicationViewModel.Projects.SelectedItem.SourceFiles.Count>0);
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem!=null) && (applicationViewModel.Projects.SelectedItem.Messages.Count>0);
 		}
 
 		private void AnalyzeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
@@ -188,24 +188,7 @@ namespace SIP_o_matic
 
 		}
 
-		private void RemoveFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.Handled = true; e.CanExecute = applicationViewModel.Projects.SelectedItem?.SourceFiles.SelectedItem != null;
-		}
-
-		private void RemoveFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-
-			if (applicationViewModel.Projects.SelectedItem == null) return;
-			try
-			{ 
-				applicationViewModel.Projects.SelectedItem.SourceFiles.RemoveSelected();
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
-		}
+		
 
 		private void AddFileCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{

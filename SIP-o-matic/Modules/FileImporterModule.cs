@@ -47,10 +47,10 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
-			step = new ProgressStep() { Label = "Add files to project", TaskFactory = AddFileToProjectAsync };
+			/*step = new ProgressStep() { Label = "Add files to project", TaskFactory = AddFileToProjectAsync };
 			step.MaximumGetter = () => fileNames.Length;
 			step.Init();
-			progressSteps.Add(step);
+			progressSteps.Add(step);*/
 
 		}
 
@@ -94,7 +94,7 @@ namespace SIP_o_matic.Modules
 			}
 		}
 
-		private async Task AddFileToProjectAsync(CancellationToken CancellationToken,  int Index)
+		/*private async Task AddFileToProjectAsync(CancellationToken CancellationToken,  int Index)
 		{
 			if (CancellationToken.IsCancellationRequested)
 			{
@@ -104,7 +104,7 @@ namespace SIP_o_matic.Modules
 
 			project.SourceFiles.Add(fileNames[Index]);
 			await Task.Delay(100);
-		}
+		}*/
 
 
 

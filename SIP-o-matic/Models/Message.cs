@@ -23,11 +23,19 @@ namespace SIP_o_matic.Models
             get;
             set;
         }
+
+        [XmlIgnore]
         public required string Content
         {
             get;
             set;
         }
+
+        public string EncodedContent
+        {
+            get => Convert.ToBase64String( Encoding.UTF8.GetBytes(Content));
+            set => Content=Encoding.UTF8.GetString(Convert.FromBase64String(value));
+		}
 
 		[XmlAttribute]
 		public required string SourceAddress

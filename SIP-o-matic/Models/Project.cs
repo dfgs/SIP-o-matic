@@ -16,11 +16,7 @@ namespace SIP_o_matic.Models
 	public class Project
 	{
 		
-		public List<SourceFile> SourceFiles
-		{
-			get;
-			set;
-		}
+		
 		public List<Device> Devices
 		{
 			get;
@@ -41,7 +37,6 @@ namespace SIP_o_matic.Models
 
 		public Project()
 		{
-			SourceFiles = new List<SourceFile>();
 			Devices= new List<Device>();
 			Messages = new List<Message>();
 			KeyFrames = new List<KeyFrame>();

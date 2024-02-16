@@ -35,12 +35,7 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(PathProperty, value); }
 		}
 
-		public SourceFileViewModelCollection SourceFiles
-		{
-			get;
-			private set;
-		}
-				
+	
 		public DeviceViewModelCollection Devices
 		{
 			get;
@@ -63,7 +58,6 @@ namespace SIP_o_matic.ViewModels
 
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
-			SourceFiles = new SourceFileViewModelCollection(Logger);
 			Devices = new DeviceViewModelCollection(Logger);
 			Messages = new MessageViewModelCollection(Logger);
 			KeyFrames = new KeyFrameViewModelCollection(Logger);
@@ -72,7 +66,6 @@ namespace SIP_o_matic.ViewModels
 		protected override void OnLoaded()
 		{
 			base.OnLoaded();
-			SourceFiles.Load(Model.SourceFiles);
 			Devices.Load(Model.Devices);
 			Messages.Load(Model.Messages);
 			KeyFrames.Load(Model.KeyFrames);
