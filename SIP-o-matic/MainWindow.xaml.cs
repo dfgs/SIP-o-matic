@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
 using SIP_o_matic.DataSources;
+using SIP_o_matic.Modules;
 
 
 namespace SIP_o_matic
@@ -55,18 +56,10 @@ namespace SIP_o_matic
 
 			if (args.Length > 1)
 			{
-				try
-				{
-					applicationViewModel.Projects.AddNew();
-					if (applicationViewModel.Projects.SelectedItem == null) return;
-					applicationViewModel.Projects.SelectedItem.SourceFiles.Add(args[1]);
-				}
-				catch (Exception ex)
-				{
-					ShowError(ex);
-				}
+				applicationViewModel.Projects.AddNew();
+				AddFiles(args[1]);
 			}
-		}//**/
+		}
 
 
 		private void ShowError(Exception ex)
@@ -75,6 +68,50 @@ namespace SIP_o_matic
 		}
 
 
+		private void AddFiles(params string[] FileNames)
+		{
+			ProgressWindow analyzeWindow;
+			FileImporterModule module;
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+
+			try
+			{
+				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem, FileNames);
+
+				analyzeWindow = new ProgressWindow(Logger);
+				analyzeWindow.Owner = this;
+				analyzeWindow.Steps.AddRange(module.ProgressSteps);
+				analyzeWindow.ShowDialog();
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
+
+
+		private void Analyze()
+		{
+			ProgressWindow analyzeWindow;
+			AnalyzeModule module;
+
+
+			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0)) return;
+			try
+			{
+				module = new AnalyzeModule(Logger, applicationViewModel.Projects.SelectedItem);
+
+				analyzeWindow = new ProgressWindow(Logger);
+				analyzeWindow.Owner = this;
+				analyzeWindow.Steps.AddRange(module.ProgressSteps);
+				analyzeWindow.ShowDialog();
+			}
+			catch (Exception ex)
+			{
+				ShowError(ex);
+			}
+		}
 
 		#region command bindings
 
@@ -85,20 +122,7 @@ namespace SIP_o_matic
 
 		private void AnalyzeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			AnalyzeWindow analyzeWindow;
-
-			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.SourceFiles.Count == 0) ) return;
-			try
-			{
-				analyzeWindow = new AnalyzeWindow(Logger);
-				analyzeWindow.Owner = this;
-				analyzeWindow.Project = applicationViewModel.Projects.SelectedItem;
-				analyzeWindow.ShowDialog();
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
+			Analyze();
 		}
 
 		private void NewCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -145,9 +169,7 @@ namespace SIP_o_matic
 		private void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
-			/*IDataSource[] dataSources;
-			IDataSource selectedDataSource;
-			DataSourceWindow dataSourceWindow;*/
+
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 
@@ -158,6 +180,7 @@ namespace SIP_o_matic
 
 			if (!dialog.ShowDialog(this) ?? false) return;
 
+			AddFiles(dialog.FileNames);
 			/*dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();
 
 			if (dataSources.Length == 0)
@@ -177,18 +200,9 @@ namespace SIP_o_matic
 				selectedDataSource = dataSourceWindow.SelectedDataSource;
 			}*/
 
+			
+			
 
-			try
-			{
-				foreach (string fileName in dialog.FileNames)
-				{
-					applicationViewModel.Projects.SelectedItem.SourceFiles.Add(fileName);
-				}
-			}
-			catch (Exception ex)
-			{
-				ShowError(ex);
-			}
 		}
 		
 

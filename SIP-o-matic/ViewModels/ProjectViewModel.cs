@@ -78,10 +78,8 @@ namespace SIP_o_matic.ViewModels
 			KeyFrames.Load(Model.KeyFrames);
 		}
 
-		public void Clear()
+		public void ClearKeyFrames()
 		{
-			Devices.Clear();
-			Messages.Clear();
 			KeyFrames.Clear();
 		}
 

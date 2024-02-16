@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
@@ -33,11 +34,19 @@ namespace SIP_o_matic.ViewModels
 			get;
 			set;
 		}
+
+
+
+		public static readonly DependencyProperty TimeSpanDisplayProperty = DependencyProperty.Register("TimeSpanDisplay", typeof(string), typeof(KeyFrameViewModel), new PropertyMetadata(null));
 		public string TimeSpanDisplay
 		{
-			get;
-			set;
+			get { return (string)GetValue(TimeSpanDisplayProperty); }
+			set { SetValue(TimeSpanDisplayProperty, value); }
 		}
+
+
+
+		
 		public uint MessageIndex
 		{
 			get => Model.MessageIndex;
@@ -46,7 +55,6 @@ namespace SIP_o_matic.ViewModels
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{
 			Calls = new CallViewModelCollection(Logger);
-			TimeSpanDisplay = "";
 		}
 
 		protected override void OnLoaded()
