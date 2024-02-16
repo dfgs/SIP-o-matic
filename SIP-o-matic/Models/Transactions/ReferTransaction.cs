@@ -16,9 +16,9 @@ namespace SIP_o_matic.Models.Transactions
 
 		private static Regex callIDRegex = new Regex(@"(?<CallID>[^;]*);.*");
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
 
 		public string? ReplacedCallID
 		{
@@ -30,7 +30,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public ReferTransaction(string CallID, string SourceAddress, string DestinationAddress, string ViaBranch,string CSeq ) :base(CallID,SourceAddress,DestinationAddress, ViaBranch,CSeq)
+		public ReferTransaction(string CallID, string ViaBranch, string CSeq) : base(CallID, ViaBranch, CSeq)
 		{
 
 		}
@@ -39,9 +39,9 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Prov1xx);
-			Final2xxTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<Response, string, string>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
@@ -98,7 +98,7 @@ namespace SIP_o_matic.Models.Transactions
 
 	
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
 			{

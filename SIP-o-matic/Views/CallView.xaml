@@ -9,6 +9,17 @@
              mc:Ignorable="d" 
              >
 	<UserControl.Resources>
+		<Style TargetType="{x:Type TextBlock}" x:Key="stateTextStyle">
+			<Setter Property="FontStyle" Value="Italic"/>
+			<Setter Property="Foreground" Value="Chocolate"/>
+			<Setter Property="HorizontalAlignment" Value="Center"/>
+			<Style.Triggers>
+				<DataTrigger Binding="{Binding IsUpdated}" Value="true">
+					<Setter Property="FontWeight" Value="Bold"/>
+				</DataTrigger>
+			</Style.Triggers>
+		</Style>
+
 		<DataTemplate DataType="{x:Type viewModels:CallViewModel}" x:Key="callDataTemplate1">
 			<Grid >
 				<Grid.ColumnDefinitions>
@@ -28,7 +39,7 @@
 
 				<views:ArrowRightView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding Color,FallbackValue='Blue'}" />
 
-				<TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"  HorizontalAlignment="Center" Text="{Binding StateDisplay,FallbackValue='Ringing'}" FontStyle="Italic" Margin="20,2,20,2" Foreground="Chocolate"/>
+				<TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"   Text="{Binding StateDisplay,FallbackValue='Ringing'}"  Style="{StaticResource stateTextStyle}" />
 			</Grid>
 		</DataTemplate>
 		<DataTemplate DataType="{x:Type viewModels:CallViewModel}" x:Key="callDataTemplate2">
@@ -50,7 +61,7 @@
 
 				<views:ArrowLeftView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding Color,FallbackValue='Blue'}"/>
 
-				<TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"  HorizontalAlignment="Center" Text="{Binding StateDisplay,FallbackValue='Ringing'}" FontStyle="Italic" Margin="20,2,20,2" Foreground="Chocolate"/>
+				<TextBlock Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="3"  Text="{Binding StateDisplay,FallbackValue='Ringing'}"   Style="{StaticResource stateTextStyle}"/>
 			</Grid>
 		</DataTemplate>
 	</UserControl.Resources>

@@ -37,6 +37,17 @@ namespace SIP_o_matic.Models
 			get;
 			set;
 		}
+		public required string FromTag
+		{
+			get;
+			set;
+		}
+
+		public string? ToTag
+		{
+			get;
+			set;
+		}
 
 		public required string Caller
 		{
@@ -72,17 +83,25 @@ namespace SIP_o_matic.Models
 			set;
 		}
 
+		public bool IsUpdated
+		{
+			get;
+			private set;
+		}
+
 		[SetsRequiredMembers]
-		public Call(string callID, string SourceDevice,string DestinationDevice, string Caller, string Callee, States InitialState,bool IsAck)
+		public Call(string callID, string SourceDevice,string DestinationDevice,string FromTag, string Caller, string Callee, States InitialState,bool IsAck)
 		{
 	
 			CallID = callID;
 			this.SourceDevice = SourceDevice;
 			this.DestinationDevice = DestinationDevice;
+			this.FromTag = FromTag;
 			this.Caller = Caller;
 			this.Callee = Callee;
 			this.IsAck = IsAck;
 			MessageIndices = new uint[] { };
+			IsUpdated = false;
 
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
 			fsm.Configure(States.OnHook)
@@ -187,25 +206,25 @@ namespace SIP_o_matic.Models
 		{
 			Call newCall;
 
-			newCall = new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.Caller, this.Callee, this.State,this.IsAck);
+			newCall = new Call(this.CallID, this.SourceDevice, this.DestinationDevice,this.FromTag, this.Caller, this.Callee, this.State,this.IsAck);
 			newCall.MessageIndices = (uint[])this.MessageIndices.Clone();
 			newCall.ReplacedCallID=this.ReplacedCallID;
+			newCall.ToTag=this.ToTag; 
+
 
 			return newCall;
 						
 		}
-		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)
+		
+		public bool Match(Request Request)
 		{
-			return ((this.SourceDevice == SourceDevice) && (this.DestinationDevice == DestinationDevice))
-				|| ((this.SourceDevice == DestinationDevice) && (this.DestinationDevice == SourceDevice));
+			return (CallID == Request.GetCallID()) && 
+				( (this.FromTag==Request.GetFromTag() || (this.FromTag == Request.GetToTag() )) );
 		}
-		public bool Match(Request Request, string SourceDevice, string DestinationDevice)
+		public bool Match(Response Response)
 		{
-			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceDevice,DestinationDevice) ;
-		}
-		public bool Match(Response Response, string SourceDevice, string DestinationDevice)
-		{
-			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && SourceAndDestinationMatch(SourceDevice, DestinationDevice);
+			return (CallID == Response.GetCallID()) &&
+				((this.FromTag == Response.GetFromTag() || (this.FromTag == Response.GetToTag())));
 		}
 
 
@@ -224,7 +243,9 @@ namespace SIP_o_matic.Models
 			fsm.Fire(trigger,Transaction);
 			this.MessageIndices = Transaction.MessagesIndices.ToArray();
 
-			return (oldAck != IsAck) || (oldState != State);
+			IsUpdated= (oldAck != IsAck) || (oldState != State);
+			
+			return IsUpdated;
 
 		}
 		

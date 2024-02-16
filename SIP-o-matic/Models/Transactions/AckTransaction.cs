@@ -13,7 +13,7 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-        public AckTransaction(string CallID, string SourceAddress,string DestinationAddress, string ViaBranch, string CSeq) : base(CallID, SourceAddress,DestinationAddress, ViaBranch, CSeq)
+        public AckTransaction(string CallID, string ViaBranch, string CSeq) : base(CallID,ViaBranch, CSeq)
         {
 
 		}
@@ -27,7 +27,7 @@ namespace SIP_o_matic.Models.Transactions
 
 		
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response,string,string> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 		}

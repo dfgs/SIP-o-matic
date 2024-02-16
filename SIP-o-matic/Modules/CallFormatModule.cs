@@ -30,14 +30,8 @@ namespace SIP_o_matic.Modules
 		{
 			int index;
 			string key;
-			int hash; ;
 
-			int hash1,hash2;
-			hash1 = 23 * 31 + SourceDevice.GetHashCode();
-			hash2 = 23 * 31 + DestinationDevice.GetHashCode();
-			hash=hash1 ^ hash2;
-
-			key = $"{CallID}/{hash}" ;
+			key = $"{CallID}/{Utils.Hash(SourceDevice,DestinationDevice)}" ;
 
 			index=legs.IndexOf(key);
 			if (index==-1)

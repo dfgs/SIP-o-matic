@@ -34,11 +34,11 @@ namespace SIP_o_matic.Models.Transactions
 
 		private StateMachine<States, Triggers> fsm;
 		
-		protected StateMachine<States, Triggers>.TriggerWithParameters<Request, string, string> InviteTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<Request, string,string> ReferTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<Request, string, string> AckTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<Request, string, string> NotifyTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<Request, string, string> ByeTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> InviteTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ReferTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> AckTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> NotifyTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ByeTrigger;
 
 
 		public required string CallID
@@ -52,7 +52,7 @@ namespace SIP_o_matic.Models.Transactions
 			set;
 		}
 
-		public required string SourceDevice
+		/*public required string SourceDevice
 		{
 			get;
 			set;
@@ -62,8 +62,8 @@ namespace SIP_o_matic.Models.Transactions
 		{
 			get;
 			set;
-		}
-
+		}*/
+		
 		public required string CSeq
 		{
 			get;
@@ -99,11 +99,11 @@ namespace SIP_o_matic.Models.Transactions
 
 
 		[SetsRequiredMembers]
-		public Transaction(string CallID, string SourceDevice, string DestinationDevice, string ViaBranch, string CSeq)
+		public Transaction(string CallID,  string ViaBranch, string CSeq)
 		{
 			this.CallID = CallID;
-			this.SourceDevice = SourceDevice;
-			this.DestinationDevice=DestinationDevice;
+			/*this.SourceDevice = SourceDevice;
+			this.DestinationDevice=DestinationDevice;*/
 			this.ViaBranch = ViaBranch;
 			this.CSeq = CSeq;
 
@@ -115,41 +115,35 @@ namespace SIP_o_matic.Models.Transactions
 
 			fsm = new StateMachine<States, Triggers>(States.Undefined);
 
-			InviteTrigger = fsm.SetTriggerParameters<Request,string,string>(Triggers.INVITE);
-			AckTrigger = fsm.SetTriggerParameters<Request, string, string>(Triggers.ACK);
-			ReferTrigger = fsm.SetTriggerParameters<Request, string, string>(Triggers.REFER);
-			NotifyTrigger = fsm.SetTriggerParameters<Request, string, string>(Triggers.NOTIFY);
-			ByeTrigger = fsm.SetTriggerParameters<Request, string, string>(Triggers.BYE);
+			InviteTrigger = fsm.SetTriggerParameters<Request>(Triggers.INVITE);
+			AckTrigger = fsm.SetTriggerParameters<Request>(Triggers.ACK);
+			ReferTrigger = fsm.SetTriggerParameters<Request>(Triggers.REFER);
+			NotifyTrigger = fsm.SetTriggerParameters<Request>(Triggers.NOTIFY);
+			ByeTrigger = fsm.SetTriggerParameters<Request>(Triggers.BYE);
 
 			OnConfigureFSM(fsm);
 		}
 
 		protected abstract void OnConfigureFSM(StateMachine<States, Triggers> fsm);
 
-		private bool SourceAndDestinationMatch(string SourceDevice, string DestinationDevice)
+		
+
+		public bool Match(Request Request)
 		{
-			return ((this.SourceDevice == SourceDevice) && (this.DestinationDevice == DestinationDevice))
-				|| ((this.SourceDevice == DestinationDevice) && (this.DestinationDevice == SourceDevice));
+			return (CallID == Request.GetCallID()) && (this.ViaBranch == Request.GetViaBranch()) && (this.CSeq==Request.GetCSeq());
+		}
+		public bool Match(Response Response)
+		{
+			return (CallID == Response.GetCallID()) && (this.ViaBranch == Response.GetViaBranch()) && (this.CSeq == Response.GetCSeq());
 		}
 
-		public bool Match(Request Request, string SourceDevice, string DestinationDevice)
+		protected bool AssertMessageBelongsToTransaction(Request Request)
 		{
-			return (CallID == Request.GetHeader<CallIDHeader>()?.Value) && (ViaBranch == Request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value) && (CSeq == Request.GetHeader<CSeqHeader>()?.Value)
-				&& SourceAndDestinationMatch(SourceDevice, DestinationDevice);
+			return Match(Request);
 		}
-		public bool Match(Response Response, string SourceDevice, string DestinationDevice)
+		protected bool AssertMessageBelongsToTransaction(Response Response)
 		{
-			return (CallID == Response.GetHeader<CallIDHeader>()?.Value) && (ViaBranch == Response.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value) && (CSeq == Response.GetHeader<CSeqHeader>()?.Value)
-				&& SourceAndDestinationMatch(SourceDevice, DestinationDevice);
-		}
-
-		protected bool AssertMessageBelongsToTransaction(Request Request,string SourceDevice, string DestinationDevice)
-		{
-			return Match(Request,SourceDevice,DestinationDevice);
-		}
-		protected bool AssertMessageBelongsToTransaction(Response Response, string SourceDevice, string DestinationDevice)
-		{
-			return Match(Response, SourceDevice, DestinationDevice);
+			return Match(Response);
 		}
 
 		public string GetGraph()
@@ -157,7 +151,7 @@ namespace SIP_o_matic.Models.Transactions
 			return UmlDotGraph.Format(fsm.GetInfo());
 		}
 
-		public bool Update(Request Request, string SourceDevice, string DestinationDevice,uint MessageIndex)
+		public bool Update(Request Request,uint MessageIndex)
 		{
 			if ((previousRequest!=null) && (previousRequest.RequestLine.Method== Request.RequestLine.Method))
 			{
@@ -171,25 +165,25 @@ namespace SIP_o_matic.Models.Transactions
 			switch (Request.RequestLine.Method)
 			{
 				case "INVITE":
-					fsm.Fire(InviteTrigger, Request,SourceDevice,DestinationDevice);
+					fsm.Fire(InviteTrigger, Request);
 					break;
 				case "ACK":
-					fsm.Fire(AckTrigger, Request, SourceDevice, DestinationDevice);
+					fsm.Fire(AckTrigger, Request);
 					break;
 				case "REFER":
-					fsm.Fire(ReferTrigger, Request, SourceDevice, DestinationDevice);
+					fsm.Fire(ReferTrigger, Request);
 					break;
 				case "NOTIFY":
-					fsm.Fire(NotifyTrigger, Request, SourceDevice, DestinationDevice);
+					fsm.Fire(NotifyTrigger, Request);
 					break;
 				case "BYE":
-					fsm.Fire(ByeTrigger, Request, SourceDevice, DestinationDevice);
+					fsm.Fire(ByeTrigger, Request);
 					break;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}
 			return true;
 		}
-		public bool Update(Response Response,string SourceDevice,string DestinationDevice,uint MessageIndex)
+		public bool Update(Response Response,uint MessageIndex)
 		{
 			if ((previousResponse!=null) && (previousResponse.StatusLine.StatusCode==Response.StatusLine.StatusCode))
 			{
@@ -200,11 +194,11 @@ namespace SIP_o_matic.Models.Transactions
 
 			MessagesIndices.Add(MessageIndex);
 
-			fsm.Fire(OnGetUpdateTrigger(Response),Response, SourceDevice, DestinationDevice);
+			fsm.Fire(OnGetUpdateTrigger(Response),Response);
 			return true;
 		}
 
-		protected abstract StateMachine<States, Triggers>.TriggerWithParameters<Response, string, string> OnGetUpdateTrigger(Response Response);
+		protected abstract StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response);
 
 	}
 }

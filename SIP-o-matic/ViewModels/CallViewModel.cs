@@ -97,6 +97,10 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
+		public bool IsUpdated
+		{
+			get => Model.IsUpdated;
+		}
 			
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(CallViewModel), new PropertyMetadata(false));

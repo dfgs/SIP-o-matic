@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,45 +27,31 @@ namespace SIP_o_matic.Modules
 		{
 			Transactions = new List<Transaction>();
 		}
+
+
+		
 		private Transaction CreateNewTransaction(Request Request,string SourceDevice, string DestinationDevice)
 		{
-			string? viaBranch;
-			string? cseq;
-			string? callID;
+			string viaBranch;
+			string cseq;
+			string callID;
+			string fromTag;
 
 			LogEnter();
 
-			callID = Request.GetHeader<CallIDHeader>()?.Value;
-			if (callID == null)
-			{
-				string error = $"CallID header missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
-
-			viaBranch = Request.GetHeader<ViaHeader>()?.GetParameter<ViaBranch>()?.Value;
-			if (viaBranch == null)
-			{
-				string error = $"Via branch missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
-
-			cseq = Request.GetHeader<CSeqHeader>()?.Value;
-			if (cseq == null)
-			{
-				string error = $"CSeq missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
+			callID = Request.GetCallID();
+			viaBranch = Request.GetViaBranch();
+			cseq = Request.GetCSeq();
+			fromTag=Request.GetFromTag();
+			
 
 			switch (Request.RequestLine.Method)
 			{
-				case "INVITE": return new InviteTransaction(callID,SourceDevice,DestinationDevice, viaBranch, cseq);
-				case "ACK": return new AckTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
-				case "REFER": return new ReferTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
-				case "NOTIFY": return new NotifyTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
-				case "BYE": return new ByeTransaction(callID, SourceDevice,DestinationDevice, viaBranch, cseq);
+				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq);
+				case "ACK": return new AckTransaction(callID,  viaBranch, cseq);
+				case "REFER": return new ReferTransaction(callID,  viaBranch, cseq);
+				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq);
+				case "BYE": return new ByeTransaction(callID,  viaBranch, cseq);
 				default:
 					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
 					Log(LogLevels.Error, error);
@@ -74,46 +61,34 @@ namespace SIP_o_matic.Modules
 		
 		private Call CreateNewCall(Request Request, string SourceDevice, string DestinationDevice)
 		{
-			string? callID;
-			Address? from, to;
+			string callID;
+			string fromTag;
+			Address from, to;
 
 			LogEnter();
 
-			callID = Request.GetHeader<CallIDHeader>()?.Value;
-			if (callID == null)
-			{
-				string error = $"CallID header missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
+			callID = Request.GetCallID();
+			fromTag = Request.GetFromTag();
 
-			from = Request.GetHeader<FromHeader>()?.Value;
-			if (from == null)
-			{
-				string error = $"From header missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
+			from = Request.GetFrom();
+			to = Request.GetTo();
 
-			to = Request.GetHeader<ToHeader>()?.Value;
-			if (to == null)
-			{
-				string error = $"To header missing in SIP message";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
-
-			return new Call(callID, SourceDevice, DestinationDevice, from.Value.ToHumanString()??"Undefined", to.Value.ToHumanString() ?? "Undefined", Call.States.OnHook, false);
+			return new Call(callID, SourceDevice, DestinationDevice,fromTag, from.ToHumanString()??"Undefined", to.ToHumanString() ?? "Undefined", Call.States.OnHook, false);
 		}
+
+		
 
 		private bool UpdateKeyFrame(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
 
+
 			LogEnter();
 
-			transaction = Transactions.FirstOrDefault(item => item.Match(Request,SourceDevice,DestinationDevice));
+			
+
+			transaction = Transactions.FirstOrDefault(item => item.Match(Request));
 			if (transaction == null)
 			{
 				// check if all other transactions are terminated
@@ -121,7 +96,8 @@ namespace SIP_o_matic.Modules
 				Transactions.Add(transaction);
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request, SourceDevice, DestinationDevice));
+			
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request) && (Utils.Hash(SourceDevice, DestinationDevice) == Utils.Hash(item.SourceDevice, item.DestinationDevice)));
 			if (call == null)
 			{
 				call = CreateNewCall(Request, SourceDevice, DestinationDevice);
@@ -130,7 +106,7 @@ namespace SIP_o_matic.Modules
 
 
 			// update transaction
-			if (transaction.Update(Request, SourceDevice, DestinationDevice, MessageIndex))
+			if (transaction.Update(Request,  MessageIndex))
 			{
 				// update call
 				return call.Update(transaction);
@@ -138,14 +114,17 @@ namespace SIP_o_matic.Modules
 			else return false;
 
 		}
-		private bool UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice,uint MessageIndex)
+		private bool UpdateKeyFrame(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
+			string? toTag;
 
 			LogEnter();
 
-			transaction = Transactions.FirstOrDefault(item => item.Match(Response, SourceDevice, DestinationDevice));
+			
+
+			transaction = Transactions.FirstOrDefault(item => item.Match(Response));
 			if (transaction == null)
 			{
 				string error = "Cannot find matching transaction for response";
@@ -154,7 +133,7 @@ namespace SIP_o_matic.Modules
 
 			}
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response, SourceDevice, DestinationDevice));
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response) && (Utils.Hash(SourceDevice,DestinationDevice)==Utils.Hash(item.SourceDevice,item.DestinationDevice )));
 			if (call == null)
 			{
 				string error = "Cannot find matching call for response";
@@ -162,8 +141,11 @@ namespace SIP_o_matic.Modules
 				throw new InvalidOperationException(error);
 			}
 
+			toTag = Response.GetToTag();
+			if (toTag!=null) call.ToTag = toTag;
+
 			// update transaction
-			if (transaction.Update(Response, SourceDevice, DestinationDevice, MessageIndex))
+			if (transaction.Update(Response,  MessageIndex))
 			{
 				// update call
 				return call.Update(transaction);
@@ -185,7 +167,7 @@ namespace SIP_o_matic.Modules
 			switch (SIPMessage)
 			{
 				case Request request:return UpdateKeyFrame(KeyFrame, request, sourceDevice, destinationDevice,Message.Index);
-				case Response response:return UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice,Message.Index);
+				case Response response:return UpdateKeyFrame(KeyFrame, response, sourceDevice, destinationDevice, Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
