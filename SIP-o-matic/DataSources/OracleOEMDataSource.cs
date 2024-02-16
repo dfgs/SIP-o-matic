@@ -8,6 +8,9 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Net;
+using System.Buffers.Text;
+using System.Reflection.Metadata;
+using System.Text.Unicode;
 
 namespace SIP_o_matic.DataSources
 {
@@ -78,7 +81,17 @@ namespace SIP_o_matic.DataSources
 
 		}
 
+		private string DecodeContent(string Base64Message)
+		{
+			Span<byte> buffer;
+			int length;
 
+			buffer = new Span<byte>(new byte[Base64Message.Length]);
+			if (!Convert.TryFromBase64String(Base64Message, buffer, out length)) return Base64Message;
+
+			return Encoding.UTF8.GetString(Convert.FromBase64String(Base64Message));
+
+		}
 		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
 		{
 			string line,dataString;
@@ -91,7 +104,6 @@ namespace SIP_o_matic.DataSources
 			string sourceAddress, destinationAddress;
 			string content;
 			uint index = 1;
-
 			using (StreamReader reader=new StreamReader(FileName))
 			{
 				line=await reader.ReadToEndAsync();
@@ -113,7 +125,9 @@ namespace SIP_o_matic.DataSources
 					sourceAddress = GetIPAddress(node!["src_ip"]!.GetValue<string>());
 					destinationAddress = GetIPAddress(node!["dst_ip"]!.GetValue<string>());
 					base64Message= node!["data"]!.GetValue<string>();
-					content = Encoding.UTF8.GetString(Convert.FromBase64String(base64Message));
+
+					content = DecodeContent(base64Message);
+					
 					message = new Message(index++,timeStamp, sourceAddress, destinationAddress, content);
 					yield return message;	
 				}

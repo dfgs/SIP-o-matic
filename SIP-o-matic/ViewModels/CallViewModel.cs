@@ -92,7 +92,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			get
 			{
-				if (IsAck) return $"{State} (ACK)";
+				if ((IsAck) && (State==Call.States.Established)) return $"{State} (ACK)";
 				else return State.ToString();
 			}
 		}
