@@ -44,13 +44,13 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(TimeSpanDisplayProperty, value); }
 		}
 
-
-
-		
+				
 		public uint MessageIndex
 		{
 			get => Model.MessageIndex;
 		}
+
+
 
 		public KeyFrameViewModel(ILogger Logger) : base(Logger)
 		{

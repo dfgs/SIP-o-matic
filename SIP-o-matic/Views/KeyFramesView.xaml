@@ -13,7 +13,7 @@
 			<RowDefinition Height="100"/>
 		</Grid.RowDefinitions>
 
-		<views:CallsView Grid.Row="0" DataContext="{Binding SelectedItem}"/>
+		<views:CallsView Grid.Row="0" DataContext="{Binding SelectedItem}" Background="White"/>
 		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
 		<views:FrameNavigatorView Grid.Row="2"/>

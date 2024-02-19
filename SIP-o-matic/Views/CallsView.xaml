@@ -15,7 +15,10 @@
 			<sys:String>Device #3</sys:String>
 		</x:Array>
 	</UserControl.Resources>
-	
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="Copy" CanExecute="CopyCommandBinding_CanExecute" Executed="CopyCommandBinding_Executed" PreviewCanExecute="CopyCommandBinding_PreviewCanExecute" />
+	</UserControl.CommandBindings>
 
 	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
 		<DockPanel >

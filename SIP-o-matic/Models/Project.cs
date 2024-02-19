@@ -11,6 +11,7 @@ using System.Windows;
 using System.Xml.Serialization;
 using ViewModelLib;
 
+
 namespace SIP_o_matic.Models
 {
 	public class Project
