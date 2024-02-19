@@ -16,9 +16,11 @@ namespace SIP_o_matic.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated };
+		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated,Error };
 
 		private StateMachine<States, Transaction.States> fsm;
+
+		private StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction> notifyTerminatedTrigger;
 
 		public required string CallID
 		{
@@ -103,6 +105,8 @@ namespace SIP_o_matic.Models
 			MessageIndices = new uint[] { };
 			IsUpdated = false;
 
+			notifyTerminatedTrigger= new StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction>(Transaction.States.NotifyTerminated);
+
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
 			fsm.Configure(States.OnHook)
 				.Permit(Transaction.States.InviteStarted, States.Calling)
@@ -116,6 +120,7 @@ namespace SIP_o_matic.Models
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
 				.Ignore(Transaction.States.InviteProceeding)
+				.Permit(Transaction.States.InviteError,States.Error)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
 
@@ -150,7 +155,8 @@ namespace SIP_o_matic.Models
 
 				.Ignore(Transaction.States.NotifyStarted)
 				.Ignore(Transaction.States.NotifyProceeding)
-				.Permit(Transaction.States.NotifyTerminated,States.Transfered)
+				.PermitIf(notifyTerminatedTrigger, States.Transfered, AssertTransfertIsCompleted)
+				.IgnoreIf(notifyTerminatedTrigger,(t)=> {return !AssertTransfertIsCompleted(t); })
 
 				.Ignore(Transaction.States.ByeStarted)
 				.Ignore(Transaction.States.ByeProceeding)
@@ -176,6 +182,9 @@ namespace SIP_o_matic.Models
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
 				;
 
+			fsm.Configure(States.Error)
+				.Ignore(Transaction.States.AckTerminated)
+				;
 			/*fsm.Configure(States.Terminated)
 				.OnEntry(() =>
 					{
@@ -186,6 +195,17 @@ namespace SIP_o_matic.Models
 					}
 				)
 				;*/
+		}
+
+		
+
+		private bool AssertTransfertIsCompleted(Transaction Transaction)
+		{
+			NotifyTransaction? transaction;
+
+			transaction=Transaction as NotifyTransaction;
+			if (transaction == null) return false;
+			return transaction.IsTransfertCompleted;
 		}
 
 		private void CheckReplacedCallID(StateMachine<States, Transaction.States>.Transition Transition)
@@ -241,6 +261,8 @@ namespace SIP_o_matic.Models
 			oldState = State;
 
 			trigger = new StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction.States, Transaction>(Transaction.State);
+
+
 			fsm.Fire(trigger,Transaction);
 			this.MessageIndices = Transaction.MessagesIndices.ToArray();
 

@@ -24,7 +24,7 @@ namespace SIP_o_matic.Models.Transactions
 			// REFER transaction states
 			ReferStarted, ReferProceeding, ReferError, ReferTerminated,
 			// NOTIFY transaction states
-			NotifyStarted, NotifyProceeding, NotifyError, NotifyTerminated,
+			NotifyStarted, NotifyProceeding, NotifyError,  NotifyTerminated,
 			// BYE transaction states
 			ByeStarted, ByeProceeding, ByeError, ByeTerminated,
 

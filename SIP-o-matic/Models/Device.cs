@@ -24,9 +24,15 @@ namespace SIP_o_matic.Models
 			set;
 		}
 		
+		
 		public Device()
 		{
 			Addresses = new List<string>();
+		}
+
+		public override string ToString()
+		{
+			return Name;
 		}
 
 	}

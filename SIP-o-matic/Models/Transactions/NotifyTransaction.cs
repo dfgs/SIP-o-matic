@@ -19,7 +19,11 @@ namespace SIP_o_matic.Models.Transactions
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
 		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
 
-
+		public bool IsTransfertCompleted
+		{
+			get;
+			set;
+		}
 
 		protected override States TerminatedState => States.NotifyTerminated;
 
@@ -47,18 +51,45 @@ namespace SIP_o_matic.Models.Transactions
 				.PermitIf(ErrorTrigger, States.NotifyError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitIf(Prov1xxTrigger, States.NotifyProceeding,  AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitIf(Final2xxTrigger, States.NotifyTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
-				;
+				.OnEntry(CheckIfTransfertIsCompleted);
+			;
 
 			fsm.Configure(States.NotifyProceeding)
 				.PermitIf(ErrorTrigger, States.NotifyError, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitReentryIf(Prov1xxTrigger,AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				.PermitIf(Final2xxTrigger, States.NotifyTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
+				
 		}
 
-		
-		
-		
+
+
+
+
+
+
+
+
+
+		private void CheckIfTransfertIsCompleted(StateMachine<States, Triggers>.Transition Transition)
+		{
+			Request? request;
+			ContentLengthHeader? contentLengthHeader;
+
+			if (Transition.Parameters.Length == 0) return;
+
+			request = Transition.Parameters[0] as Request;
+			if (request==null) return;
+
+			contentLengthHeader = request.GetHeader<ContentLengthHeader>();
+			if (contentLengthHeader == null) return;
+
+			if (contentLengthHeader.Value == "0") return;
+
+			IsTransfertCompleted = request.Body == "SIP/2.0 200 OK\r\n";
+		}
+
+
 		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)
