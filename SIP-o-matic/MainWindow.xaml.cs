@@ -296,6 +296,38 @@ namespace SIP_o_matic
 
 		}
 
+
+		private void ExportSIPCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem != null);
+		}
+
+		private async void ExportSIPCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SaveFileDialog dialog;
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+			
+			dialog = new SaveFileDialog();
+			dialog.Title = "Save project as";
+			dialog.DefaultExt = "sip";
+			dialog.Filter = "sip files|*.sip|All files|*.*";
+
+			if (dialog.ShowDialog(this) ?? false)
+			{
+				try
+				{
+					await applicationViewModel.Projects.SelectedItem.ExportSIPAsync(dialog.FileName);
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
+			}
+		}
+
+
+
 		#endregion
 
 

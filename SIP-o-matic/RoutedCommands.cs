@@ -16,6 +16,8 @@ namespace SIP_o_matic
 
 		public static RoutedCommand OK = new RoutedCommand();
 		public static RoutedCommand Cancel = new RoutedCommand();
-		
+
+		public static RoutedCommand ExportSIP = new RoutedCommand();
+		public static RoutedCommand ExportPPT = new RoutedCommand();
 	}
 }

@@ -115,6 +115,7 @@ namespace SIP_o_matic.Models
 				;
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
+				.Ignore(Transaction.States.InviteProceeding)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
 

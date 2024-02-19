@@ -23,6 +23,7 @@
 		<CommandBinding Command="SaveAs" CanExecute="SaveAsCommandBinding_CanExecute" Executed="SaveAsCommandBinding_Executed"/>
 		<CommandBinding Command="Close" CanExecute="CloseCommandBinding_CanExecute" Executed="CloseCommandBinding_Executed"/>
 		<CommandBinding Command="Open" CanExecute="OpenFileCommandBinding_CanExecute" Executed="OpenFileCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.ExportSIP}" CanExecute="ExportSIPCommandBinding_CanExecute" Executed="ExportSIPCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>
@@ -58,6 +59,13 @@
 
 				<Button Command="{x:Static root:RoutedCommands.Analyze}"  ToolTip="Analyze project" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/bullet_go.png" Stretch="None"/>
+				</Button>
+				<Separator/>
+				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/report_disk.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.ExportPPT}"  ToolTip="Export to power point" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/page_white_powerpoint.png" Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>

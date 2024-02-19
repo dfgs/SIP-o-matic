@@ -93,6 +93,13 @@ namespace SIP_o_matic.ViewModels
 			await TryAsync(() => Project.LoadAsync(Path)).Then(result => project = result).OrThrow("Failed to open project");
 			Load(project!);
 		}
+		public async Task ExportSIPAsync(string Path)
+		{
+			if (Path == null) throw new ArgumentNullException(nameof(Path));
+
+			await TryAsync(() => Model.ExportSIPAsync(Path)).OrThrow("Failed to export project file");
+		}
+
 
 
 	}
