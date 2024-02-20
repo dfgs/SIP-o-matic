@@ -4,25 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
+			 xmlns:local="clr-namespace:SIP_o_matic"
 			 xmlns:sys="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="1200">
 
-	<UserControl.Resources>
-		<x:Array x:Key="devices" Type="sys:String">
-			<sys:String>Device #1</sys:String>
-			<sys:String>Device #2</sys:String>
-			<sys:String>Device #3</sys:String>
-		</x:Array>
-	</UserControl.Resources>
+	
 
-	<UserControl.CommandBindings>
-		<CommandBinding Command="Copy" CanExecute="CopyCommandBinding_CanExecute" Executed="CopyCommandBinding_Executed" PreviewCanExecute="CopyCommandBinding_PreviewCanExecute" />
-	</UserControl.CommandBindings>
 
-	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" >
-		<DockPanel >
-			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Devices}" x:Name="headerPanel"  >
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"  >
+		<!--DataContext="{Binding TargetNullValue={x:Static local:Consts.KeyFrames}}"-->
+		<DockPanel HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="dockPanel">
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding Devices}"   >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -39,18 +32,18 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
-			<Grid>
+			<Grid  >
 
-				<ItemsControl ItemsSource="{Binding Devices}" Background="Transparent"  >
+				<ItemsControl ItemsSource="{Binding Devices}"  >
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>
-							<StackPanel Orientation="Horizontal"/>
+							<StackPanel Orientation="Horizontal" />
 						</ItemsPanelTemplate>
 					</ItemsControl.ItemsPanel>
 					<ItemsControl.ItemTemplate>
 						<DataTemplate>
-							<ContentControl Width="300">
-								<Line X1="0.5" Y1="0" X2="0" Y2="10000" Stroke="Gray" StrokeDashArray="5 5" StrokeThickness="1" HorizontalAlignment="Center"  />
+							<ContentControl Width="300" >
+								<Path Stretch="Fill" Data="M 0,0 0,1" Stroke="Gray" StrokeDashArray="5 5" StrokeThickness="1" SnapsToDevicePixels="True"   />
 							</ContentControl>
 						</DataTemplate>
 					</ItemsControl.ItemTemplate>
@@ -59,7 +52,7 @@
 				<ListBox ItemsSource="{Binding Calls}" SelectedItem="{Binding Calls.SelectedItem}" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
-							<views:LadderPanel Devices="{Binding Devices}" ColumnWidth="300"  HorizontalAlignment="Left" VerticalAlignment="Top"  />
+							<views:LadderPanel Devices="{Binding Devices}" ColumnWidth="300"  HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="ladderPanel" />
 						</ItemsPanelTemplate>
 					</ListBox.ItemsPanel>
 					<ListBox.ItemContainerStyle>

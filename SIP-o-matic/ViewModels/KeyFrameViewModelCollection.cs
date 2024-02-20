@@ -127,6 +127,17 @@ namespace SIP_o_matic.ViewModels
 			AddInternal(keyFrameViewModel);
 		}
 
+		internal static KeyFrameViewModelCollection CreateTestData()
+		{
+			KeyFrameViewModel keyFrame;
+			KeyFrameViewModelCollection keyFrames;
+
+			keyFrames = new KeyFrameViewModelCollection(NullLogger.Instance);
+			keyFrame = KeyFrameViewModel.CreateTestData();
+			keyFrames.AddInternal(keyFrame);
+
+			return keyFrames;
+		}
 
 	}
 }

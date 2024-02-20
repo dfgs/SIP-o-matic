@@ -1,5 +1,6 @@
 ﻿using LogLib;
 using SIP_o_matic.Models;
+using SIP_o_matic.Views;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,9 +62,24 @@ namespace SIP_o_matic.ViewModels
 		{
 			base.OnLoaded();
 			Calls.Load(Model.Calls);
-
-			
 		}
 
+		internal static KeyFrameViewModel CreateTestData()
+		{
+			KeyFrameViewModel keyFrame;
+			KeyFrame model;
+
+			keyFrame = new KeyFrameViewModel(NullLogger.Instance);
+			keyFrame.TimeSpan = TimeSpan.Zero;
+
+			model = new KeyFrame(DateTime.Now);
+			model.MessageIndex = 1;
+			model.Calls.Add(new Call("abc-def1", "SBC1", "SBC2", "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
+			model.Calls.Add(new Call("abc-def2", "SBC2", "SBC3", "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
+
+			keyFrame.Load(model);
+
+			return keyFrame;
+		}
 	}
 }

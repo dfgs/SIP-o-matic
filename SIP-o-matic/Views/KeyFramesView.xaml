@@ -4,8 +4,15 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
+             xmlns:local="clr-namespace:SIP_o_matic"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+
+	<UserControl.CommandBindings>
+		<CommandBinding Command="Copy" CanExecute="CopyCommandBinding_CanExecute" Executed="CopyCommandBinding_Executed" PreviewCanExecute="CopyCommandBinding_PreviewCanExecute" />
+		<CommandBinding Command="{x:Static local:RoutedCommands.ExportPPT}" CanExecute="ExportPPTCommandBinding_CanExecute" Executed="ExportPPTCommandBinding_Executed" PreviewCanExecute="ExportPPTCommandBinding_PreviewCanExecute" />
+	</UserControl.CommandBindings>
+
 	<Grid>
 		<Grid.RowDefinitions>
 			<RowDefinition Height="*"/>
@@ -13,7 +20,7 @@
 			<RowDefinition Height="100"/>
 		</Grid.RowDefinitions>
 
-		<views:CallsView Grid.Row="0" DataContext="{Binding SelectedItem}" Background="White"/>
+		<views:CallsView Grid.Row="0" DataContext="{Binding SelectedItem}" Background="White" x:Name="callsView"/>
 		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
 		<views:FrameNavigatorView Grid.Row="2"/>

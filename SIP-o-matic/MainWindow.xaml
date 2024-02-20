@@ -53,6 +53,9 @@
 				<Button Command="SaveAs" ToolTip="Save project as" ToolTipService.ShowOnDisabled="true">
 					<Image Source="Images\disk_multiple.png"  Stretch="None"/>
 				</Button>
+				<Button Command="{x:Static root:RoutedCommands.ExportPPT}"  ToolTip="Export to power point" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/page_white_powerpoint.png" Stretch="None"/>
+				</Button>
 				<Separator/>
 				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/folder_add.png" Stretch="None"/>
@@ -64,9 +67,6 @@
 				<Separator/>
 				<!--Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true"-->
 					<!--Image Source="/Images/report_disk.png" Stretch="None"/-->
-				<!--/Button-->
-				<!--Button Command="{x:Static root:RoutedCommands.ExportPPT}"  ToolTip="Export to power point" ToolTipService.ShowOnDisabled="true"-->
-				<!--Image Source="/Images/page_white_powerpoint.png" Stretch="None"/-->
 				<!--/Button-->
 				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/page_copy.png" Stretch="None"/>
