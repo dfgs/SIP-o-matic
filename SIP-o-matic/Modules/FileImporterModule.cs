@@ -63,9 +63,18 @@ namespace SIP_o_matic.Modules
 		private async Task ExtractDevicesAsync(CancellationToken CancellationToken,  int Index)
 		{
 			IDataSource dataSource;
+			string extension;
 
-			
-			dataSource = new OracleOEMDataSource();
+			extension = System.IO.Path.GetExtension(fileNames[Index]);
+			if (extension.ToLower()==".sip")
+			{
+				dataSource = new GenericSIPDataSource();
+			}
+			else
+			{
+				dataSource = new OracleOEMDataSource();
+			}
+
 			await foreach (Device device in dataSource.EnumerateDevicesAsync(fileNames[Index]))
 			{
 				if (CancellationToken.IsCancellationRequested)
@@ -80,9 +89,20 @@ namespace SIP_o_matic.Modules
 		private async Task ExtractMessagesAsync(CancellationToken CancellationToken,  int Index)
 		{
 			IDataSource dataSource;
-			
 
-			dataSource = new OracleOEMDataSource();
+
+			string extension;
+
+			extension = System.IO.Path.GetExtension(fileNames[Index]);
+			if (extension.ToLower() == ".sip")
+			{
+				dataSource = new GenericSIPDataSource();
+			}
+			else
+			{
+				dataSource = new OracleOEMDataSource();
+			}
+
 			await foreach (Message message in dataSource.EnumerateMessagesAsync(fileNames[Index]))
 			{
 				if (CancellationToken.IsCancellationRequested)
