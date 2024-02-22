@@ -1,5 +1,5 @@
 ﻿using SIP_o_matic.DataSources;
-using SIP_o_matic.Models;
+using SIP_o_matic.corelib.Models;
 using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -20,7 +20,7 @@ using System.Windows.Shapes;
 using SIPParserLib;
 using ParserLib;
 using LogLib;
-using SIP_o_matic.Models.Transactions;
+using SIP_o_matic.corelib.Models.Transactions;
 using SIP_o_matic.Modules;
 
 

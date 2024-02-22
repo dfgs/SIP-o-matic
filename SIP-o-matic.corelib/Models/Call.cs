@@ -1,4 +1,4 @@
-﻿using SIP_o_matic.Models.Transactions;
+﻿using SIP_o_matic.corelib.Models.Transactions;
 using SIPParserLib;
 using Stateless;
 using Stateless.Graph;
@@ -10,9 +10,9 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
-using static SIP_o_matic.Models.Transactions.Transaction;
+using static SIP_o_matic.corelib.Models.Transactions.Transaction;
 
-namespace SIP_o_matic.Models
+namespace SIP_o_matic.corelib.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace SIP_o_matic.Models.Transactions
+namespace SIP_o_matic.corelib.Models.Transactions
 {
 	public class ReferTransaction:Transaction
 	{

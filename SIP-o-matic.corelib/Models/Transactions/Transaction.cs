@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIP_o_matic.Models.Transactions
+namespace SIP_o_matic.corelib.Models.Transactions
 {
 	public abstract class Transaction: ISIPMessageMatch
 	{

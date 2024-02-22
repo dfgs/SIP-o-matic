@@ -1,4 +1,4 @@
-﻿using SIP_o_matic.Models.Transactions;
+﻿using SIP_o_matic.corelib.Models.Transactions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIP_o_matic.Models
+namespace SIP_o_matic.corelib.Models
 {
 
 	public class KeyFrame:ICloneable<KeyFrame>

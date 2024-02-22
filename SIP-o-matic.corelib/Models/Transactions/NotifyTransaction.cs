@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SIP_o_matic.Models.Transactions
+namespace SIP_o_matic.corelib.Models.Transactions
 {
 	public class NotifyTransaction:Transaction
 	{

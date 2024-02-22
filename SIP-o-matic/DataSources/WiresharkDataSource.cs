@@ -1,6 +1,6 @@
 ﻿using EthernetFrameReaderLib;
 using PcapngFile;
-using SIP_o_matic.Models;
+using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

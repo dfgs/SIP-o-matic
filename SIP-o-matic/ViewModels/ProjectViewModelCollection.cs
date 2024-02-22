@@ -1,5 +1,5 @@
 ﻿using LogLib;
-using SIP_o_matic.Models;
+using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

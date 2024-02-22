@@ -126,6 +126,7 @@
     <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
     <ProjectReference Include="..\..\ViewModelLib\ViewModelLib\ViewModelLib.csproj" />
     <ProjectReference Include="..\AudiocodesSyslogLib\AudiocodesSyslogLib.csproj" />
+    <ProjectReference Include="..\SIP-o-matic.corelib\SIP-o-matic.corelib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

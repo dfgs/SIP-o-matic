@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>SIP_o_matic.corelib</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Stateless" Version="5.15.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LogLib\LogLib\LogLib.csproj" />
+    <ProjectReference Include="..\..\ModuleLib\ModuleLib\ModuleLib.csproj" />
+    <ProjectReference Include="..\..\ParserLib\ParserLib\ParserLib.csproj" />
+    <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ParserLib;
-using SIP_o_matic.Models;
+using SIP_o_matic.corelib.Models;
 using SIP_o_matic.Views;
 
 namespace SIP_o_matic.DataSources

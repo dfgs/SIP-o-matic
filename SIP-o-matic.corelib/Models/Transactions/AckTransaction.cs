@@ -4,7 +4,7 @@ using Stateless.Graph;
 using System;
 using System.Diagnostics.CodeAnalysis;
 
-namespace SIP_o_matic.Models.Transactions
+namespace SIP_o_matic.corelib.Models.Transactions
 {
 	public class AckTransaction : Transaction
     {

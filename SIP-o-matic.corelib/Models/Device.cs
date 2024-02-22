@@ -1,5 +1,4 @@
-﻿using SIP_o_matic.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SIP_o_matic.Models
+namespace SIP_o_matic.corelib.Models
 {
 	public class Device
 	{

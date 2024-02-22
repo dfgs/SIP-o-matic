@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
 
-namespace SIP_o_matic.Models
+namespace SIP_o_matic.corelib.Models
 {
     public class Message
     {

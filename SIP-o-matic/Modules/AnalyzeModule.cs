@@ -9,11 +9,12 @@ using LogLib;
 using ModuleLib;
 using ParserLib;
 using SIP_o_matic.DataSources;
-using SIP_o_matic.Models;
-using SIP_o_matic.Models.Transactions;
+using SIP_o_matic.corelib.Models;
+using SIP_o_matic.corelib.Models.Transactions;
 using SIP_o_matic.ViewModels;
 using SIPParserLib;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using SIP_o_matic.corelib;
 
 namespace SIP_o_matic.Modules
 {

@@ -1,6 +1,4 @@
-﻿using SIP_o_matic.DataSources;
-using SIP_o_matic.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SIP_o_matic.Models
+namespace SIP_o_matic.ViewModels
 {
 
 	public enum StepStatuses { Undefined,Running,Terminated,Error};
