@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using SIP_o_matic.corelib.Models;
 
-namespace SIP_o_matic.DataSources
+namespace SIP_o_matic.corelib.DataSources
 {
     public interface IDataSource
 	{

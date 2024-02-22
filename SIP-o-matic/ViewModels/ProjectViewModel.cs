@@ -1,7 +1,6 @@
-﻿using EthernetFrameReaderLib;
-using LogLib;
+﻿using LogLib;
 using PcapngFile;
-using SIP_o_matic.DataSources;
+using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.Views;
 using SIPParserLib;

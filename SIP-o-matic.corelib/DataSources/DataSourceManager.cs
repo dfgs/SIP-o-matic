@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SIP_o_matic.DataSources
+namespace SIP_o_matic.corelib.DataSources
 {
 	public class DataSourceManager
 	{

@@ -1,6 +1,6 @@
 ﻿using LogLib;
 using ModuleLib;
-using SIP_o_matic.DataSources;
+using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.ViewModels;
 using System;

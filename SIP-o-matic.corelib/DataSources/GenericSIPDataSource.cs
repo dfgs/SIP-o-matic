@@ -13,7 +13,7 @@ using System.Reflection.Metadata;
 using System.Text.Unicode;
 using System.Reflection;
 
-namespace SIP_o_matic.DataSources
+namespace SIP_o_matic.corelib.DataSources
 {
     public class GenericSIPDataSource : IDataSource
 	{

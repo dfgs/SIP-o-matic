@@ -16,7 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.Json;
-using SIP_o_matic.DataSources;
+using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.Modules;
 
 
