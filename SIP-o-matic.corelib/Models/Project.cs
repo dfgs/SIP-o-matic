@@ -78,7 +78,7 @@ namespace SIP_o_matic.corelib.Models
 				await writer.WriteLineAsync("");
 				foreach (Device device in Devices)
 				{
-					await writer.WriteLineAsync(device.Name + " (" + string.Join(", ",device.Addresses) +" )");
+					await writer.WriteLineAsync("\""+device.Name + "\" {" + string.Join(", ",device.Addresses) +" }");
 				}
 				await writer.WriteLineAsync("");
 				await writer.WriteLineAsync("");
@@ -88,12 +88,12 @@ namespace SIP_o_matic.corelib.Models
 				foreach (Message message in Messages)
 				{
 					//2023 - 01 - 02 14:03:33.2225 from 192.168.0.1 to 192.168.0.2
-					await writer.WriteLineAsync("----------------------------------------------------------------------------------------");
 					await writer.WriteLineAsync(message.Timestamp.ToString("yyyy-MM-dd HH:mm:ss.ffff") + " from " + message.SourceAddress + " to " + message.DestinationAddress);
-					await writer.WriteLineAsync("----------------------------------------------------------------------------------------");
 					await writer.WriteLineAsync(message.Content);
+					await writer.WriteLineAsync("----------------------------------------------------------------------------------------");
 				}
 
+				writer.Flush();
 			}
 
 		}

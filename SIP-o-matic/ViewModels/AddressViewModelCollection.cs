@@ -24,7 +24,7 @@ namespace SIP_o_matic.ViewModels
 			AddressViewModel addressViewModel;
 
 			if (Model.Contains(Address)) return;
-			
+			if (string.IsNullOrEmpty(Address)) return;
 			
 			Model.Add(Address);
 			addressViewModel = new AddressViewModel(Logger);

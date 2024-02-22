@@ -65,9 +65,9 @@
 					<Image Source="/Images/bullet_go.png" Stretch="None"/>
 				</Button>
 				<Separator/>
-				<!--Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true"-->
-					<!--Image Source="/Images/report_disk.png" Stretch="None"/-->
-				<!--/Button-->
+				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/report_disk.png" Stretch="None"/>
+				</Button>
 				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/page_copy.png" Stretch="None"/>
 				</Button>

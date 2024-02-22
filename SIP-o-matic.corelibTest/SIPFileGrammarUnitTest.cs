@@ -24,9 +24,13 @@ namespace SIP_o_matic.corelibTest
 			IReader reader;
 			string result;
 
-			reader = new ParserLib.StringReader("LAB-VERIZON", ' ', '\r', '\n');
+			reader = new ParserLib.StringReader("\"LAB-VERIZON\"", ' ', '\r', '\n');
 			result = SIPFileGrammar.DeviceName.Parse(reader);
 			Assert.AreEqual("LAB-VERIZON", result);
+
+			reader = new ParserLib.StringReader("\"LAB-VERIZON (Test)\"", ' ', '\r', '\n');
+			result = SIPFileGrammar.DeviceName.Parse(reader);
+			Assert.AreEqual("LAB-VERIZON (Test)", result);
 		}
 
 		[TestMethod]
@@ -61,7 +65,7 @@ namespace SIP_o_matic.corelibTest
 			IReader reader;
 			Device result;
 
-			reader = new ParserLib.StringReader("SVI-CMA (10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 )", ' ', '\r', '\n');
+			reader = new ParserLib.StringReader("\"SVI-CMA\" {10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 }", ' ', '\r', '\n');
 			result = SIPFileGrammar.Device.Parse(reader);
 			Assert.AreEqual("SVI-CMA", result.Name);
 			Assert.AreEqual(5, result.Addresses.Count);
@@ -78,7 +82,7 @@ namespace SIP_o_matic.corelibTest
 			IReader reader;
 			Device[] result;
 
-			reader = new ParserLib.StringReader("SVI-CMA (10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 )\r\nGenesys-SIP-Proxy-CMA (10.91.219.12, 10.45.213.147 )", ' ','\r','\n');
+			reader = new ParserLib.StringReader("\"SVI-CMA\" {10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 }\r\n\"Genesys-SIP-Proxy-CMA\" {10.91.219.12, 10.45.213.147 }", ' ','\r','\n');
 			result = SIPFileGrammar.Devices.Parse(reader).ToArray();
 
 			Assert.AreEqual(2, result.Length);
@@ -91,7 +95,7 @@ namespace SIP_o_matic.corelibTest
 			IReader reader;
 			Device[] result;
 
-			reader = new ParserLib.StringReader("[Devices]\r\n\r\nSVI-CMA (10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 )\r\nGenesys-SIP-Proxy-CMA (10.91.219.12, 10.45.213.147 )", ' ', '\r', '\n');
+			reader = new ParserLib.StringReader("[Devices]\r\n\r\n\"SVI-CMA\" {10.45.196.12, 10.45.213.211, 10.91.226.66, 10.91.226.67, 10.45.196.11 }\r\n\"Genesys-SIP-Proxy-CMA\" {10.91.219.12, 10.45.213.147 }", ' ', '\r', '\n');
 			result = SIPFileGrammar.DeviceEnumerator.Parse(reader).ToArray();
 
 			Assert.AreEqual(2, result.Length);
@@ -142,6 +146,33 @@ namespace SIP_o_matic.corelibTest
 			Assert.AreEqual(484, result.Millisecond);
 			Assert.AreEqual(600, result.Microsecond);
 		}
+
+
+		[TestMethod]
+		public void ShouldParseContentLine()
+		{
+			IReader reader;
+			string result;
+
+			reader = new ParserLib.StringReader("INVITE sip:+33251886806@10.91.254.17:5060;user=phone SIP/2.0\r\n");
+			result = SIPFileGrammar.ContentLine.Parse(reader);
+			Assert.AreEqual("INVITE sip:+33251886806@10.91.254.17:5060;user=phone SIP/2.0\r\n", result);
+		}
+
+		[TestMethod]
+		public void ShouldParseContentLines()
+		{
+			IReader reader;
+			string[] result;
+
+			reader = new ParserLib.StringReader("INVITE sip:+33251886806@10.91.254.17:5060;user=phone SIP/2.0\r\nVia: SIP/2.0/UDP 10.253.0.2:5060;branch=z9hG4bKfdgbcl10a8lrp5egi7h0.1\r\n");
+			result = SIPFileGrammar.ContentLines.Parse(reader).ToArray();
+
+			Assert.AreEqual(2, result.Length);
+			Assert.AreEqual("INVITE sip:+33251886806@10.91.254.17:5060;user=phone SIP/2.0\r\n", result[0]);
+			Assert.AreEqual("Via: SIP/2.0/UDP 10.253.0.2:5060;branch=z9hG4bKfdgbcl10a8lrp5egi7h0.1\r\n", result[1]);
+		}
+
 
 
 	}

@@ -12,7 +12,12 @@ namespace SIP_o_matic.corelib.DataSources
 	{
 		
 		public static ISingleParser<string> DevicesHeader = Parse.String("[Devices]", true);
-		public static ISingleParser<string> DeviceName = Parse.Except('(').OneOrMoreTimes().ToStringParser();
+		public static ISingleParser<string> DeviceName =
+			from _1 in Parse.Char('"')
+			from name in Parse.Except('"').ReaderIncludes(' ').OneOrMoreTimes().ToStringParser()
+			from _2 in Parse.Char('"')
+			select name;
+
 
 		public static ISingleParser<string> IPAddress = Parse.Digit().OneOrMoreTimes().ToStringParser().Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).ToStringParser();
 
@@ -21,9 +26,9 @@ namespace SIP_o_matic.corelib.DataSources
 		public static IMultipleParser<string> IPAddresses = IPAddress.List(Parse.Char(','));
 
 		public static ISingleParser<Device> Device = from name in DeviceName
-													 from _1 in Parse.Char('(')
+													 from _1 in Parse.Char('{')
 													 from adresses in IPAddresses
-													 from _2 in Parse.Char(')')
+													 from _2 in Parse.Char('}')
 													 select new Device(name,adresses);
 		public static IMultipleParser<Device> Devices = Device.ZeroOrMoreTimes();
 
@@ -33,7 +38,15 @@ namespace SIP_o_matic.corelib.DataSources
 		public static ISingleParser<string> MessagesHeader = Parse.String("[Messages]", true);
 		public static ISingleParser<string> SeparatorLine = Parse.Char('-').OneOrMoreTimes().ToStringParser();
 
-		public static ISingleParser<string> Content = Parse.Except('-').Then(Parse.Except('\r').OneOrMoreTimes()).ReaderIncludes('\r', '\n', ' ').ToStringParser();
+
+		public static ISingleParser<string> LineFeed = Parse.String("\r\n").ReaderIncludes('\r', '\n', ' ');
+
+		public static ISingleParser<string> FullLine = from content in Parse.Except('-').Then(Parse.Except('\r').ReaderIncludes('\r', '\n', ' ').OneOrMoreTimes()).ToStringParser()
+														  from LF in LineFeed
+														  select content+LineFeed;
+		public static ISingleParser<string> ContentLine = LineFeed.Or(FullLine);
+
+		public static IMultipleParser<string> ContentLines = ContentLine.OneOrMoreTimes();
 
 		public static ISingleParser<DateTime> Date =
 			from year in Parse.Int()
@@ -51,14 +64,15 @@ namespace SIP_o_matic.corelib.DataSources
 			from milliSeconds in Parse.Int()
 			select new DateTime(year, month, day, hours, minutes, seconds, milliSeconds/10,milliSeconds%10 *100);
 
-		public static ISingleParser<Message> Message = from _1 in SeparatorLine
-													   from timeStamp in Date
+		public static ISingleParser<Message> Message = from timeStamp in Date
 													   from _2 in Parse.String("from", true)
 													   from source in IPAddress
 													   from _3 in Parse.String("to", true)
 													   from destination in IPAddress
-													   from content in Content
-													   select new Message(0, timeStamp, source, destination, content);
+													   from _4 in LineFeed
+													   from content in ContentLines
+													   from _1 in SeparatorLine
+													   select new Message(0, timeStamp, source, destination, string.Join("",content));
 
 		public static IMultipleParser<Message> Messages = Message.ZeroOrMoreTimes();
 
@@ -67,7 +81,7 @@ namespace SIP_o_matic.corelib.DataSources
 																 select devices.ToArray();
 
 		public static ISingleParser<Message[]> MessageEnumerator = from _1 in DevicesHeader
-																 from devices in Devices
+																   from devices in Devices
 																   from _2 in MessagesHeader
 																   from messages in Messages
 																   select messages.ToArray();
