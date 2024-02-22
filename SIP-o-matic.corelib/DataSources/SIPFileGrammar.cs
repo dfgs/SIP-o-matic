@@ -40,7 +40,7 @@ namespace SIP_o_matic.corelib.DataSources
 			from _1 in Parse.Char('-')
 			from month in Parse.Int()
 			from _2 in Parse.Char('-')
-			from day in Parse.Int()
+			from day in Parse.Int().ReaderIncludes(' ')
 			from _3 in Parse.Char(' ').ReaderIncludes(' ')
 			from hours in Parse.Int()
 			from _4 in Parse.Char(':')
@@ -49,7 +49,7 @@ namespace SIP_o_matic.corelib.DataSources
 			from seconds in Parse.Int()
 			from _6 in Parse.Char('.')
 			from milliSeconds in Parse.Int()
-			select new DateTime(year, month, day, hours, minutes, seconds, milliSeconds);
+			select new DateTime(year, month, day, hours, minutes, seconds, milliSeconds/10,milliSeconds%10 *100);
 
 		public static ISingleParser<Message> Message = from _1 in SeparatorLine
 													   from timeStamp in Date
