@@ -14,7 +14,7 @@ namespace SIP_o_matic.corelib.DataSources
 		public static ISingleParser<string> DevicesHeader = Parse.String("[Devices]", true);
 		public static ISingleParser<string> DeviceName = Parse.Except('(').OneOrMoreTimes().ToStringParser();
 
-		public static ISingleParser<string> IPAddress = Parse.Digit().ToStringParser().Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().ToStringParser()).ToStringParser();
+		public static ISingleParser<string> IPAddress = Parse.Digit().OneOrMoreTimes().ToStringParser().Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).Then(Parse.Char('.').ToStringParser()).Then(Parse.Digit().OneOrMoreTimes().ToStringParser()).ToStringParser();
 
 
 
