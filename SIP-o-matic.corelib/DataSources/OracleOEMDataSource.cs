@@ -54,7 +54,7 @@ namespace SIP_o_matic.corelib.DataSources
 			string name, addresses;
 			string sourceAddress, destinationAddress;
 			List<Device> devices;
-			int srcDeviceIndex,dstDeviceIndex;
+			int? srcDeviceIndex,dstDeviceIndex;
 			Dictionary<int, Device> deviceDictionary;
 
 			devices = new List<Device>();
@@ -95,7 +95,7 @@ namespace SIP_o_matic.corelib.DataSources
 					}
 					devices.Add(_device);
 
-					deviceDictionary.Add(srcDeviceIndex, _device);
+					deviceDictionary.Add(srcDeviceIndex.Value, _device);
 				}
 				#endregion
 
@@ -118,14 +118,21 @@ namespace SIP_o_matic.corelib.DataSources
 					sourceAddress = GetIPAddress(node!["src_ip"]!.GetValue<string>());
 					destinationAddress = GetIPAddress(node!["dst_ip"]!.GetValue<string>());
 
-					srcDeviceIndex = node!["src_device"]!.GetValue<int>();
-					dstDeviceIndex = node!["dst_device"]!.GetValue<int>();
+					srcDeviceIndex = node!["src_device"]?.GetValue<int>();
+					dstDeviceIndex = node!["dst_device"]?.GetValue<int>();
 
-					_device = deviceDictionary[srcDeviceIndex];
-					if (!_device.Addresses.Contains(sourceAddress)) _device.Addresses.Add(sourceAddress);
-
-					_device = deviceDictionary[dstDeviceIndex];
-					if (!_device.Addresses.Contains(destinationAddress)) _device.Addresses.Add(destinationAddress);
+					if (srcDeviceIndex.HasValue)
+					{
+						_device = deviceDictionary[srcDeviceIndex.Value];
+						if (!_device.Addresses.Contains(sourceAddress)) _device.Addresses.Add(sourceAddress);
+					}
+					
+					if (dstDeviceIndex.HasValue)
+					{
+						_device = deviceDictionary[dstDeviceIndex.Value];
+						if (!_device.Addresses.Contains(destinationAddress)) _device.Addresses.Add(destinationAddress);
+					}
+					
 					///yield return message;
 				}
 				#endregion

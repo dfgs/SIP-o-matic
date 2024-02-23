@@ -64,10 +64,17 @@ namespace SIP_o_matic.corelib.Models.Transactions
 				.PermitIf(Final2xxTrigger, States.InviteTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
 				;
 
+			fsm.Configure(States.InviteError)
+				.PermitIf(Prov1xxTrigger, States.InviteProceeding, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Prov180Trigger, States.InviteRinging, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				.PermitIf(Final2xxTrigger, States.InviteTerminated, AssertMessageBelongsToTransaction, TransactionErrorMessage)
+				;
+
+
 		}
 
-		
-		
+
+
 		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
 			switch (Response.StatusLine.StatusCode)

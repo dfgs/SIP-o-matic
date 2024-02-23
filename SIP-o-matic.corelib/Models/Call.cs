@@ -114,6 +114,7 @@ namespace SIP_o_matic.corelib.Models
 			fsm.Configure(States.Calling)
 				.Ignore(Transaction.States.InviteStarted)
 				.PermitReentry(Transaction.States.InviteProceeding)
+				.Permit(Transaction.States.InviteError, States.Error)
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
@@ -135,6 +136,7 @@ namespace SIP_o_matic.corelib.Models
 
 				.Ignore(Transaction.States.ReferStarted)
 				.Ignore(Transaction.States.ReferProceeding)
+				.Ignore(Transaction.States.ReferError)
 				.Permit(Transaction.States.ReferTerminated, States.Transfering)
 
 				.Ignore(Transaction.States.ByeStarted)
@@ -184,17 +186,13 @@ namespace SIP_o_matic.corelib.Models
 
 			fsm.Configure(States.Error)
 				.Ignore(Transaction.States.AckTerminated)
+				.Ignore(Transaction.States.InviteStarted)
+				.Permit(Transaction.States.InviteProceeding,States.Calling)
+				.PermitReentry(Transaction.States.InviteError)
+				.Permit(Transaction.States.InviteRinging, States.Ringing)
+				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
-			/*fsm.Configure(States.Terminated)
-				.OnEntry(() =>
-					{
-						if (CallID == "SDo2pg901-c155e675bb01dc8ff7638df0e6c6c83f-v300g00")
-						{
-							int t = 0;
-						}
-					}
-				)
-				;*/
+
 		}
 
 		
