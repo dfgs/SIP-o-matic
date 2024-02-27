@@ -15,6 +15,7 @@ using SIP_o_matic.ViewModels;
 using SIPParserLib;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using SIP_o_matic.corelib;
+using System.Windows.Media.Animation;
 
 namespace SIP_o_matic.Modules
 {
@@ -32,8 +33,10 @@ namespace SIP_o_matic.Modules
 		private DateTime firstEvent;
 
 		private List<string> legs;
-		private List<string> colors;
-		private ColorManager colorManager;
+		private List<string> callColors;
+		private ColorManager callColorManager;
+		private List<string> messageColors;
+		private ColorManager messageColorManager;
 
 
 		public AnalyzeModule(ILogger Logger, ProjectViewModel Project) : base(Logger)
@@ -44,8 +47,11 @@ namespace SIP_o_matic.Modules
 			this._project= Project;
 
 			legs = new List<string>();
-			colors = new List<string>();
-			colorManager = new ColorManager(10);
+			callColors = new List<string>();
+			callColorManager = new ColorManager(10);
+
+			messageColors = new List<string>();
+			messageColorManager = new ColorManager(10);
 
 
 			Transactions = new List<Transaction>();
@@ -57,12 +63,15 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
+			step = new ProgressStep() { Label = "Format messages frame", TaskFactory = FormatMessagesFrameAsync };
+			step.MaximumGetter = () => 1;
+			step.Init();
+			progressSteps.Add(step);
 
 			step = new ProgressStep() { Label = "Create key frames", TaskFactory = CreateKeyFramesAsync };
 			step.MaximumGetter = () => _project.Messages.Count;
 			step.Init();
 			progressSteps.Add(step);
-
 
 			step = new ProgressStep() { Label = "Format key frames", TaskFactory = FormatKeyFramesAsync };
 			step.MaximumGetter = () => _project.KeyFrames.Count;
@@ -110,16 +119,30 @@ namespace SIP_o_matic.Modules
 
 			key = Caller + "/" + Callee;
 
-			index = colors.IndexOf(key);
+			index = callColors.IndexOf(key);
 			if (index == -1)
 			{
-				index = colors.Count;
-				colors.Add(key);
+				index = callColors.Count;
+				callColors.Add(key);
 			}
 
-			return colorManager.GetColorString(index);
+			return callColorManager.GetColorString(index);
+		}
+		private string GetColor(string CallID, string ViaBranch,string CSeq)
+		{
+			int index;
+			string key;
 
+			key = CallID + "/" + ViaBranch+"/"+CSeq;
 
+			index = messageColors.IndexOf(key);
+			if (index == -1)
+			{
+				index = messageColors.Count;
+				messageColors.Add(key);
+			}
+
+			return messageColorManager.GetColorString(index);
 		}
 
 
@@ -248,20 +271,23 @@ namespace SIP_o_matic.Modules
 
 		}
 
-		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, ProjectViewModel Project, SIPMessage SIPMessage, MessageViewModel Message)
+		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, ProjectViewModel Project,  MessageViewModel Message)
 		{
-			string sourceDevice,destinationDevice;
 
 			LogEnter();
 			
 			
-			sourceDevice = Project.Devices.FindDeviceByAddress(Message.SourceAddress)?.Name ?? Message.SourceAddress;
-			destinationDevice = Project.Devices.FindDeviceByAddress(Message.DestinationAddress)?.Name ?? Message.DestinationAddress;
-
-			switch (SIPMessage)
+			if (Message.SIPMessage==null)
 			{
-				case Request request:return await UpdateKeyFrameAsync(KeyFrame, request, sourceDevice, destinationDevice,Message.Index);
-				case Response response:return await UpdateKeyFrameAsync(KeyFrame, response, sourceDevice, destinationDevice, Message.Index);
+				string error = "No parsed SIP message found";
+				Log(LogLevels.Error, error);
+				throw new InvalidOperationException(error);
+			}
+
+			switch (Message.SIPMessage)
+			{
+				case Request request:return await UpdateKeyFrameAsync(KeyFrame, request, Message.SourceDevice, Message.DestinationDevice, Message.Index);
+				case Response response:return await UpdateKeyFrameAsync(KeyFrame, response, Message.SourceDevice, Message.DestinationDevice, Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
@@ -272,9 +298,6 @@ namespace SIP_o_matic.Modules
 
 		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, int Index)
 		{
-			StringReader reader;
-			SIPMessage sipMessage;
-
 			KeyFrame newKeyFrame;
 			MessageViewModel message;
 
@@ -287,20 +310,8 @@ namespace SIP_o_matic.Modules
 				return;
 			}
 
-
 			message = _project.Messages[Index];
 
-			reader = new StringReader(message.Content, ' ');
-			try
-			{
-				sipMessage = SIPGrammar.SIPMessage.Parse(reader);
-			}
-			catch (Exception ex)
-			{
-				string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-			}
 
 			try
 			{
@@ -317,7 +328,7 @@ namespace SIP_o_matic.Modules
 
 				newKeyFrame.MessageIndex = message.Index;
 
-				if (await UpdateKeyFrameAsync(newKeyFrame,_project, sipMessage, message))
+				if (await UpdateKeyFrameAsync(newKeyFrame,_project,  message))
 				{
 					_project.KeyFrames.Add(newKeyFrame);
 				}
@@ -400,6 +411,71 @@ namespace SIP_o_matic.Modules
 		}
 
 
+
+
+		private async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, MessagesFrameViewModel MessagesFrame)
+		{
+			StringReader reader;
+			string callID;
+			string viaBranch;
+			string cseq;
+
+
+
+			await foreach (MessageViewModel message in _project.Messages.ToAsyncEnumerable())
+			{
+				if (CancellationToken.IsCancellationRequested)
+				{
+					Log(LogLevels.Information, "Task cancelled");
+					break;
+				}
+
+
+				message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress;
+				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress;
+
+
+				reader = new StringReader(message.Content, ' ');
+				try
+				{
+					message.SIPMessage = SIPGrammar.SIPMessage.Parse(reader);
+				}
+				catch (Exception ex)
+				{
+					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
+					Log(LogLevels.Error, error);
+					throw new InvalidOperationException(error);
+				}
+
+				callID = message.SIPMessage.GetCallID();
+				viaBranch = message.SIPMessage.GetViaBranch();
+				cseq = message.SIPMessage.GetCSeq();
+
+				message.Color = GetColor(callID, viaBranch, cseq);
+
+				MessagesFrame.Messages.Add(message);
+			}
+
+		}
+		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
+		{
+			MessagesFrameViewModel messageFrame;
+
+			LogEnter();
+
+			if (CancellationToken.IsCancellationRequested)
+			{
+				Log(LogLevels.Information, "Task cancelled");
+				return;
+			}
+
+			if (_project.Messages.Count == 0) return;
+
+			messageFrame = new MessagesFrameViewModel(_project.Logger);
+			await FormatMessagesFrameAsync(CancellationToken, messageFrame);
+			_project.MessagesFrame = messageFrame;
+
+		}
 
 
 	}

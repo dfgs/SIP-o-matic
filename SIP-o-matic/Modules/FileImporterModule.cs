@@ -106,7 +106,6 @@ namespace SIP_o_matic.Modules
 		private async Task ExtractMessagesAsync(CancellationToken CancellationToken,  int Index)
 		{
 			IDataSource dataSource;
-			MessageViewModel messageViewModel;
 
 			dataSource = dataSources[Index];
 			foreach (Message message in dataSource.EnumerateMessages())
@@ -117,11 +116,7 @@ namespace SIP_o_matic.Modules
 					return;
 				}
 
-				messageViewModel=project.Messages.Add(message);
-
-				messageViewModel.SourceDevice = project.Devices.FindDeviceByAddress(messageViewModel.SourceAddress)?.Name ?? messageViewModel.SourceAddress;
-				messageViewModel.DestinationDevice = project.Devices.FindDeviceByAddress(messageViewModel.DestinationAddress)?.Name ?? messageViewModel.DestinationAddress;
-
+				project.Messages.Add(message);
 				await Task.Delay(1);
 			}
 		}

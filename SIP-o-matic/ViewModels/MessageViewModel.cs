@@ -1,5 +1,6 @@
 ﻿using LogLib;
 using SIP_o_matic.corelib.Models;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,16 @@ namespace SIP_o_matic.ViewModels
 		{
 			get =>Model.Content;
 		}
+		public string Color
+		{
+			get;
+			set;
+		}
+		public SIPMessage? SIPMessage
+		{
+			get;
+			set;
+		}
 
 		public string SourceAddress
 		{
@@ -36,15 +47,17 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public string? SourceDevice
+		private string? sourceDevice;
+		public string SourceDevice
 		{
-			get;
-			set;
+			get => sourceDevice ?? SourceAddress;
+			set => this.sourceDevice = value;
 		}
-		public string? DestinationDevice
+		private string? destinationDevice;
+		public string DestinationDevice
 		{
-			get;
-			set;
+			get => destinationDevice ?? DestinationAddress;
+			set => this.destinationDevice = value;
 		}
 
 		public IEnumerable<string> Devices
@@ -61,8 +74,21 @@ namespace SIP_o_matic.ViewModels
 			get { return (bool)GetValue(IsFlippedProperty); }
 			set { SetValue(IsFlippedProperty, value); }
 		}
+
+		public string Description
+		{
+			get
+			{
+				if (SIPMessage == null) return "Undefined";
+				else if (SIPMessage is Request request) return $"[{Index}] {request.RequestLine}";
+				else if (SIPMessage is Response response) return $"[{Index}] {response.StatusLine}";
+				return "Undefined";
+			}
+		}
+
 		public MessageViewModel(ILogger Logger) : base(Logger)
 		{
+			
 		}
 
 	}

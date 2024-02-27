@@ -22,7 +22,7 @@
 				<views:KeyFramesView DataContext="{Binding KeyFrames}"/>
 			</TabItem>
 			<TabItem Header="Messages">
-				<views:MessagesView DataContext="{Binding}"/>
+				<views:MessagesView DataContext="{Binding MessagesFrame}"/>
 			</TabItem>
 		
 		</TabControl>

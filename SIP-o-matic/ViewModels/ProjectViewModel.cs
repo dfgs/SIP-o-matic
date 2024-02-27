@@ -40,11 +40,7 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
-		public IEnumerable<string> FilteredDevices
-		{
-			get => 
-				Messages.SelectMany(message => message.Devices).Distinct();
-		}
+		
 
 		public MessageViewModelCollection Messages
 		{
@@ -60,11 +56,23 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
+
+		public static readonly DependencyProperty MessagesFrameProperty = DependencyProperty.Register("MessagesFrame", typeof(MessagesFrameViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public MessagesFrameViewModel MessagesFrame
+		{
+			get { return (MessagesFrameViewModel)GetValue(MessagesFrameProperty); }
+			set { SetValue(MessagesFrameProperty, value); }
+		}
+
+
+
+
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			Devices = new DeviceViewModelCollection(Logger);
 			Messages = new MessageViewModelCollection(Logger);
 			KeyFrames = new KeyFrameViewModelCollection(Logger);
+			MessagesFrame = new MessagesFrameViewModel(Logger);
 		}
 
 		protected override void OnLoaded()
@@ -73,11 +81,13 @@ namespace SIP_o_matic.ViewModels
 			Devices.Load(Model.Devices);
 			Messages.Load(Model.Messages);
 			KeyFrames.Load(Model.KeyFrames);
+			MessagesFrame.Load("");
 		}
 
 		public void ClearKeyFrames()
 		{
 			KeyFrames.Clear();
+			MessagesFrame.Clear();
 		}
 
 		public async Task SaveAsync(string Path)
