@@ -73,9 +73,14 @@ namespace SIP_o_matic.Modules
 			string extension;
 
 			extension = System.IO.Path.GetExtension(fileNames[Index]);
+			
 			if (extension.ToLower() == ".sip")
 			{
 				dataSource = new GenericSIPDataSource();
+			}
+			else if (extension.ToLower() == ".log")
+			{
+				dataSource = new AlcatelSIPTraceDataSource();
 			}
 			else
 			{
