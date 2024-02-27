@@ -6,23 +6,7 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <ListBox ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}">
-		<ListBox.ItemTemplate>
-			<DataTemplate>
-				<StackPanel>
-					<StackPanel Orientation="Horizontal">
-						<TextBlock Foreground="Gray" Text="{Binding Index,StringFormat='[{0}]'}"/>
-						<TextBlock Foreground="Gray" Text=" "/>
-						<TextBlock Foreground="Gray" Text="{Binding Timestamp}"/>
-						<TextBlock Foreground="Gray" Text=" "/>
-						<TextBlock Foreground="Gray" Text="{Binding SourceAddress}"/>
-						<TextBlock Foreground="Gray" Text=" -> "/>
-						<TextBlock Foreground="Gray" Text="{Binding DestinationAddress}"/>
-					</StackPanel>
-					<TextBlock Text="{Binding Content}"/>
-				</StackPanel>
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-            
-    </ListBox>
+
+	<views:LadderView Devices="{Binding FilteredDevices}" ItemsSource="{Binding Messages}"/>
+
 </UserControl>

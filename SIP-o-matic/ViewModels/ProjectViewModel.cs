@@ -40,6 +40,11 @@ namespace SIP_o_matic.ViewModels
 			get;
 			private set;
 		}
+		public IEnumerable<string> FilteredDevices
+		{
+			get => 
+				Messages.SelectMany(message => message.Devices).Distinct();
+		}
 
 		public MessageViewModelCollection Messages
 		{

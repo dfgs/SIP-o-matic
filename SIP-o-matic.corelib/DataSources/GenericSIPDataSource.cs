@@ -15,14 +15,18 @@ using System.Reflection;
 
 namespace SIP_o_matic.corelib.DataSources
 {
-    public class GenericSIPDataSource : IDataSource
+	public class GenericSIPDataSource : IDataSource
 	{
+		private List<Device> devices;
+		private List<Message> messages;
 
 		public string Description => "Generic SIP";
 
 
 		public GenericSIPDataSource()
 		{
+			devices = new List<Device>();
+			messages = new List<Message>();
 		}
 
 		public IEnumerable<string> GetSupportedFileExts()
@@ -30,42 +34,46 @@ namespace SIP_o_matic.corelib.DataSources
 			yield return "sip";
 		}
 
-		
 
-		public async IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName)
+
+		public async Task LoadAsync(string FileName)
 		{
 			ParserLib.StreamReader streamReader;
-
-			using (FileStream stream = new FileStream(FileName, FileMode.Open))
-			{
-				streamReader = new ParserLib.StreamReader(stream, ' ', '\r', '\n');
-				await foreach(Device device in SIPFileGrammar.DeviceEnumerator.Parse(streamReader).ToAsyncEnumerable())
-				{
-					yield return device;
-				}
-			}
-
-		}//*/
-
-
-		public async IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName)
-		{
 			uint index;
-			ParserLib.StreamReader streamReader;
 
 			index = 0;
+			devices.Clear();
+			messages.Clear();
+
 			using (FileStream stream = new FileStream(FileName, FileMode.Open))
 			{
 				streamReader = new ParserLib.StreamReader(stream, ' ', '\r', '\n');
+				await foreach (Device device in SIPFileGrammar.DeviceEnumerator.Parse(streamReader).ToAsyncEnumerable())
+				{
+					devices.Add(device);
+				}
 				await foreach (Message message in SIPFileGrammar.MessageEnumerator.Parse(streamReader).ToAsyncEnumerable())
 				{
 					message.Index = index;
 					index++;
-					yield return message;
+					messages.Add(message);
 				}
 			}
 		}
 
-		
+		public IEnumerable<Device> EnumerateDevices()
+		{
+			return devices;
+		}
+
+
+
+		public IEnumerable<Message> EnumerateMessages()
+		{
+			return messages;
+		}
+
+
+
 	}
 }

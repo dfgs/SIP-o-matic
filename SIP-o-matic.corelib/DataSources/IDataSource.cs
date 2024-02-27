@@ -9,15 +9,18 @@ namespace SIP_o_matic.corelib.DataSources
 {
     public interface IDataSource
 	{
-		IAsyncEnumerable<Message> EnumerateMessagesAsync(string FileName);
-		IAsyncEnumerable<Device> EnumerateDevicesAsync(string FileName);
-
-		IEnumerable<string> GetSupportedFileExts();
-
 		string Description
 		{
 			get;
 		}
+
+		IEnumerable<Message> EnumerateMessages();
+		IEnumerable<Device> EnumerateDevices();
+
+		IEnumerable<string> GetSupportedFileExts();
+
+		Task LoadAsync(string FileName);
+
 
 	}
 }

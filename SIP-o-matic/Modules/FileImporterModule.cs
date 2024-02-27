@@ -23,6 +23,8 @@ namespace SIP_o_matic.Modules
 		private string[] fileNames;
 		private ProjectViewModel project;
 
+		private List<IDataSource> dataSources;
+
 		public FileImporterModule(ILogger Logger, ProjectViewModel Project,IEnumerable<string> FileNames) : base(Logger)
 		{
 			ProgressStep step;
@@ -33,9 +35,14 @@ namespace SIP_o_matic.Modules
 
 			this.project = Project;
 			this.fileNames = FileNames.ToArray();
-
+			dataSources = new List<IDataSource>();
 
 			progressSteps = new List<ProgressStep>();
+
+			step = new ProgressStep() { Label = "Import file", TaskFactory = ImportFilesAsync };
+			step.MaximumGetter = () => fileNames.Length;
+			step.Init();
+			progressSteps.Add(step);
 
 			step = new ProgressStep() { Label="Extract devices", TaskFactory = ExtractDevicesAsync };
 			step.MaximumGetter = () => fileNames.Length;
@@ -59,38 +66,10 @@ namespace SIP_o_matic.Modules
 			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
 			await Task.Delay(1000);
 		}
-
-		private async Task ExtractDevicesAsync(CancellationToken CancellationToken,  int Index)
+		
+		private async Task ImportFilesAsync(CancellationToken CancellationToken, int Index)
 		{
 			IDataSource dataSource;
-			string extension;
-
-			extension = System.IO.Path.GetExtension(fileNames[Index]);
-			if (extension.ToLower()==".sip")
-			{
-				dataSource = new GenericSIPDataSource();
-			}
-			else
-			{
-				dataSource = new OracleOEMDataSource();
-			}
-
-			await foreach (Device device in dataSource.EnumerateDevicesAsync(fileNames[Index]))
-			{
-				if (CancellationToken.IsCancellationRequested)
-				{
-					Log(LogLevels.Information, "Task cancelled");
-					return;
-				}
-				project.Devices.Add(device);
-			}
-		}
-
-		private async Task ExtractMessagesAsync(CancellationToken CancellationToken,  int Index)
-		{
-			IDataSource dataSource;
-
-
 			string extension;
 
 			extension = System.IO.Path.GetExtension(fileNames[Index]);
@@ -102,15 +81,48 @@ namespace SIP_o_matic.Modules
 			{
 				dataSource = new OracleOEMDataSource();
 			}
+			dataSources.Add(dataSource);
+			await dataSource.LoadAsync(fileNames[Index]);
+		}
 
-			await foreach (Message message in dataSource.EnumerateMessagesAsync(fileNames[Index]))
+		private async Task ExtractDevicesAsync(CancellationToken CancellationToken,  int Index)
+		{
+			IDataSource dataSource;
+
+
+			dataSource = dataSources[Index];
+			foreach (Device device in dataSource.EnumerateDevices())
 			{
 				if (CancellationToken.IsCancellationRequested)
 				{
 					Log(LogLevels.Information, "Task cancelled");
 					return;
 				}
-				project.Messages.Add(message);
+				project.Devices.Add(device);
+				await Task.Delay(1);
+			}
+		}
+
+		private async Task ExtractMessagesAsync(CancellationToken CancellationToken,  int Index)
+		{
+			IDataSource dataSource;
+			MessageViewModel messageViewModel;
+
+			dataSource = dataSources[Index];
+			foreach (Message message in dataSource.EnumerateMessages())
+			{
+				if (CancellationToken.IsCancellationRequested)
+				{
+					Log(LogLevels.Information, "Task cancelled");
+					return;
+				}
+
+				messageViewModel=project.Messages.Add(message);
+
+				messageViewModel.SourceDevice = project.Devices.FindDeviceByAddress(messageViewModel.SourceAddress)?.Name ?? messageViewModel.SourceAddress;
+				messageViewModel.DestinationDevice = project.Devices.FindDeviceByAddress(messageViewModel.DestinationAddress)?.Name ?? messageViewModel.DestinationAddress;
+
+				await Task.Delay(1);
 			}
 		}
 

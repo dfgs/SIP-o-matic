@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="SIP_o_matic.Views.LadderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:views="clr-namespace:SIP_o_matic.Views"
+             mc:Ignorable="d" x:Name="root"
+             d:DesignHeight="450" d:DesignWidth="800">
+	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"  >
+		<!--DataContext="{Binding TargetNullValue={x:Static local:Consts.KeyFrames}}"-->
+		<DockPanel HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="dockPanel">
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}"   >
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<StackPanel Orientation="Horizontal"/>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Border BorderBrush="Gray" Background="WhiteSmoke" BorderThickness="1" Width="300" CornerRadius="5" Margin="5" ToolTip="{Binding}" >
+							<Border.Effect>
+								<DropShadowEffect  BlurRadius="5" Opacity="0.25"/>
+							</Border.Effect>
+							<TextBlock Text="{Binding}" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="5"  FontSize="20"/>
+						</Border>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+			<Grid>
+				<ItemsControl ItemsSource="{Binding ElementName=root,Path=Devices}"  >
+					<ItemsControl.ItemsPanel>
+						<ItemsPanelTemplate>
+							<StackPanel Orientation="Horizontal" />
+						</ItemsPanelTemplate>
+					</ItemsControl.ItemsPanel>
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<ContentControl Width="300" >
+								<Path Stretch="Fill" Data="M 0,0 0,1" Stroke="Gray" StrokeDashArray="5 5" StrokeThickness="1" SnapsToDevicePixels="True"   />
+							</ContentControl>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+
+				<ListBox ItemsSource="{Binding ElementName=root,Path=ItemsSource}" SelectedItem="{Binding ElementName=root, Path=ItemsSource.SelectedItem}" 
+									ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0"
+									ItemTemplate="{Binding ElementName=root,Path=ItemTemplate}">
+					<ListBox.ItemsPanel>
+						<ItemsPanelTemplate>
+							<views:LadderPanel Devices="{Binding ElementName=root,Path=Devices}" ColumnWidth="300"  HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="ladderPanel" />
+						</ItemsPanelTemplate>
+					</ListBox.ItemsPanel>
+					<ListBox.ItemContainerStyle>
+						<Style TargetType="{x:Type ListBoxItem}">
+							<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+							<Setter Property="views:LadderPanel.SourceDevice" Value="{Binding SourceDevice}"/>
+							<Setter Property="views:LadderPanel.DestinationDevice" Value="{Binding DestinationDevice}"/>
+							<Setter Property="views:LadderPanel.IsFlipped" Value="{Binding IsFlipped}"/>
+						</Style>
+					</ListBox.ItemContainerStyle>
+					
+				</ListBox>
+			</Grid>
+		</DockPanel>
+	</ScrollViewer>
+</UserControl>
