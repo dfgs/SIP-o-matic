@@ -15,9 +15,9 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? ErrorTrigger;
 
 		public bool IsTransfertCompleted
 		{
@@ -38,9 +38,9 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
-			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Prov1xx);
+			Final2xxTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
@@ -90,14 +90,14 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		}
 
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<IResponse> OnGetUpdateTrigger(IResponse Response)
 		{
-			switch (Response.StatusLine.StatusCode)
+			switch (Response.StatusCode)
 			{
 				case 100:return Prov1xxTrigger!;
 				case 200: case 202:return Final2xxTrigger!;
 				case >= 400 and < 699: return ErrorTrigger!;
-				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusCode})");
 			}
 		}
 

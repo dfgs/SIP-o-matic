@@ -234,8 +234,8 @@ namespace SIP_o_matic.corelib.Models
 			return newCall;
 						
 		}
-		
-		public bool Match(Request Request)
+
+		/*public bool Match(Request Request)
 		{
 			return (CallID == Request.GetCallID()) && 
 				( (this.FromTag==Request.GetFromTag() || (this.FromTag == Request.GetToTag() )) );
@@ -244,9 +244,13 @@ namespace SIP_o_matic.corelib.Models
 		{
 			return (CallID == Response.GetCallID()) &&
 				((this.FromTag == Response.GetFromTag() || (this.FromTag == Response.GetToTag())));
+		}*/
+
+		public bool Match(ISIPMessage MessageInfo)
+		{
+			return (CallID == MessageInfo.GetCallID()) &&
+				((this.FromTag == MessageInfo.GetFromTag() || (this.FromTag == MessageInfo.GetToTag())));
 		}
-
-
 
 		public bool Update(Transaction Transaction)
 		{

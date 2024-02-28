@@ -1,4 +1,7 @@
 ﻿using LogLib;
+using ParserLib;
+using PcapngFile;
+using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.Models;
 using SIPParserLib;
 using System;
@@ -13,6 +16,8 @@ namespace SIP_o_matic.ViewModels
 {
 	public class MessageViewModel : ViewModel<Message>
 	{
+
+
 		public uint Index
 		{
 			get => Model.Index;
@@ -30,10 +35,19 @@ namespace SIP_o_matic.ViewModels
 			get;
 			set;
 		}
-		public SIPMessage? SIPMessage
+
+		public string Description
+		{
+			get
+			{
+				return $"[{Index}] {SIPMessage.Description}";
+			}
+		}
+
+		public SIPMessageViewModel SIPMessage
 		{
 			get;
-			set;
+			private set;
 		}
 
 		public string SourceAddress
@@ -75,20 +89,35 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsFlippedProperty, value); }
 		}
 
-		public string Description
-		{
-			get
-			{
-				if (SIPMessage == null) return "Undefined";
-				else if (SIPMessage is Request request) return $"[{Index}] {request.RequestLine}";
-				else if (SIPMessage is Response response) return $"[{Index}] {response.StatusLine}";
-				return "Undefined";
-			}
-		}
 
 		public MessageViewModel(ILogger Logger) : base(Logger)
 		{
+			SIPMessage = new SIPMessageViewModel(Logger);
+			Color = "Black";
+		}
+
+		protected override void OnLoaded()
+		{
+			StringReader reader;
+			SIPMessage sipMessage;
+
+			base.OnLoaded();
+
+			reader = new StringReader(Model.Content, ' ');
+			try
+			{
+				sipMessage = SIPGrammar.SIPMessage.Parse(reader);
+			}
+			catch (Exception ex)
+			{
+				string error = $"Failed to decode SIP message ({ex.Message})";
+				Log(LogLevels.Error, error);
+				throw new InvalidOperationException(error);
+			}
+
+			SIPMessage.Load(sipMessage);
 			
+
 		}
 
 	}

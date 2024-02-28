@@ -7,12 +7,24 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 
-	<views:LadderView Devices="{Binding Devices}" ItemsSource="{Binding Messages}">
-		<views:LadderView.ItemTemplate>
-			<DataTemplate>
-				<views:MessageView Margin="0,0,0,16" ToolTip="{Binding Content}"/>
-			</DataTemplate>
-		</views:LadderView.ItemTemplate>
-	</views:LadderView>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="5"/>
+			<ColumnDefinition Width="400"/>
+		</Grid.ColumnDefinitions>
+
+		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Messages}">
+			<views:LadderView.ItemTemplate>
+				<DataTemplate>
+					<views:MessageView Margin="0,0,0,16" ToolTip="{Binding Content}"/>
+				</DataTemplate>
+			</views:LadderView.ItemTemplate>
+		</views:LadderView>
+
+		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+
+		<views:SIPMessageTooltip Grid.Column="2" DataContext="{Binding Messages.SelectedItem.SIPMessage}"/>
+	</Grid>
 
 </UserControl>

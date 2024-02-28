@@ -146,22 +146,22 @@ namespace SIP_o_matic.Modules
 		}
 
 
-		private Transaction CreateNewTransaction(Request Request,string SourceDevice, string DestinationDevice)
+		private Transaction CreateNewTransaction(IRequest Request,string SourceDevice, string DestinationDevice)
 		{
 			string viaBranch;
 			string cseq;
 			string callID;
-			string fromTag;
+			//string fromTag;
 
 			LogEnter();
 
 			callID = Request.GetCallID();
 			viaBranch = Request.GetViaBranch();
 			cseq = Request.GetCSeq();
-			fromTag=Request.GetFromTag();
+			//fromTag=Request.GetFromTag();
 			
 
-			switch (Request.RequestLine.Method)
+			switch (Request.Method)
 			{
 				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq);
 				case "ACK": return new AckTransaction(callID,  viaBranch, cseq);
@@ -169,13 +169,13 @@ namespace SIP_o_matic.Modules
 				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq);
 				case "BYE": return new ByeTransaction(callID,  viaBranch, cseq);
 				default:
-					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
+					string error = $"Failed to create new transaction: Invalid request method {Request.Method}";
 					Log(LogLevels.Error, error);
 					throw new NotImplementedException(error);
 			}
 		}
 		
-		private Call CreateNewCall(Request Request, string SourceDevice, string DestinationDevice)
+		private Call CreateNewCall(IRequest Request, string SourceDevice, string DestinationDevice)
 		{
 			string callID;
 			string fromTag;
@@ -194,7 +194,7 @@ namespace SIP_o_matic.Modules
 
 		
 
-		private async Task<bool> UpdateKeyFrameAsync(KeyFrame KeyFrame, Request Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
+		private async Task<bool> UpdateKeyFrameFromRequestAsync(KeyFrame KeyFrame, IRequest Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -230,7 +230,7 @@ namespace SIP_o_matic.Modules
 			else return false;
 
 		}
-		private async Task<bool> UpdateKeyFrameAsync(KeyFrame KeyFrame, Response Response, string SourceDevice, string DestinationDevice, uint MessageIndex)
+		private async Task<bool> UpdateKeyFrameFromResponseAsync(KeyFrame KeyFrame, IResponse Response, string SourceDevice, string DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -284,10 +284,10 @@ namespace SIP_o_matic.Modules
 				throw new InvalidOperationException(error);
 			}
 
-			switch (Message.SIPMessage)
+			switch (Message.SIPMessage.MessageType)
 			{
-				case Request request:return await UpdateKeyFrameAsync(KeyFrame, request, Message.SourceDevice, Message.DestinationDevice, Message.Index);
-				case Response response:return await UpdateKeyFrameAsync(KeyFrame, response, Message.SourceDevice, Message.DestinationDevice, Message.Index);
+				case SIPMessageViewModel.Types.Request:return await UpdateKeyFrameFromRequestAsync(KeyFrame, Message.SIPMessage, Message.SourceDevice, Message.DestinationDevice, Message.Index);
+				case SIPMessageViewModel.Types.Response:return await UpdateKeyFrameFromResponseAsync(KeyFrame, Message.SIPMessage, Message.SourceDevice, Message.DestinationDevice, Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
@@ -415,7 +415,6 @@ namespace SIP_o_matic.Modules
 
 		private async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, MessagesFrameViewModel MessagesFrame)
 		{
-			StringReader reader;
 			string callID;
 			string viaBranch;
 			string cseq;
@@ -435,17 +434,7 @@ namespace SIP_o_matic.Modules
 				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress;
 
 
-				reader = new StringReader(message.Content, ' ');
-				try
-				{
-					message.SIPMessage = SIPGrammar.SIPMessage.Parse(reader);
-				}
-				catch (Exception ex)
-				{
-					string error = $"Failed to decode SIP message [{message.Index}]:\r\n" + ex.Message + "\r\n" + message.Content;
-					Log(LogLevels.Error, error);
-					throw new InvalidOperationException(error);
-				}
+				
 
 				callID = message.SIPMessage.GetCallID();
 				viaBranch = message.SIPMessage.GetViaBranch();
