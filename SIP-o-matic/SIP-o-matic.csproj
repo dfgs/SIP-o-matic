@@ -12,6 +12,7 @@
     <None Remove="Fonts\G7_Cube_5.ttf" />
     <None Remove="Fonts\Open 24 Display St.ttf" />
     <None Remove="Images\accept.png" />
+    <None Remove="Images\Alcatel.png" />
     <None Remove="Images\arrow_refresh.png" />
     <None Remove="Images\attach.png" />
     <None Remove="Images\bug_edit.png" />
@@ -29,6 +30,7 @@
     <None Remove="Images\cross.png" />
     <None Remove="Images\disk.png" />
     <None Remove="Images\disk_multiple.png" />
+    <None Remove="Images\EOM.png" />
     <None Remove="Images\error.png" />
     <None Remove="Images\folder.png" />
     <None Remove="Images\folder_add.png" />
@@ -44,6 +46,7 @@
     <None Remove="Images\server_delete.png" />
     <None Remove="Images\sound.png" />
     <None Remove="Images\sound_none.png" />
+    <None Remove="Images\telephone.png" />
     <None Remove="Images\textfield_add.png" />
     <None Remove="Images\textfield_delete.png" />
     <None Remove="Images\textfield_rename.png" />
@@ -76,6 +79,7 @@
     </Resource>
     <Resource Include="Fonts\Open 24 Display St.ttf" />
     <Resource Include="Images\accept.png" />
+    <Resource Include="Images\Alcatel.png" />
     <Resource Include="Images\arrow_refresh.png" />
     <Resource Include="Images\attach.png" />
     <Resource Include="Images\bug_edit.png" />
@@ -93,6 +97,7 @@
     <Resource Include="Images\cross.png" />
     <Resource Include="Images\disk.png" />
     <Resource Include="Images\disk_multiple.png" />
+    <Resource Include="Images\EOM.png" />
     <Resource Include="Images\error.png" />
     <Resource Include="Images\folder.png" />
     <Resource Include="Images\folder_add.png" />
@@ -108,12 +113,14 @@
     <Resource Include="Images\server_delete.png" />
     <Resource Include="Images\sound.png" />
     <Resource Include="Images\sound_none.png" />
+    <Resource Include="Images\telephone.png" />
     <Resource Include="Images\textfield_add.png" />
     <Resource Include="Images\textfield_delete.png" />
     <Resource Include="Images\textfield_rename.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.45" />
     <PackageReference Include="PcapngFile" Version="1.0.5" />
     <PackageReference Include="Stateless" Version="5.15.0" />

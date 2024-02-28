@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:root="clr-namespace:SIP_o_matic"
 		xmlns:views="clr-namespace:SIP_o_matic.Views"
+		xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized" Loaded="Window_Loaded"
         Title="SIP-o-matic" Height="640" Width="800" >
 
@@ -57,9 +58,34 @@
 					<Image Source="/Images/page_white_powerpoint.png" Stretch="None"/>
 				</Button>
 				<Separator/>
-				<Button Command="{x:Static root:RoutedCommands.AddFile}"  ToolTip="Add file" ToolTipService.ShowOnDisabled="true">
-					<Image Source="/Images/folder_add.png" Stretch="None"/>
-				</Button>
+				
+				<Menu Background="Transparent">
+					<MenuItem Padding="0" >
+						<MenuItem.Header>
+							<TextBlock Text="▼" FontSize="8" VerticalAlignment="Center" Foreground="#AA000000"/>
+						</MenuItem.Header>
+						<MenuItem.Icon>
+							<Image Source="/Images/folder_add.png" Stretch="None"/>
+						</MenuItem.Icon>
+						<MenuItem Header="Add EOM files" Command="{x:Static root:RoutedCommands.AddFile}" CommandParameter="EOM">
+							<MenuItem.Icon>
+								<Image Source="Images/EOM.png" Stretch="None"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Add Alcatel SIP files" Command="{x:Static root:RoutedCommands.AddFile}" CommandParameter="Alcatel">
+							<MenuItem.Icon>
+								<Image Source="Images/Alcatel.png" Stretch="None"/>
+							</MenuItem.Icon>
+						</MenuItem>
+						<MenuItem Header="Add generic SIP files" Command="{x:Static root:RoutedCommands.AddFile}" CommandParameter="SIP">
+							<MenuItem.Icon>
+								<Image Source="Images/telephone.png" Stretch="None"/>
+							</MenuItem.Icon>
+
+						</MenuItem>
+					</MenuItem>
+				</Menu>
+				
 
 				<Button Command="{x:Static root:RoutedCommands.Analyze}"  ToolTip="Analyze project" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/bullet_go.png" Stretch="None"/>
