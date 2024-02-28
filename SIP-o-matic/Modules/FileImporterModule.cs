@@ -24,16 +24,19 @@ namespace SIP_o_matic.Modules
 		private ProjectViewModel project;
 
 		private List<IDataSource> dataSources;
+		private string fileSource;
 
-		public FileImporterModule(ILogger Logger, ProjectViewModel Project,IEnumerable<string> FileNames) : base(Logger)
+		public FileImporterModule(ILogger Logger, ProjectViewModel Project,string FileSource, IEnumerable<string> FileNames) : base(Logger)
 		{
 			ProgressStep step;
 
 
 			if (Project == null) throw new ArgumentNullException(nameof(Project));
 			if (FileNames == null) throw new ArgumentNullException(nameof(FileNames));
+			if (FileSource == null) throw new ArgumentNullException(nameof(FileSource));
 
 			this.project = Project;
+			this.fileSource = FileSource;
 			this.fileNames = FileNames.ToArray();
 			dataSources = new List<IDataSource>();
 
@@ -70,21 +73,22 @@ namespace SIP_o_matic.Modules
 		private async Task ImportFilesAsync(CancellationToken CancellationToken, int Index)
 		{
 			IDataSource dataSource;
-			string extension;
 
-			extension = System.IO.Path.GetExtension(fileNames[Index]);
-			
-			if (extension.ToLower() == ".sip")
+
+			switch (fileSource)
 			{
-				dataSource = new GenericSIPDataSource();
-			}
-			else if (extension.ToLower() == ".log")
-			{
-				dataSource = new AlcatelSIPTraceDataSource();
-			}
-			else
-			{
-				dataSource = new OracleOEMDataSource();
+				case "EOM":
+					dataSource = new OracleOEMDataSource();
+					break;
+				case "Alcatel":
+					dataSource = new AlcatelSIPTraceDataSource();
+					break;
+				case "SIP":
+					dataSource = new GenericSIPDataSource();
+					break;
+				default:
+					dataSource = new OracleOEMDataSource();
+					break;
 			}
 			dataSources.Add(dataSource);
 			await dataSource.LoadAsync(fileNames[Index]);

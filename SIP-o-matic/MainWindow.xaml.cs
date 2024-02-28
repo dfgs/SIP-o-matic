@@ -58,7 +58,7 @@ namespace SIP_o_matic
 			if (args.Length > 1)
 			{
 				applicationViewModel.Projects.AddNew();
-				AddFiles(args[1]);
+				AddFiles("EOM", args[1]);
 			}
 		}
 
@@ -69,7 +69,7 @@ namespace SIP_o_matic
 		}
 
 
-		private void AddFiles(params string[] FileNames)
+		private void AddFiles(string FileSource, params string[] FileNames)
 		{
 			ProgressWindow analyzeWindow;
 			FileImporterModule module;
@@ -78,7 +78,7 @@ namespace SIP_o_matic
 
 			try
 			{
-				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem, FileNames);
+				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem, FileSource, FileNames);
 
 				analyzeWindow = new ProgressWindow(Logger);
 				analyzeWindow.Owner = this;
@@ -199,37 +199,39 @@ namespace SIP_o_matic
 		private void AddFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
+			string? fileSource;
+
+			fileSource = e.Parameter as string;
+			if (fileSource == null) fileSource = "EOM";
 
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 
 			dialog = new OpenFileDialog();
-			dialog.Filter = "All files|*.*";
 			dialog.Title = "Add file to project";
 			dialog.Multiselect = true;
 
-			if (!dialog.ShowDialog(this) ?? false) return;
-
-			AddFiles(dialog.FileNames);
-			/*dataSources = dataSourceManager.GetDataSourceForFile(dialog.FileName).ToArray();
-
-			if (dataSources.Length == 0)
+			switch(fileSource)
 			{
-				ShowError(new Exception("File format is not supported"));
-				return;
+				case "EOM":
+					dialog.Filter = "html files|*.html";
+					break;
+				case "Alcatel":
+					dialog.Filter = "log files|*.log";
+					break;
+				case "SIP":
+					dialog.Filter = "SIP files|*.sip";
+					break;
+				default:
+					dialog.Filter = "All files|*.*";
+					break;
 			}
 
-			if (dataSources.Length == 1) selectedDataSource = dataSources[0];
-			else
-			{
-				dataSourceWindow = new DataSourceWindow();
-				dataSourceWindow.Owner = this.Owner;
-				dataSourceWindow.DataContext = dataSources;
 
-				if (!dataSourceWindow.ShowDialog() ?? false) return;
-				selectedDataSource = dataSourceWindow.SelectedDataSource;
-			}*/
 
+			if (!dialog.ShowDialog(this) ?? false) return;
+
+			AddFiles(fileSource, dialog.FileNames);
 			
 			
 

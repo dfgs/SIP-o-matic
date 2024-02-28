@@ -80,9 +80,7 @@ namespace SIP_o_matic.corelib.DataSources
 																 from devices in Devices
 																 select devices.ToArray();
 
-		public static ISingleParser<Message[]> MessageEnumerator = from _1 in DevicesHeader
-																   from devices in Devices
-																   from _2 in MessagesHeader
+		public static ISingleParser<Message[]> MessageEnumerator = from _2 in MessagesHeader
 																   from messages in Messages
 																   select messages.ToArray();
 
