@@ -56,6 +56,7 @@
 							<Setter Property="views:LadderPanel.SourceDevice" Value="{Binding SourceDevice}"/>
 							<Setter Property="views:LadderPanel.DestinationDevice" Value="{Binding DestinationDevice}"/>
 							<Setter Property="views:LadderPanel.IsFlipped" Value="{Binding IsFlipped}"/>
+							<Setter Property="ToolTip" Value="{Binding ElementName=root,Path=ItemToolTip}"/>
 						</Style>
 					</ListBox.ItemContainerStyle>
 					

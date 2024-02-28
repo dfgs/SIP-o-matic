@@ -1,4 +1,5 @@
 ﻿using LogLib;
+using ParserLib;
 using SIP_o_matic.corelib;
 using SIPParserLib;
 using System;
@@ -58,10 +59,36 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
-	public SIPMessageViewModel(ILogger Logger) : base(Logger)
+		public IEnumerable<MessageHeader> Headers
+		{
+			get => Model.Headers;
+		}
+
+		public SDP? SDP
+		{
+			get;
+			private set;
+		}
+
+		public SIPMessageViewModel(ILogger Logger) : base(Logger)
 		{
 		}
 
+		protected override void OnLoaded()
+		{
+			StringReader reader;
+			IParseResult result;
+
+			base.OnLoaded();
+
+			SDP = null;
+			if (string.IsNullOrEmpty(Model.Body)) return;
+
+			reader = new StringReader(Model.Body);
+			result=SDPGrammar.SDP.TryParse(reader);
+			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
+			
+		}
 		public  string GetCallID()
 		{
 			string? value;

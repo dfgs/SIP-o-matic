@@ -12,8 +12,11 @@
 	<views:LadderView Devices="{Binding Devices}" ItemsSource="{Binding Calls}">
 		<views:LadderView.ItemTemplate>
 			<DataTemplate>
-				<views:CallView Margin="0,0,0,16" ToolTip="{Binding MessageIndicesDescription}"/>
+				<views:CallView Margin="0,0,0,16"/>
 			</DataTemplate>
 		</views:LadderView.ItemTemplate>
+		<views:LadderView.ItemToolTip>
+			<TextBlock Text="{Binding MessageIndicesDescription}"/>
+		</views:LadderView.ItemToolTip>
     </views:LadderView>
 </UserControl>

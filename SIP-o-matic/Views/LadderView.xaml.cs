@@ -47,6 +47,12 @@ namespace SIP_o_matic.Views
 			set { SetValue(ItemTemplateProperty, value); }
 		}
 
+		public static readonly DependencyProperty ItemToolTipProperty = DependencyProperty.Register("ItemToolTip", typeof(object), typeof(LadderView), new PropertyMetadata(null));
+		public object ItemToolTip
+		{
+			get { return (object)GetValue(ItemToolTipProperty); }
+			set { SetValue(ItemToolTipProperty, value); }
+		}
 
 		public LadderView()
 		{
