@@ -110,8 +110,7 @@ namespace SIP_o_matic.ViewModels
 			}
 			catch (Exception ex)
 			{
-				string error = $"Failed to decode SIP message ({ex.Message})";
-				Log(LogLevels.Error, error);
+				string error = $"Failed to decode SIP message ({ex.Message})\r\r{Model.Content}";
 				throw new InvalidOperationException(error);
 			}
 

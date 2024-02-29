@@ -33,6 +33,7 @@ namespace SIP_o_matic.ViewModels
 
 			messageViewModel=new MessageViewModel(Logger);
 			messageViewModel.Load(Message);
+			
 			AddInternal(messageViewModel);
 
 		}

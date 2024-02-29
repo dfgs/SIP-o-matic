@@ -29,19 +29,13 @@ namespace SIP_o_matic
 	public partial class MainWindow : Window
 	{
 		private ApplicationViewModel applicationViewModel;
-		private DataSourceManager dataSourceManager;
 		private ILogger Logger;
 
 		public MainWindow()
 		{
-			dataSourceManager= new DataSourceManager();
-			dataSourceManager.Register(new OracleOEMDataSource());
-			//dataSourceManager.Register(new OracleSBCDataSource());
-			//dataSourceManager.Register(new WiresharkDataSource());
-			//dataSourceManager.Register(new AudiocodesSyslogDataSource());
-			//dataSourceManager.Register(new AlcatelSIPTraceDataSource());
 
-			Logger = NullLogger.Instance;
+			//Logger = NullLogger.Instance;
+			Logger = new FileLogger(new DefaultLogFormatter(), "SIP-o-matic.log");
 			applicationViewModel = new ApplicationViewModel(Logger);
 
 
@@ -214,13 +208,13 @@ namespace SIP_o_matic
 			switch(fileSource)
 			{
 				case "EOM":
-					dialog.Filter = "html files|*.html";
+					dialog.Filter = "html files|*.html|All files|*.*";
 					break;
 				case "Alcatel":
-					dialog.Filter = "log files|*.log";
+					dialog.Filter = "sip motor files|*.txt*|All files|*.*";
 					break;
 				case "SIP":
-					dialog.Filter = "SIP files|*.sip";
+					dialog.Filter = "SIP files|*.sip|All files|*.*";
 					break;
 				default:
 					dialog.Filter = "All files|*.*";

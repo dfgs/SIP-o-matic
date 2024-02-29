@@ -1,6 +1,7 @@
 ﻿using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,8 @@ namespace SIP_o_matic.corelib.DataSources
 {
 	public class AlcatelSIPTraceDataSource : IDataSource
 	{
-		private static Regex inRegex = new Regex(@"(?<Timestamp>.*)RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
-		private static Regex outRegex = new Regex(@"(?<Timestamp>.*)SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex inRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>\D\D\D +\D\D\D +\d+ +\d\d:\d\d:\d\d +\d\d\d\d) RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex outRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>\D\D\D +\D\D\D +\d+ +\d\d:\d\d:\d\d +\d\d\d\d) SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
 
 		private List<Device> devices;
 		private List<Message> messages;
@@ -65,6 +66,7 @@ namespace SIP_o_matic.corelib.DataSources
 			Match inMatch, outMatch;
 			uint index;
 			StreamReader reader;
+			string dateString;
 
 			index = 1;
 			devices.Clear();
@@ -87,7 +89,9 @@ namespace SIP_o_matic.corelib.DataSources
 					if (inMatch.Success)
 					{
 						message = await ReadMessageAsync(reader);
-						DateTime.TryParse(inMatch.Groups["Timestamp"].Value, out timeStamp);
+						dateString = inMatch.Groups["Timestamp"].Value.Replace("  "," ");
+						timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy",CultureInfo.InvariantCulture);
+						
 						sourceAddress = inMatch.Groups["Address"].Value;
 						destinationAddress = "127.0.0.1";
 
@@ -107,7 +111,9 @@ namespace SIP_o_matic.corelib.DataSources
 						if (outMatch.Success)
 						{
 							message = await ReadMessageAsync(reader);
-							DateTime.TryParse(inMatch.Groups["Timestamp"].Value, out timeStamp);
+							dateString = outMatch.Groups["Timestamp"].Value.Replace("  ", " ");
+							timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture);
+
 							sourceAddress = "127.0.0.1";
 							destinationAddress = outMatch.Groups["Address"].Value;
 
