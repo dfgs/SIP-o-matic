@@ -72,6 +72,8 @@ namespace SIP_o_matic.corelib.DataSources
 
 			device = new Device() { Name = "OXE" };
 			device.Addresses.Add("127.0.0.1");
+			devices.Add(device);
+
 
 			using (FileStream stream = new FileStream(FileName, FileMode.Open))
 			{

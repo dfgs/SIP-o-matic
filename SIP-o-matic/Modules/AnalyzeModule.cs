@@ -48,10 +48,10 @@ namespace SIP_o_matic.Modules
 
 			legs = new List<string>();
 			callColors = new List<string>();
-			callColorManager = new ColorManager(10);
+			callColorManager = new ColorManager(100);
 
 			messageColors = new List<string>();
-			messageColorManager = new ColorManager(10);
+			messageColorManager = new ColorManager(100);
 
 
 			Transactions = new List<Transaction>();
@@ -244,10 +244,9 @@ namespace SIP_o_matic.Modules
 			transaction = Transactions.FirstOrDefault(item => item.Match(Response));
 			if (transaction == null)
 			{
-				string error = "Cannot find matching transaction for response";
-				Log(LogLevels.Error, error);
-				throw new InvalidOperationException(error);
-
+				string error = "Cannot find matching transaction for response, possibly incomplete log file";
+				Log(LogLevels.Warning, error);
+				return false;
 			}
 
 			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response) && (Utils.Hash(SourceDevice,DestinationDevice)==Utils.Hash(item.SourceDevice,item.DestinationDevice )));
@@ -461,6 +460,7 @@ namespace SIP_o_matic.Modules
 			if (_project.Messages.Count == 0) return;
 
 			messageFrame = new MessagesFrameViewModel(_project.Logger);
+			messageFrame.Load("");
 			await FormatMessagesFrameAsync(CancellationToken, messageFrame);
 			_project.MessagesFrame = messageFrame;
 

@@ -16,7 +16,7 @@ namespace SIP_o_matic.corelib.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated,Error };
+		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated,Error,Undefined };
 
 		private StateMachine<States, Transaction.States> fsm;
 
@@ -110,6 +110,22 @@ namespace SIP_o_matic.corelib.Models
 			fsm = new StateMachine<States, Transaction.States>(InitialState);
 			fsm.Configure(States.OnHook)
 				.Permit(Transaction.States.InviteStarted, States.Calling)
+				.Permit(Transaction.States.InviteProceeding, States.Undefined)
+				.Permit(Transaction.States.InviteRinging, States.Undefined)
+				.Permit(Transaction.States.InviteTerminated, States.Undefined)
+				.Permit(Transaction.States.InviteError, States.Undefined)
+				.Permit(Transaction.States.AckTerminated, States.Undefined)
+				.Permit(Transaction.States.ReferStarted, States.Undefined)
+				.Permit(Transaction.States.ReferProceeding, States.Undefined)
+				.Permit(Transaction.States.ReferError, States.Undefined)
+				.Permit(Transaction.States.ReferTerminated, States.Undefined)
+				.Permit(Transaction.States.ByeStarted, States.Undefined)
+				.Permit(Transaction.States.ByeProceeding, States.Undefined)
+				.Permit(Transaction.States.ByeError, States.Undefined)
+				.Permit(Transaction.States.ByeTerminated, States.Undefined)
+				.Permit(Transaction.States.NotifyStarted, States.Undefined)
+				.Permit(Transaction.States.NotifyProceeding, States.Undefined)
+				.Permit(Transaction.States.NotifyTerminated, States.Undefined)
 				;
 			fsm.Configure(States.Calling)
 				.Ignore(Transaction.States.InviteStarted)
@@ -192,10 +208,29 @@ namespace SIP_o_matic.corelib.Models
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
+			fsm.Configure(States.Undefined) // incomplete calls
+				.Ignore(Transaction.States.InviteStarted)
+				.Ignore(Transaction.States.InviteProceeding)
+				.Ignore(Transaction.States.InviteRinging)
+				.Ignore(Transaction.States.InviteTerminated)
+				.Ignore(Transaction.States.InviteError)
+				.Ignore(Transaction.States.AckTerminated)
+				.Ignore(Transaction.States.ReferStarted)
+				.Ignore(Transaction.States.ReferProceeding)
+				.Ignore(Transaction.States.ReferError)
+				.Ignore(Transaction.States.ReferTerminated)
+				.Ignore(Transaction.States.ByeStarted)
+				.Ignore(Transaction.States.ByeProceeding)
+				.Ignore(Transaction.States.ByeError)
+				.Ignore(Transaction.States.ByeTerminated)
+				.Ignore(Transaction.States.NotifyStarted)
+				.Ignore(Transaction.States.NotifyProceeding)
+				.Ignore(Transaction.States.NotifyTerminated)
+				;
 
 		}
 
-		
+
 
 		private bool AssertTransfertIsCompleted(Transaction Transaction)
 		{
