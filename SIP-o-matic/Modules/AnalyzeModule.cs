@@ -48,10 +48,10 @@ namespace SIP_o_matic.Modules
 
 			legs = new List<string>();
 			callColors = new List<string>();
-			callColorManager = new ColorManager(100);
+			callColorManager = new ColorManager();
 
 			messageColors = new List<string>();
-			messageColorManager = new ColorManager(100);
+			messageColorManager = new ColorManager();
 
 
 			Transactions = new List<Transaction>();
