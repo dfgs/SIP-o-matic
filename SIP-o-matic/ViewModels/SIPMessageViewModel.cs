@@ -46,7 +46,7 @@ namespace SIP_o_matic.ViewModels
 			get
 			{
 				if (Model is Request request) return request.RequestLine.Method;
-				throw new InvalidOperationException("SIP message is not Request");
+				throw new InvalidOperationException($"SIP message is not Request");
 			}
 		}
 
@@ -55,7 +55,7 @@ namespace SIP_o_matic.ViewModels
 			get
 			{
 				if (Model is Response response) return response.StatusLine.StatusCode;
-				throw new InvalidOperationException("SIP message is not Response");
+				throw new InvalidOperationException($"SIP message is not Response");
 			}
 		}
 

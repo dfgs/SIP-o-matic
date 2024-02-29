@@ -428,12 +428,11 @@ namespace SIP_o_matic.Modules
 					break;
 				}
 
+				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 
 				message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress;
 				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress;
-
-
-				
+									
 
 				callID = message.SIPMessage.GetCallID();
 				viaBranch = message.SIPMessage.GetViaBranch();

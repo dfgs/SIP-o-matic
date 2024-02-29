@@ -124,7 +124,7 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					return;
 				}
-
+				Log(LogLevels.Debug, $"Adding message:\r\n{message.Content}");
 				project.Messages.Add(message);
 				await Task.Delay(1);
 			}
