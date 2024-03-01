@@ -6,6 +6,7 @@ using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,10 +58,11 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
-			/*step = new ProgressStep() { Label = "Add files to project", TaskFactory = AddFileToProjectAsync };
-			step.MaximumGetter = () => fileNames.Length;
+			step = new ProgressStep() { Label = "Extract dialogs", TaskFactory = ExtractDialogsAsync };
+			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
-			progressSteps.Add(step);*/
+			progressSteps.Add(step);
+
 
 		}
 
@@ -130,17 +132,20 @@ namespace SIP_o_matic.Modules
 			}
 		}
 
-		/*private async Task AddFileToProjectAsync(CancellationToken CancellationToken,  int Index)
+		private async Task ExtractDialogsAsync(CancellationToken CancellationToken, int Index)
 		{
-			if (CancellationToken.IsCancellationRequested)
-			{
-				Log(LogLevels.Information, "Task cancelled");
-				return;
-			}
+			MessageViewModel message;
+			Dialog dialog;
 
-			project.SourceFiles.Add(fileNames[Index]);
-			await Task.Delay(100);
-		}*/
+			message = project.Messages[Index];
+
+			if (project.Dialogs.ContainsDialogForMessage(message)) return;
+
+			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceDevice, message.DestinationDevice, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString()??"Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined");
+			project.Dialogs.Add(dialog);
+			await Task.Delay(1);
+			
+		}
 
 
 

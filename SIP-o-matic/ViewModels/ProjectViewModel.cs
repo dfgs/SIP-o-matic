@@ -55,7 +55,11 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-
+		public DialogViewModelCollection Dialogs
+		{
+			get;
+			private set;
+		}
 
 		public static readonly DependencyProperty MessagesFrameProperty = DependencyProperty.Register("MessagesFrame", typeof(MessagesFrameViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public MessagesFrameViewModel MessagesFrame
@@ -73,6 +77,7 @@ namespace SIP_o_matic.ViewModels
 			Messages = new MessageViewModelCollection(Logger);
 			KeyFrames = new KeyFrameViewModelCollection(Logger);
 			MessagesFrame = new MessagesFrameViewModel(Logger);
+			Dialogs = new DialogViewModelCollection(Logger);
 		}
 
 		protected override void OnLoaded()
@@ -82,6 +87,7 @@ namespace SIP_o_matic.ViewModels
 			Messages.Load(Model.Messages);
 			KeyFrames.Load(Model.KeyFrames);
 			MessagesFrame.Load("");
+			Dialogs.Load(Model.Dialogs);
 		}
 
 		public void ClearKeyFrames()

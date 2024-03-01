@@ -34,11 +34,20 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
+		[XmlIgnore]
+		public List<Dialog> Dialogs
+		{
+			get;
+			set;
+		}
+
+
 		public Project()
 		{
 			Devices= new List<Device>();
 			Messages = new List<Message>();
 			KeyFrames = new List<KeyFrame>();
+			Dialogs = new List<Dialog>();
 		}
 		public async Task SaveAsync(string Path)
 		{

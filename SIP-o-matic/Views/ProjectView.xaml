@@ -18,6 +18,9 @@
 		
 		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" IsEnabled="{Binding ElementName=leftExpander,Path=IsExpanded}"/>
 		<TabControl Grid.Column="2" ListBox.SelectionChanged="UserControl_SelectionChanged">
+			<TabItem Header="Dialogs">
+				<views:DialogsView DataContext="{Binding Dialogs}"/>
+			</TabItem>
 			<TabItem Header="Key Frames">
 				<views:KeyFramesView DataContext="{Binding KeyFrames}"/>
 			</TabItem>
