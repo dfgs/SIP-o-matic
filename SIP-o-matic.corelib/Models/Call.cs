@@ -137,6 +137,10 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.CancelProceeding)
 				.Ignore(Transaction.States.CancelError)
 				.Permit(Transaction.States.CancelTerminated, States.Cancelled)
+				.Ignore(Transaction.States.UpdateStarted)
+				.Ignore(Transaction.States.UpdateProceeding)
+				.Ignore(Transaction.States.UpdateError)
+				.Ignore(Transaction.States.UpdateTerminated)
 				;
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
@@ -147,6 +151,10 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.CancelProceeding)
 				.Ignore(Transaction.States.CancelError)
 				.Permit(Transaction.States.CancelTerminated, States.Cancelled)
+				.Ignore(Transaction.States.UpdateStarted)
+				.Ignore(Transaction.States.UpdateProceeding)
+				.Ignore(Transaction.States.UpdateError)
+				.Ignore(Transaction.States.UpdateTerminated)
 				;
 
 			fsm.Configure(States.Established)
@@ -165,7 +173,19 @@ namespace SIP_o_matic.corelib.Models
 
 				.Ignore(Transaction.States.ByeStarted)
 				.Ignore(Transaction.States.ByeProceeding)
+				.Ignore(Transaction.States.ByeError)
 				.Permit(Transaction.States.ByeTerminated, States.Terminated)
+
+				.Ignore(Transaction.States.CancelStarted)
+				.Ignore(Transaction.States.CancelProceeding)
+				.Ignore(Transaction.States.CancelError)
+				.Ignore(Transaction.States.CancelTerminated)
+
+
+				.Ignore(Transaction.States.UpdateStarted)
+				.Ignore(Transaction.States.UpdateProceeding)
+				.Ignore(Transaction.States.UpdateError)
+				.Ignore(Transaction.States.UpdateTerminated)
 
 				.OnEntryFrom(Transaction.States.AckTerminated, () => {this.IsAck = true;})
 				;
@@ -248,6 +268,10 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.CancelProceeding)
 				.Ignore(Transaction.States.CancelError)
 				.Ignore(Transaction.States.CancelTerminated)
+				.Ignore(Transaction.States.UpdateStarted)
+				.Ignore(Transaction.States.UpdateProceeding)
+				.Ignore(Transaction.States.UpdateError)
+				.Ignore(Transaction.States.UpdateTerminated)
 				;
 
 		}
