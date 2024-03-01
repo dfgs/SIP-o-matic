@@ -326,6 +326,7 @@ namespace SIP_o_matic.Modules
 			}
 
 			message = _project.Messages[Index];
+			if (!_project.Dialogs.ContainsCheckedDialogForMessage(message)) return;	// filer only selected dialogs
 
 
 			try
@@ -443,6 +444,8 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					break;
 				}
+
+				if (!_project.Dialogs.ContainsCheckedDialogForMessage(message)) continue;// filer only selected dialogs
 
 				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 

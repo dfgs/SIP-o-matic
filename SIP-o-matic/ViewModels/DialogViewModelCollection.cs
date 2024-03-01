@@ -24,6 +24,14 @@ namespace SIP_o_matic.ViewModels
 		{
 			return this.FirstOrDefault(item => item.Match(Message.SIPMessage)) != null;
 		}
+		public bool ContainsCheckedDialogForMessage(MessageViewModel Message)
+		{
+			DialogViewModel? item;
+
+			item=this.FirstOrDefault(item => item.Match(Message.SIPMessage));
+			if (item == null) return false;
+			return item.IsChecked;
+		}
 
 		public void Add(Dialog Dialog)
 		{
