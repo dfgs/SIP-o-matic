@@ -27,9 +27,19 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			NotifyStarted, NotifyProceeding, NotifyError,  NotifyTerminated,
 			// BYE transaction states
 			ByeStarted, ByeProceeding, ByeError, ByeTerminated,
+			// OPTIONS transaction states
+			OptionsStarted, OptionsTerminated,
+			// REGISTER transaction states
+			RegisterStarted, RegisterTerminated,
+			// MESSAGE transaction states
+			MessageStarted, MessageTerminated,
+			// CANCEL transaction states
+			CancelStarted, CancelProceeding, CancelError, CancelTerminated,
+			// SUBSCRIBE transaction states
+			SubscribeStarted, SubscribeProceeding, SubscribeError, SubscribeTerminated,
 
 		};
-		public enum Triggers { INVITE, ACK, REFER,NOTIFY,BYE, Prov1xx, Prov180, Final2xx, Error };
+		public enum Triggers { INVITE, ACK, REFER,NOTIFY,BYE,OPTIONS,REGISTER,MESSAGE,CANCEL,SUBSCRIBE, Prov1xx, Prov180, Final2xx, Error };
 
 
 		private StateMachine<States, Triggers> fsm;
@@ -39,6 +49,11 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> AckTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> NotifyTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> ByeTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> OptionsTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> RegisterTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> MessageTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> CancelTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> SubscribeTrigger;
 
 
 		public required string CallID
@@ -120,6 +135,11 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			ReferTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.REFER);
 			NotifyTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.NOTIFY);
 			ByeTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.BYE);
+			OptionsTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.OPTIONS);
+			RegisterTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.REGISTER);
+			MessageTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.MESSAGE);
+			CancelTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.CANCEL);
+			SubscribeTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.SUBSCRIBE);
 
 			OnConfigureFSM(fsm);
 		}
@@ -180,6 +200,21 @@ namespace SIP_o_matic.corelib.Models.Transactions
 					break;
 				case "BYE":
 					fsm.Fire(ByeTrigger, Request);
+					break;
+				case "OPTIONS":
+					fsm.Fire(OptionsTrigger, Request);
+					break;
+				case "REGISTER":
+					fsm.Fire(RegisterTrigger, Request);
+					break;
+				case "MESSAGE":
+					fsm.Fire(MessageTrigger, Request);
+					break;
+				case "CANCEL":
+					fsm.Fire(CancelTrigger, Request);
+					break;
+				case "SUBSCRIBE":
+					fsm.Fire(SubscribeTrigger, Request);
 					break;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.Method})");
 			}

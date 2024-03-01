@@ -16,7 +16,7 @@ namespace SIP_o_matic.corelib.Models
 {
 	public class Call:ICloneable<Call>,ISIPMessageMatch
 	{
-		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered, Terminated,Error,Undefined };
+		public  enum States { OnHook,Calling, Ringing,Established, Transfering, Transfered,Cancelled, Terminated,Error,Undefined };
 
 		private StateMachine<States, Transaction.States> fsm;
 
@@ -133,12 +133,20 @@ namespace SIP_o_matic.corelib.Models
 				.Permit(Transaction.States.InviteError, States.Error)
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
+				.Ignore(Transaction.States.CancelStarted)
+				.Ignore(Transaction.States.CancelProceeding)
+				.Ignore(Transaction.States.CancelError)
+				.Permit(Transaction.States.CancelTerminated, States.Cancelled)
 				;
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
 				.Ignore(Transaction.States.InviteProceeding)
 				.Permit(Transaction.States.InviteError,States.Error)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
+				.Ignore(Transaction.States.CancelStarted)
+				.Ignore(Transaction.States.CancelProceeding)
+				.Ignore(Transaction.States.CancelError)
+				.Permit(Transaction.States.CancelTerminated, States.Cancelled)
 				;
 
 			fsm.Configure(States.Established)
@@ -208,6 +216,16 @@ namespace SIP_o_matic.corelib.Models
 				.Permit(Transaction.States.InviteRinging, States.Ringing)
 				.Permit(Transaction.States.InviteTerminated, States.Established)
 				;
+
+			fsm.Configure(States.Cancelled)
+				.Ignore(Transaction.States.CancelStarted)
+				.Ignore(Transaction.States.CancelProceeding)
+				.PermitReentry(Transaction.States.CancelTerminated)
+				.Ignore(Transaction.States.InviteError)
+				.Permit(Transaction.States.AckTerminated, States.Terminated)
+				;
+
+
 			fsm.Configure(States.Undefined) // incomplete calls
 				.Ignore(Transaction.States.InviteStarted)
 				.Ignore(Transaction.States.InviteProceeding)
@@ -226,6 +244,10 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.NotifyStarted)
 				.Ignore(Transaction.States.NotifyProceeding)
 				.Ignore(Transaction.States.NotifyTerminated)
+				.Ignore(Transaction.States.CancelStarted)
+				.Ignore(Transaction.States.CancelProceeding)
+				.Ignore(Transaction.States.CancelError)
+				.Ignore(Transaction.States.CancelTerminated)
 				;
 
 		}

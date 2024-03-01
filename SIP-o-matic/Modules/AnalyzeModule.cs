@@ -167,7 +167,12 @@ namespace SIP_o_matic.Modules
 				case "ACK": return new AckTransaction(callID,  viaBranch, cseq);
 				case "REFER": return new ReferTransaction(callID,  viaBranch, cseq);
 				case "NOTIFY": return new NotifyTransaction(callID, viaBranch, cseq);
-				case "BYE": return new ByeTransaction(callID,  viaBranch, cseq);
+				case "BYE": return new ByeTransaction(callID, viaBranch, cseq);
+				case "OPTIONS": return new OptionsTransaction(callID, viaBranch, cseq);
+				case "REGISTER": return new RegisterTransaction(callID, viaBranch, cseq);
+				case "MESSAGE": return new MessageTransaction(callID, viaBranch, cseq);
+				case "CANCEL": return new CancelTransaction(callID, viaBranch, cseq);
+				case "SUBSCRIBE": return new SubscribeTransaction(callID, viaBranch, cseq);
 				default:
 					string error = $"Failed to create new transaction: Invalid request method {Request.Method}";
 					Log(LogLevels.Error, error);
@@ -212,18 +217,22 @@ namespace SIP_o_matic.Modules
 				Transactions.Add(transaction);
 			}
 
-			
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request) && (Utils.Hash(SourceDevice, DestinationDevice) == Utils.Hash(item.SourceDevice, item.DestinationDevice)));
-			if (call == null)
-			{
-				call = CreateNewCall(Request, SourceDevice, DestinationDevice);
-				KeyFrame.Calls.Add(call);
-			}
-
 
 			// update transaction
 			if (transaction.Update(Request,  MessageIndex))
 			{
+				if ((transaction is OptionsTransaction)
+					|| (transaction is RegisterTransaction)
+					|| (transaction is MessageTransaction)
+					|| (transaction is SubscribeTransaction)
+				) return false;// ignore options transactions
+
+				call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request) && (Utils.Hash(SourceDevice, DestinationDevice) == Utils.Hash(item.SourceDevice, item.DestinationDevice)));
+				if (call == null)
+				{
+					call = CreateNewCall(Request, SourceDevice, DestinationDevice);
+					KeyFrame.Calls.Add(call);
+				}
 				// update call
 				return call.Update(transaction);
 			}
@@ -248,6 +257,12 @@ namespace SIP_o_matic.Modules
 				Log(LogLevels.Warning, error);
 				return false;
 			}
+
+			if ((transaction is OptionsTransaction)
+				|| (transaction is RegisterTransaction)
+				|| (transaction is MessageTransaction)
+				|| (transaction is SubscribeTransaction)
+				) return false;// ignore options transactions
 
 			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response) && (Utils.Hash(SourceDevice,DestinationDevice)==Utils.Hash(item.SourceDevice,item.DestinationDevice )));
 			if (call == null)
