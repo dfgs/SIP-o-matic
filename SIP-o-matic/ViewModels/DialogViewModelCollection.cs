@@ -33,6 +33,15 @@ namespace SIP_o_matic.ViewModels
 			return item.IsChecked;
 		}
 
+		public override int GetNewItemIndex(DialogViewModel Item)
+		{
+			for(int t=0;t<Count;t++)
+			{
+				if (Item.TimeStamp < this[t].TimeStamp) return t;
+			}
+			return Count ;
+		}
+
 		public void Add(Dialog Dialog)
 		{
 			DialogViewModel dialogViewModel;

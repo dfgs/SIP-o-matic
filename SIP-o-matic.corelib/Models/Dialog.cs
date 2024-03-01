@@ -63,6 +63,11 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
+		public Dialog()
+		{
+
+		}
+
 		[SetsRequiredMembers]
 		public Dialog(DateTime TimeStamp, string callID, string SourceDevice,string DestinationDevice,string FromTag,string? ToTag, string Caller, string Callee)
 		{

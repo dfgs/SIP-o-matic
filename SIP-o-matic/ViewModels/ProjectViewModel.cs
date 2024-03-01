@@ -110,6 +110,9 @@ namespace SIP_o_matic.ViewModels
 		{
 			Project? project = null;
 
+			this.Path = Path;
+			this.Name = System.IO.Path.GetFileName(Path);
+
 			await TryAsync(() => Project.LoadAsync(Path)).Then(result => project = result).OrThrow("Failed to open project");
 			Load(project!);
 		}

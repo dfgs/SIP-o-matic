@@ -34,7 +34,6 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
-		[XmlIgnore]
 		public List<Dialog> Dialogs
 		{
 			get;

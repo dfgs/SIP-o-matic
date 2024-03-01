@@ -14,7 +14,7 @@
 			<ColumnDefinition Width="600"/>
 		</Grid.ColumnDefinitions>
 
-		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Messages}">
+		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Messages}" >
 			<views:LadderView.ItemTemplate>
 				<DataTemplate>
 					<views:MessageView Margin="0,0,0,16"/>

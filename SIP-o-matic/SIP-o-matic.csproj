@@ -6,6 +6,7 @@
     <RootNamespace>SIP_o_matic</RootNamespace>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Bigfoot.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +16,7 @@
     <None Remove="Images\Alcatel.png" />
     <None Remove="Images\arrow_refresh.png" />
     <None Remove="Images\attach.png" />
+    <None Remove="Images\Bigfoot.ico" />
     <None Remove="Images\bug_edit.png" />
     <None Remove="Images\bullet_black.png" />
     <None Remove="Images\bullet_go.png" />
@@ -74,6 +76,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="Bigfoot.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Fonts\G7_Cube_5.ttf">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -82,6 +88,7 @@
     <Resource Include="Images\Alcatel.png" />
     <Resource Include="Images\arrow_refresh.png" />
     <Resource Include="Images\attach.png" />
+    <Resource Include="Images\Bigfoot.ico" />
     <Resource Include="Images\bug_edit.png" />
     <Resource Include="Images\bullet_black.png" />
     <Resource Include="Images\bullet_go.png" />

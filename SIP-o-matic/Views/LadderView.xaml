@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
 	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"  >
 		<!--DataContext="{Binding TargetNullValue={x:Static local:Consts.KeyFrames}}"-->
-		<DockPanel HorizontalAlignment="Left" VerticalAlignment="Top" x:Name="dockPanel">
+		<DockPanel  VerticalAlignment="Top" x:Name="dockPanel">
 			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}"   >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>

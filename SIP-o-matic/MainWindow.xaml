@@ -7,7 +7,7 @@
 		xmlns:views="clr-namespace:SIP_o_matic.Views"
 		xmlns:tk="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" WindowState="Maximized" Loaded="Window_Loaded"
-        Title="SIP-o-matic" Height="640" Width="800" >
+        Title="SIP-o-matic" Height="640" Width="800" Icon="Images\Bigfoot.ico" >
 
 	<Window.InputBindings>
 		<KeyBinding Modifiers="Ctrl" Key="C" Command="Copy"/>
