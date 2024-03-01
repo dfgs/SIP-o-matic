@@ -139,6 +139,8 @@ namespace SIP_o_matic.Modules
 
 			message = project.Messages[Index];
 
+			if (!message.SIPMessage.IsRequest) return;
+			if (message.SIPMessage.Method != "INVITE") return;
 			if (project.Dialogs.ContainsDialogForMessage(message)) return;
 
 			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceDevice, message.DestinationDevice, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString()??"Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined");

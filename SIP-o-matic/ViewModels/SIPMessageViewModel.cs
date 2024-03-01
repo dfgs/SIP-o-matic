@@ -41,6 +41,11 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
+		public bool IsRequest
+		{
+			get => Model is Request;
+		}
+
 		public string Method
 		{
 			get
