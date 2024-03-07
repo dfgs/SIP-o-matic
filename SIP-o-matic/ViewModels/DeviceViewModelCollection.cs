@@ -7,12 +7,25 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
 	public class DeviceViewModelCollection : ListViewModel<Device, DeviceViewModel>
 	{
+
+
+		public static readonly DependencyProperty SelectedDeviceOrAddressProperty = DependencyProperty.Register("SelectedDeviceOrAddress", typeof(object), typeof(DeviceViewModelCollection), new PropertyMetadata(null));
+		public object SelectedDeviceOrAddress
+		{
+			get { return (object)GetValue(SelectedDeviceOrAddressProperty); }
+			set { SetValue(SelectedDeviceOrAddressProperty, value); }
+		}
+
+
+
+
 		public DeviceViewModelCollection(ILogger Logger) : base(Logger)
 		{
 		}

@@ -19,5 +19,10 @@ namespace SIP_o_matic
 
 		public static RoutedCommand ExportSIP = new RoutedCommand();
 		public static RoutedCommand ExportPPT = new RoutedCommand();
+
+
+		public static RoutedCommand AddDeviceOrAddress = new RoutedCommand();
+		public static RoutedCommand RemoveDeviceOrAddress = new RoutedCommand();
+		public static RoutedCommand EditDeviceOrAddress = new RoutedCommand();
 	}
 }

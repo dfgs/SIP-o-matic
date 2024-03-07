@@ -15,6 +15,11 @@ namespace SIP_o_matic.ViewModels
 		public string Name
 		{
 			get => Model.Name;
+			set 
+			{ 
+				Model.Name = value; 
+				OnPropertyChanged(nameof(Name)); 
+			}
 		}
 		public AddressViewModelCollection Addresses
 		{

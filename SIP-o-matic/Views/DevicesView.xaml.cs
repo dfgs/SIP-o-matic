@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIP_o_matic.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,9 +21,40 @@ namespace SIP_o_matic.Views
 	/// </summary>
 	public partial class DevicesView : UserControl
 	{
+		private DeviceViewModel? selectedDevice;
+		private AddressViewModel? selectedAddress;
+
 		public DevicesView()
 		{
 			InitializeComponent();
+			selectedDevice = null;
+			selectedAddress = null;
 		}
-	}
+		public ItemsControl? GetSelectedTreeViewItemParent(TreeViewItem item)
+		{
+			DependencyObject parent = VisualTreeHelper.GetParent(item);
+			while (!(parent is TreeViewItem || parent is TreeView))
+			{
+				parent = VisualTreeHelper.GetParent(parent);
+			}
+
+			return parent as ItemsControl;
+		}
+
+
+		private void TreeView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+		{
+			DeviceViewModelCollection? devices;
+
+			devices = DataContext as DeviceViewModelCollection;
+			if (devices == null) return;
+
+			devices.SelectedDeviceOrAddress = e.NewValue;
+		
+
+
+        }
+
+
+    }
 }

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
+             xmlns:root="clr-namespace:SIP_o_matic"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	<UserControl.Resources>
@@ -15,8 +16,24 @@
 			<TextBlock Text="{Binding Value}"/>
 		</DataTemplate>
 	</UserControl.Resources>
+	<DockPanel>
+		<ToolBarTray DockPanel.Dock="Top">
+			<ToolBar>
+				<Button Command="{x:Static root:RoutedCommands.AddDeviceOrAddress}">
+					<Image Source="/Images/textfield_add.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}">
+					<Image Source="/Images/textfield_delete.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}">
+					<Image Source="/Images/textfield_rename.png" Stretch="None"/>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
 
-	<TreeView ItemsSource="{Binding}"  BorderThickness="0"/>
+		<TreeView ItemsSource="{Binding}"  BorderThickness="0" SelectedItemChanged="TreeView_SelectedItemChanged" x:Name="treeView" />
+
+	</DockPanel>
 
 
 </UserControl>

@@ -15,6 +15,8 @@
 		<KeyBinding Modifiers="Ctrl" Key="O" Command="Open"/>
 		<KeyBinding Modifiers="Ctrl" Key="F4" Command="Close"/>
 		<KeyBinding Key="F5" Command="{x:Static root:RoutedCommands.Analyze}"/>
+		<KeyBinding Key="Delete" Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}"/>
+		<KeyBinding Key="F2" Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}"/>
 	</Window.InputBindings>
 
 	<Window.CommandBindings>
@@ -26,6 +28,8 @@
 		<CommandBinding Command="Close" CanExecute="CloseCommandBinding_CanExecute" Executed="CloseCommandBinding_Executed"/>
 		<CommandBinding Command="Open" CanExecute="OpenFileCommandBinding_CanExecute" Executed="OpenFileCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.ExportSIP}" CanExecute="ExportSIPCommandBinding_CanExecute" Executed="ExportSIPCommandBinding_Executed"/>
+
+		<CommandBinding Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}" CanExecute="EditDeviceOrAddressCommandBinding_CanExecute" Executed="EditDeviceOrAddressCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>

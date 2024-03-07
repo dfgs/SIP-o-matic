@@ -323,7 +323,64 @@ namespace SIP_o_matic
 			}
 		}
 
+		private void EditDeviceOrAddressCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; 
+			if (applicationViewModel.Projects.SelectedItem==null)
+			{
+				e.CanExecute = false;
+				return;
+			}
+			e.CanExecute = (applicationViewModel.Projects.SelectedItem.Devices.SelectedDeviceOrAddress!=null);
+		}
 
+		private void EditDeviceOrAddressCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			RenameWindow window;
+			DeviceViewModelCollection? devices;
+
+			devices = applicationViewModel?.Projects?.SelectedItem?.Devices;
+
+
+			if (devices?.SelectedDeviceOrAddress == null) return;
+
+			window = new RenameWindow();
+			window.Owner = this;
+			if (devices.SelectedDeviceOrAddress is DeviceViewModel deviceViewModel)
+			{
+				// rename device
+				window.Value = deviceViewModel.Name;
+				if (window.ShowDialog() ?? false)
+				{
+					try
+					{
+						deviceViewModel.Name = window.Value;
+					}
+					catch (Exception ex)
+					{
+						ShowError(ex);
+					}
+				}
+			}
+			else if (devices.SelectedDeviceOrAddress is AddressViewModel addressViewModel)
+			{
+				// rename address
+				window.Value = addressViewModel.Value;
+
+				if (window.ShowDialog() ?? false)
+				{
+					try
+					{
+						//applicationViewModel.Projects.SelectedItem.Devices.SelectedItem.Addresses.SelectedItem.Value = window.Value;
+					}
+					catch (Exception ex)
+					{
+						ShowError(ex);
+					}
+				}
+			}
+
+		}
 
 		#endregion
 

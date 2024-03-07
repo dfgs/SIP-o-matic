@@ -8,6 +8,7 @@ namespace SIP_o_matic.ViewModels
 		public string Value
 		{
 			get => Model;
+			
 		}
 
 		public AddressViewModel(ILogger Logger) : base(Logger)
