@@ -84,6 +84,11 @@
 								<Image Source="Images/Alcatel.png" Stretch="None"/>
 							</MenuItem.Icon>
 						</MenuItem>
+						<MenuItem Header="Add pcapng files" Command="{x:Static root:RoutedCommands.AddFile}" CommandParameter="pcapng">
+							<MenuItem.Icon>
+								<Image Source="Images/wireshark.png" Stretch="None"/>
+							</MenuItem.Icon>
+						</MenuItem>
 						<MenuItem Header="Add generic SIP files" Command="{x:Static root:RoutedCommands.AddFile}" CommandParameter="SIP">
 							<MenuItem.Icon>
 								<Image Source="Images/telephone.png" Stretch="None"/>

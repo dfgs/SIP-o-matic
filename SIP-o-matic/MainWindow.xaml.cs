@@ -214,6 +214,9 @@ namespace SIP_o_matic
 				case "Alcatel":
 					dialog.Filter = "sip motor files|*.txt*|All files|*.*";
 					break;
+				case "pcapng":
+					dialog.Filter = "pcapng files|*.pcapng|All files|*.*";
+					break;
 				case "SIP":
 					dialog.Filter = "SIP files|*.sip|All files|*.*";
 					break;

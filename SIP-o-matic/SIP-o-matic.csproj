@@ -53,6 +53,7 @@
     <None Remove="Images\textfield_add.png" />
     <None Remove="Images\textfield_delete.png" />
     <None Remove="Images\textfield_rename.png" />
+    <None Remove="Images\wireshark.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -126,11 +127,10 @@
     <Resource Include="Images\textfield_add.png" />
     <Resource Include="Images\textfield_delete.png" />
     <Resource Include="Images\textfield_rename.png" />
+    <Resource Include="Images\wireshark.png" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.6.0" />
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.45" />
     <PackageReference Include="PcapngFile" Version="1.0.5" />
     <PackageReference Include="Stateless" Version="5.15.0" />
   </ItemGroup>

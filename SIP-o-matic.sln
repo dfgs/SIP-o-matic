@@ -23,9 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserLib", "..\ParserLib\P
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleLib", "..\ModuleLib\ModuleLib\ModuleLib.csproj", "{F89B06C7-43CC-4589-9859-3A4656AAA4A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIP-o-matic.corelib", "SIP-o-matic.corelib\SIP-o-matic.corelib.csproj", "{96C08F69-40C4-4043-8DB2-49D4E017BCEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIP-o-matic.corelib", "SIP-o-matic.corelib\SIP-o-matic.corelib.csproj", "{96C08F69-40C4-4043-8DB2-49D4E017BCEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SIP-o-matic.corelibTest", "SIP-o-matic.corelibTest\SIP-o-matic.corelibTest.csproj", "{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SIP-o-matic.corelibTest", "SIP-o-matic.corelibTest\SIP-o-matic.corelibTest.csproj", "{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EthernetFrameReaderLib", "..\EthernetFrameReaderLib\EthernetFrameReaderLib\EthernetFrameReaderLib.csproj", "{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,10 @@ Global
 		{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,6 +91,7 @@ Global
 		{80FEC6ED-A4AC-41FD-975C-32C0D1059B83} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{F89B06C7-43CC-4589-9859-3A4656AAA4A6} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{3D8E0F7E-C18D-4CB7-91DE-E6E6AB13583A} = {6A28D05C-EF1C-4718-A428-D0E044DB2DDB}
+		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9229E506-032C-4EEB-9A4A-D9F3DC95820E}

@@ -2,6 +2,7 @@
 using ModuleLib;
 using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
+using SIP_o_matic.DataSources;
 using SIP_o_matic.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -87,6 +88,9 @@ namespace SIP_o_matic.Modules
 					break;
 				case "SIP":
 					dataSource = new GenericSIPDataSource();
+					break;
+				case "pcapng":
+					dataSource = new WiresharkDataSource();
 					break;
 				default:
 					dataSource = new OracleOEMDataSource();
