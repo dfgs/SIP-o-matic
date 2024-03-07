@@ -142,8 +142,9 @@ namespace SIP_o_matic.Modules
 			if (!message.SIPMessage.IsRequest) return;
 			if (message.SIPMessage.Method != "INVITE") return;
 			if (project.Dialogs.ContainsDialogForMessage(message)) return;
-
-			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceDevice, message.DestinationDevice, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString()??"Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined");
+			
+			
+			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString()??"Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined");
 			project.Dialogs.Add(dialog);
 			await Task.Delay(1);
 			

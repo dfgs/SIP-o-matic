@@ -11,6 +11,7 @@ namespace SIP_o_matic.ViewModels
 {
 	public class MessagesFrameViewModel : ViewModel<string>
 	{
+
 		public IEnumerable<string> Devices
 		{
 			get => Messages.SelectMany(message => message.Devices).Distinct();
@@ -22,9 +23,12 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public MessagesFrameViewModel(ILogger Logger) : base(Logger)
+		private IDeviceNameProvider deviceNameProvider;
+
+		public MessagesFrameViewModel(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
-			Messages = new MessageViewModelCollection(Logger);
+			this.deviceNameProvider = DeviceNameProvider;
+			Messages = new MessageViewModelCollection(Logger,deviceNameProvider);
 		}
 		protected override void OnLoaded()
 		{

@@ -93,5 +93,20 @@ namespace SIP_o_matic.ViewModels
 			
 		}
 
+		public void Remove(DeviceViewModel Device)
+		{
+			Model.Remove(Device.GetModel());
+			RemoveInternal(Device);
+		}
+
+		public void Remove(AddressViewModel Address)
+		{
+			DeviceViewModel? device;
+
+			device = this.FirstOrDefault(item => item.Addresses.Contains(Address));
+			if (device == null) return;
+
+			device.Addresses.Remove(Address);
+		}
 	}
 }

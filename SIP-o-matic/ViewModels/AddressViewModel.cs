@@ -20,5 +20,11 @@ namespace SIP_o_matic.ViewModels
 		public AddressViewModel(ILogger Logger) : base(Logger)
 		{
 		}
+
+		public Address GetModel()
+		{
+			return Model;
+		}
+
 	}
 }

@@ -38,6 +38,13 @@ namespace SIP_o_matic.ViewModels
 			return Model.Contains(Address);
 		}
 
+		public void Remove(AddressViewModel Address)
+		{
+			Model.Remove(Address.GetModel());
+			RemoveInternal(Address);
+		}
+
+
 
 	}
 }

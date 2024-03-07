@@ -30,6 +30,9 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.ExportSIP}" CanExecute="ExportSIPCommandBinding_CanExecute" Executed="ExportSIPCommandBinding_Executed"/>
 
 		<CommandBinding Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}" CanExecute="EditDeviceOrAddressCommandBinding_CanExecute" Executed="EditDeviceOrAddressCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.AddDevice}" CanExecute="AddDeviceCommandBinding_CanExecute" Executed="AddDeviceCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.AddAddress}" CanExecute="AddAddressCommandBinding_CanExecute" Executed="AddAddressCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}" CanExecute="RemoveDeviceOrAddressCommandBinding_CanExecute" Executed="RemoveDeviceOrAddressCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>

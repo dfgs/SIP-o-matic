@@ -11,13 +11,17 @@ namespace SIP_o_matic.ViewModels
 {
 	public class DialogViewModelCollection : ListViewModel<Dialog, DialogViewModel>
 	{
-		public DialogViewModelCollection(ILogger Logger) : base(Logger)
+
+		private IDeviceNameProvider deviceNameProvider;
+
+		public DialogViewModelCollection(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
+			this.deviceNameProvider = DeviceNameProvider;
 		}
 
 		protected override DialogViewModel OnCreateItem()
 		{
-			return new DialogViewModel(Logger);
+			return new DialogViewModel(Logger,deviceNameProvider);
 		}
 
 		public bool ContainsDialogForMessage(MessageViewModel Message)
@@ -48,7 +52,7 @@ namespace SIP_o_matic.ViewModels
 
 			Model.Add(Dialog);
 
-			dialogViewModel = new DialogViewModel(Logger);
+			dialogViewModel = new DialogViewModel(Logger,deviceNameProvider);
 			dialogViewModel.Load(Dialog);
 
 			AddInternal(dialogViewModel);

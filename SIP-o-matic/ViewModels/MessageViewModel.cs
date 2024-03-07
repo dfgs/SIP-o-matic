@@ -55,26 +55,34 @@ namespace SIP_o_matic.ViewModels
 
 		public Address SourceAddress
 		{
-			get=>Model.SourceAddress; 
+			get=>Model.SourceAddress;
+			set
+			{
+				Model.SourceAddress = value;
+				OnPropertyChanged(nameof(SourceAddress));
+				OnPropertyChanged(nameof(SourceDevice));
+			}
 		}
 
 		public Address DestinationAddress
 		{
-			get=> Model.DestinationAddress; 
+			get=> Model.DestinationAddress;
+			set
+			{
+				Model.DestinationAddress = value;
+				OnPropertyChanged(nameof(DestinationAddress));
+				OnPropertyChanged(nameof(DestinationDevice));
+			}
 		}
 
 
-		private string? sourceDevice;
 		public string SourceDevice
 		{
-			get => sourceDevice ?? SourceAddress.Value;
-			set => this.sourceDevice = value;
+			get => deviceNameProvider.GetDeviceName(Model.SourceAddress);
 		}
-		private string? destinationDevice;
 		public string DestinationDevice
 		{
-			get => destinationDevice ?? DestinationAddress.Value;
-			set => this.destinationDevice = value;
+			get => deviceNameProvider.GetDeviceName(Model.DestinationAddress);
 		}
 
 		public IEnumerable<string> Devices
@@ -92,11 +100,23 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsFlippedProperty, value); }
 		}
 
+		private IDeviceNameProvider deviceNameProvider;
 
-		public MessageViewModel(ILogger Logger) : base(Logger)
+		public MessageViewModel(ILogger Logger,IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
+			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
+			this.deviceNameProvider = DeviceNameProvider;
+			this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
+
 			SIPMessage = new SIPMessageViewModel(Logger);
 			TransactionColor = "Black";DialogColor = "Blue";
+
+		}
+
+		private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		{
+			OnPropertyChanged(nameof(SourceDevice));
+			OnPropertyChanged(nameof(DestinationDevice));
 		}
 
 		protected override void OnLoaded()

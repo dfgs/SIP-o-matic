@@ -3,7 +3,6 @@ using PcapngFile;
 using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.Views;
-using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,12 +12,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-    public class ProjectViewModel: ViewModel<Project>
+	public class ProjectViewModel : ViewModel<Project>, IDeviceNameProvider
 	{
+		public event EventHandler? DeviceNameUpdated;
+
 
 		public static readonly DependencyProperty NameProperty = DependencyProperty.Register("Name", typeof(string), typeof(ProjectViewModel), new PropertyMetadata("new project"));
 		public string Name
@@ -74,10 +76,10 @@ namespace SIP_o_matic.ViewModels
 		public ProjectViewModel(ILogger Logger):base(Logger)
 		{
 			Devices = new DeviceViewModelCollection(Logger);
-			Messages = new MessageViewModelCollection(Logger);
+			Messages = new MessageViewModelCollection(Logger,this);
 			KeyFrames = new KeyFrameViewModelCollection(Logger);
-			MessagesFrame = new MessagesFrameViewModel(Logger);
-			Dialogs = new DialogViewModelCollection(Logger);
+			MessagesFrame = new MessagesFrameViewModel(Logger,this);
+			Dialogs = new DialogViewModelCollection(Logger,this);
 		}
 
 		protected override void OnLoaded()
@@ -123,7 +125,52 @@ namespace SIP_o_matic.ViewModels
 			await TryAsync(() => Model.ExportSIPAsync(Path)).OrThrow("Failed to export project file");
 		}
 
+		public void UpdateAddresses(string OldValue, string NewValue)
+		{
+			foreach (DialogViewModel dialog in Dialogs)
+			{
+				if (dialog.SourceAddress.Value == OldValue) dialog.SourceAddress = new Address(NewValue);
+				if (dialog.DestinationAddress.Value == OldValue) dialog.DestinationAddress = new Address(NewValue);
+			}
+			foreach (MessageViewModel message in Messages)
+			{
+				if (message.SourceAddress.Value == OldValue) message.SourceAddress = new Address(NewValue);
+				if (message.DestinationAddress.Value == OldValue) message.DestinationAddress = new Address(NewValue);
+			}
+		}
 
+		public void RenameDevice(DeviceViewModel Device,string Name)
+		{
+			Device.Name = Name;
+			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
+		}
+
+		public string GetDeviceName(Address Address)
+		{
+			if (Address == null) return "Undefined";
+			return this.Devices.FindDeviceByAddress(Address)?.Name ?? Address.Value;
+		}
+		public void RemoveDevice(DeviceViewModel Device)
+		{
+			Devices.Remove(Device);
+			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
+		}
+		public void RemoveAddress(AddressViewModel Address)
+		{
+			Devices.Remove(Address);
+			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
+		}
+
+		public void AddDevice(Device Device)
+		{
+			Devices.Add(Device);
+			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
+		}
+		public void AddAddressToDevice(DeviceViewModel Device,Address Address)
+		{
+			Device.Addresses.Add(Address);
+			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
+		}
 
 	}
 }

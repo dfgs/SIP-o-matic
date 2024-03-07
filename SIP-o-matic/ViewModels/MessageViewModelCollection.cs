@@ -11,13 +11,18 @@ namespace SIP_o_matic.ViewModels
 {
 	public class MessageViewModelCollection : ListViewModel<Message, MessageViewModel>
 	{
-		public MessageViewModelCollection(ILogger Logger) : base(Logger)
+
+		private IDeviceNameProvider deviceNameProvider;
+
+
+		public MessageViewModelCollection(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
+			this.deviceNameProvider = DeviceNameProvider;
 		}
 
 		protected override MessageViewModel OnCreateItem()
 		{
-			return new MessageViewModel(Logger);
+			return new MessageViewModel(Logger,deviceNameProvider);
 		}
 		public void Clear()
 		{
@@ -31,7 +36,7 @@ namespace SIP_o_matic.ViewModels
 
 			Model.Add(Message);
 
-			messageViewModel=new MessageViewModel(Logger);
+			messageViewModel=new MessageViewModel(Logger, deviceNameProvider);
 			messageViewModel.Load(Message);
 			
 			AddInternal(messageViewModel);

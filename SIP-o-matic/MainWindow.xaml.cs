@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using System.Text.Json;
 using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.Modules;
+using SIP_o_matic.corelib.Models;
 
 
 
@@ -338,8 +339,12 @@ namespace SIP_o_matic
 		{
 			RenameWindow window;
 			DeviceViewModelCollection? devices;
+			ProjectViewModel? project;
+			string oldValue;
 
-			devices = applicationViewModel?.Projects?.SelectedItem?.Devices;
+			project = applicationViewModel?.Projects.SelectedItem;
+			if (project == null) return;
+			devices = project.Devices;
 
 
 			if (devices?.SelectedDeviceOrAddress == null) return;
@@ -349,12 +354,13 @@ namespace SIP_o_matic
 			if (devices.SelectedDeviceOrAddress is DeviceViewModel deviceViewModel)
 			{
 				// rename device
-				window.Value = deviceViewModel.Name;
+				oldValue = deviceViewModel.Name;
+				window.Value = oldValue;
 				if (window.ShowDialog() ?? false)
 				{
 					try
 					{
-						deviceViewModel.Name = window.Value;
+						project.RenameDevice(deviceViewModel, window.Value);
 					}
 					catch (Exception ex)
 					{
@@ -365,13 +371,15 @@ namespace SIP_o_matic
 			else if (devices.SelectedDeviceOrAddress is AddressViewModel addressViewModel)
 			{
 				// rename address
-				window.Value = addressViewModel.Value;
+				oldValue = addressViewModel.Value;
+				window.Value = oldValue;
 
 				if (window.ShowDialog() ?? false)
 				{
 					try
 					{
 						addressViewModel.Value = window.Value;
+						project.UpdateAddresses(oldValue, window.Value);
 					}
 					catch (Exception ex)
 					{
@@ -382,6 +390,133 @@ namespace SIP_o_matic
 
 		}
 
+
+		private void AddDeviceCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;e.CanExecute=(applicationViewModel.Projects.SelectedItem != null);
+			
+		}
+
+		private void AddDeviceCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			RenameWindow window;
+			DeviceViewModelCollection? devices;
+			ProjectViewModel? project;
+			string oldValue;
+
+			project = applicationViewModel?.Projects.SelectedItem;
+			if (project == null) return;
+			devices = project.Devices;
+
+
+			window = new RenameWindow();
+			window.Owner = this;
+			if (devices.SelectedDeviceOrAddress is DeviceViewModel deviceViewModel)
+			{
+				oldValue = "New device";
+				window.Value = oldValue;
+				if (window.ShowDialog() ?? false)
+				{
+					try
+					{
+						project.AddDevice(new Device(window.Value, new Address[] { }));
+					}
+					catch (Exception ex)
+					{
+						ShowError(ex);
+					}
+				}
+			}
+			
+
+		}
+
+		private void AddAddressCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;
+			if (applicationViewModel.Projects.SelectedItem == null)
+			{
+				e.CanExecute = false;
+				return;
+			}
+			e.CanExecute = (applicationViewModel.Projects.SelectedItem.Devices.SelectedDeviceOrAddress as DeviceViewModel != null);
+		}
+
+		private void AddAddressCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			RenameWindow window;
+			DeviceViewModelCollection? devices;
+			ProjectViewModel? project;
+			string oldValue;
+			DeviceViewModel? device;
+
+			project = applicationViewModel?.Projects.SelectedItem;
+			if (project == null) return;
+			devices = project.Devices;
+
+
+			device = devices?.SelectedDeviceOrAddress as DeviceViewModel;
+
+			if ( device== null) return;
+
+			window = new RenameWindow();
+			window.Owner = this;
+							
+			oldValue = "127.0.0.1";
+			window.Value = oldValue;
+
+			if (window.ShowDialog() ?? false)
+			{
+				try
+				{
+					project.AddAddressToDevice(device,new Address( window.Value));
+				}
+				catch (Exception ex)
+				{
+					ShowError(ex);
+				}
+			}
+			
+
+		}
+
+
+		private void RemoveDeviceOrAddressCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;
+			if (applicationViewModel.Projects.SelectedItem == null)
+			{
+				e.CanExecute = false;
+				return;
+			}
+			e.CanExecute = (applicationViewModel.Projects.SelectedItem.Devices.SelectedDeviceOrAddress != null);
+		}
+
+		private void RemoveDeviceOrAddressCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			DeviceViewModelCollection? devices;
+			ProjectViewModel? project;
+
+			project = applicationViewModel?.Projects.SelectedItem;
+			if (project == null) return;
+			devices = project.Devices;
+
+
+			if (devices?.SelectedDeviceOrAddress == null) return;
+
+			
+			if (devices.SelectedDeviceOrAddress is DeviceViewModel deviceViewModel)
+			{
+				// remove device
+				project.RemoveDevice(deviceViewModel);
+			}
+			else if (devices.SelectedDeviceOrAddress is AddressViewModel addressViewModel)
+			{
+				// remove address
+				project.RemoveAddress(addressViewModel);
+			}
+
+		}
 		#endregion
 
 

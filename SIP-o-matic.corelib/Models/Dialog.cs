@@ -29,13 +29,13 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
-		public required string SourceDevice
+		public required Address SourceAddress
 		{
 			get;
 			set;
 		}
 
-		public required string DestinationDevice
+		public required Address DestinationAddress
 		{
 			get;
 			set;
@@ -69,12 +69,12 @@ namespace SIP_o_matic.corelib.Models
 		}
 
 		[SetsRequiredMembers]
-		public Dialog(DateTime TimeStamp, string callID, string SourceDevice,string DestinationDevice,string FromTag,string? ToTag, string Caller, string Callee)
+		public Dialog(DateTime TimeStamp, string callID, Address SourceAddress, Address DestinationAddress,string FromTag,string? ToTag, string Caller, string Callee)
 		{
 			this.TimeStamp = TimeStamp;
 			this.CallID = callID;
-			this.SourceDevice = SourceDevice;
-			this.DestinationDevice = DestinationDevice;
+			this.SourceAddress = SourceAddress;
+			this.DestinationAddress = DestinationAddress;
 			this.FromTag = FromTag;
 			this.ToTag = ToTag;
 			this.Caller = Caller;

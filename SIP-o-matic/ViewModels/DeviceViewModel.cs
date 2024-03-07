@@ -39,7 +39,10 @@ namespace SIP_o_matic.ViewModels
 			Addresses.Load(Model.Addresses);
 		}
 
-		
+		public Device GetModel()
+		{
+			return Model;
+		}
 		
 
 	}

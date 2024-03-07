@@ -465,8 +465,8 @@ namespace SIP_o_matic.Modules
 
 				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 
-				message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress.Value;
-				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress.Value;
+				//message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress.Value;
+				//message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress.Value;
 									
 
 				callID = message.SIPMessage.GetCallID();
@@ -495,7 +495,7 @@ namespace SIP_o_matic.Modules
 
 			if (_project.Messages.Count == 0) return;
 
-			messageFrame = new MessagesFrameViewModel(_project.Logger);
+			messageFrame = new MessagesFrameViewModel(_project.Logger,_project);
 			messageFrame.Load("");
 			await FormatMessagesFrameAsync(CancellationToken, messageFrame);
 			_project.MessagesFrame = messageFrame;

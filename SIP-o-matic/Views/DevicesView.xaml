@@ -19,13 +19,16 @@
 	<DockPanel>
 		<ToolBarTray DockPanel.Dock="Top">
 			<ToolBar>
-				<Button Command="{x:Static root:RoutedCommands.AddDeviceOrAddress}">
-					<Image Source="/Images/textfield_add.png" Stretch="None"/>
+				<Button Command="{x:Static root:RoutedCommands.AddDevice}" ToolTip="Add device" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/server_add.png" Stretch="None"/>
 				</Button>
-				<Button Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}">
-					<Image Source="/Images/textfield_delete.png" Stretch="None"/>
+				<Button Command="{x:Static root:RoutedCommands.AddAddress}" ToolTip="Add address" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/tag_blue_add.png" Stretch="None"/>
 				</Button>
-				<Button Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}">
+				<Button Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}" ToolTip="Remove device or address" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/cross.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}" ToolTip="Edit device or address" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/textfield_rename.png" Stretch="None"/>
 				</Button>
 			</ToolBar>

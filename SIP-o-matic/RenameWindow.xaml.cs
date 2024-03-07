@@ -37,6 +37,7 @@ namespace SIP_o_matic
 		private void root_Loaded(object sender, RoutedEventArgs e)
 		{
 			textBox.Focus();
+			textBox.SelectAll();
 		}
 
 		#region events

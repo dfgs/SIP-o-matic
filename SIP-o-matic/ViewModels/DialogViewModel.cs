@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ViewModelLib;
+using Address = SIP_o_matic.corelib.Models.Address;
 
 namespace SIP_o_matic.ViewModels
 {
@@ -37,16 +38,35 @@ namespace SIP_o_matic.ViewModels
 			get => Model.CallID;
 		}
 
-		public string SourceDevice
+		public Address SourceAddress
 		{
-			get=>Model.SourceDevice;
+			get => Model.SourceAddress;
+			set
+			{
+				Model.SourceAddress = value;
+				OnPropertyChanged(nameof(SourceAddress));
+				OnPropertyChanged(nameof(SourceDevice));
+			}
 		}
 
+		public Address DestinationAddress
+		{
+			get => Model.DestinationAddress;
+			set
+			{
+				Model.DestinationAddress = value;
+				OnPropertyChanged(nameof(DestinationAddress));
+				OnPropertyChanged(nameof(DestinationDevice));
+			}
+		}
 
-
+		public string SourceDevice
+		{
+			get => deviceNameProvider.GetDeviceName(Model.SourceAddress);
+		}
 		public string DestinationDevice
 		{
-			get=> Model.DestinationDevice;
+			get => deviceNameProvider.GetDeviceName(Model.DestinationAddress);
 		}
 
 		public IEnumerable<string> Devices
@@ -66,13 +86,23 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Model.Callee;
 		}
-		
-			
 
-		
-		public DialogViewModel(ILogger Logger) : base(Logger)
+
+		private IDeviceNameProvider deviceNameProvider;
+
+
+		public DialogViewModel(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
-			
+			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
+			this.deviceNameProvider = DeviceNameProvider;
+			this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
+
+		}
+
+		private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		{
+			OnPropertyChanged(nameof(SourceDevice));
+			OnPropertyChanged(nameof(DestinationDevice));
 		}
 
 		public bool Match(ISIPMessage MessageInfo)
