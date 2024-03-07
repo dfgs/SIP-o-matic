@@ -29,7 +29,7 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  BorderThickness="1" BorderBrush="Gray" Background="WhiteSmoke"  >
+				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  BorderThickness="1" BorderBrush="#55000000" HorizontalAlignment="Left"  >
 					<StackPanel Orientation="Horizontal" >
 						<Border  Background="{Binding TransactionColor,FallbackValue='Green'}" Width="8" VerticalAlignment="Stretch" />
 						<TextBlock  HorizontalAlignment="Left"  Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="#555555" FontWeight="Bold" Margin="3,3,3,3"/>
@@ -56,7 +56,7 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray" Background="WhiteSmoke" >
+				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#55000000" HorizontalAlignment="Left" >
 					<StackPanel Orientation="Horizontal">
 						<Border  Background="{Binding TransactionColor,FallbackValue='Green'}" Width="8" VerticalAlignment="Stretch" />
 						<TextBlock  HorizontalAlignment="Left"  Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="#555555" FontWeight="Bold" Margin="3,3,3,3"/>
