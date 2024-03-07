@@ -30,12 +30,16 @@ namespace SIP_o_matic.ViewModels
 		{
 			get =>Model.Content;
 		}
-		public string Color
+		public string TransactionColor
 		{
 			get;
 			set;
 		}
-
+		public string DialogColor
+		{
+			get;
+			set;
+		}
 		public string Description
 		{
 			get
@@ -93,7 +97,7 @@ namespace SIP_o_matic.ViewModels
 		public MessageViewModel(ILogger Logger) : base(Logger)
 		{
 			SIPMessage = new SIPMessageViewModel(Logger);
-			Color = "Black";
+			TransactionColor = "Black";DialogColor = "Blue";
 		}
 
 		protected override void OnLoaded()

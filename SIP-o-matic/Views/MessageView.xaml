@@ -29,10 +29,15 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="{Binding Color,FallbackValue='Blue'}" FontWeight="Bold"/>
+				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2"  BorderThickness="1" BorderBrush="Gray" Background="WhiteSmoke"  >
+					<StackPanel Orientation="Horizontal" >
+						<Border  Background="{Binding TransactionColor,FallbackValue='Green'}" Width="8" VerticalAlignment="Stretch" />
+						<TextBlock  HorizontalAlignment="Left"  Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="#555555" FontWeight="Bold" Margin="3,3,3,3"/>
+					</StackPanel>
+				</Border>
 				<TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding Timestamp,StringFormat='{}{0:HH:mm:ss.fff}',FallbackValue='12:41:00.123'}" Foreground="Gray" FontSize="9" />
 
-				<views:ArrowRightView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding Color,FallbackValue='Blue'}" />
+				<views:ArrowRightView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding DialogColor,FallbackValue='Blue'}" />
 
 				<TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left"  Text="{Binding SourceAddress,FallbackValue='192.168.1.2'}"/>
 				<TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right"  Text="{Binding DestinationAddress,FallbackValue='10.10.5.5'}"/>
@@ -51,10 +56,15 @@
 					<RowDefinition Height="Auto"/>
 				</Grid.RowDefinitions>
 
-				<TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="{Binding Color,FallbackValue='Blue'}" FontWeight="Bold"/>
+				<Border Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="Gray" Background="WhiteSmoke" >
+					<StackPanel Orientation="Horizontal">
+						<Border  Background="{Binding TransactionColor,FallbackValue='Green'}" Width="8" VerticalAlignment="Stretch" />
+						<TextBlock  HorizontalAlignment="Left"  Text="{Binding Description,FallbackValue='[5] 200 OK'}" Foreground="#555555" FontWeight="Bold" Margin="3,3,3,3"/>
+					</StackPanel>
+				</Border>
 				<TextBlock Grid.Column="2" Grid.Row="0" HorizontalAlignment="Right" VerticalAlignment="Bottom" Text="{Binding Timestamp,StringFormat='{}{0:HH:mm:ss.fff}',FallbackValue='12:41:00.123' }" Foreground="Gray" FontSize="9" />
 
-				<views:ArrowLeftView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding Color,FallbackValue='Blue'}" />
+				<views:ArrowLeftView Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3" Foreground="{Binding DialogColor,FallbackValue='Blue'}" />
 
 				<TextBlock Grid.Column="0" Grid.Row="2" HorizontalAlignment="Left"  Text="{Binding DestinationAddress,FallbackValue='192.168.1.2'}"/>
 				<TextBlock Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right"  Text="{Binding SourceAddress,FallbackValue='10.10.5.5'}"/>

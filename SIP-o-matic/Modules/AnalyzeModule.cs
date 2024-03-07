@@ -35,7 +35,8 @@ namespace SIP_o_matic.Modules
 		private List<string> legs;
 		private List<string> callColors;
 		private ColorManager callColorManager;
-		private List<string> messageColors;
+		private List<string> transactionColors;
+		private List<string> dialogColors;
 		private ColorManager messageColorManager;
 
 
@@ -50,7 +51,8 @@ namespace SIP_o_matic.Modules
 			callColors = new List<string>();
 			callColorManager = new ColorManager();
 
-			messageColors = new List<string>();
+			transactionColors = new List<string>();
+			dialogColors = new List<string>();
 			messageColorManager = new ColorManager();
 
 
@@ -128,23 +130,38 @@ namespace SIP_o_matic.Modules
 
 			return callColorManager.GetColorString(index);
 		}
-		private string GetColor(string CallID, string ViaBranch,string CSeq)
+		private string GetTransactionColor(string CallID, string ViaBranch,string CSeq)
 		{
 			int index;
 			string key;
 
 			key = CallID + "/" + ViaBranch+"/"+CSeq;
 
-			index = messageColors.IndexOf(key);
+			index = transactionColors.IndexOf(key);
 			if (index == -1)
 			{
-				index = messageColors.Count;
-				messageColors.Add(key);
+				index = transactionColors.Count;
+				transactionColors.Add(key);
 			}
 
 			return messageColorManager.GetColorString(index);
 		}
+		private string GetDialogColor(string CallID, string FromTag)
+		{
+			int index;
+			string key;
 
+			key = CallID + "/" + FromTag ;
+
+			index = dialogColors.IndexOf(key);
+			if (index == -1)
+			{
+				index = dialogColors.Count;
+				dialogColors.Add(key);
+			}
+
+			return messageColorManager.GetColorString(index);
+		}
 
 		private Transaction CreateNewTransaction(IRequest Request,string SourceDevice, string DestinationDevice)
 		{
@@ -434,7 +451,7 @@ namespace SIP_o_matic.Modules
 			string callID;
 			string viaBranch;
 			string cseq;
-
+			string fromTag;
 
 
 			await foreach (MessageViewModel message in _project.Messages.ToAsyncEnumerable())
@@ -456,8 +473,10 @@ namespace SIP_o_matic.Modules
 				callID = message.SIPMessage.GetCallID();
 				viaBranch = message.SIPMessage.GetViaBranch();
 				cseq = message.SIPMessage.GetCSeq();
+				fromTag = message.SIPMessage.GetFromTag();
 
-				message.Color = GetColor(callID, viaBranch, cseq);
+				message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
+				message.DialogColor = GetDialogColor(callID, fromTag);
 
 				MessagesFrame.Messages.Add(message);
 			}
