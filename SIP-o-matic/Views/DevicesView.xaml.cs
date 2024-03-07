@@ -21,14 +21,10 @@ namespace SIP_o_matic.Views
 	/// </summary>
 	public partial class DevicesView : UserControl
 	{
-		private DeviceViewModel? selectedDevice;
-		private AddressViewModel? selectedAddress;
 
 		public DevicesView()
 		{
 			InitializeComponent();
-			selectedDevice = null;
-			selectedAddress = null;
 		}
 		public ItemsControl? GetSelectedTreeViewItemParent(TreeViewItem item)
 		{

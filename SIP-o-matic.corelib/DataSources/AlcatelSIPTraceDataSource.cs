@@ -61,7 +61,7 @@ namespace SIP_o_matic.corelib.DataSources
 			string? line;
 			Message _event;
 			DateTime timeStamp;
-			string sourceAddress, destinationAddress;
+			Address sourceAddress, destinationAddress;
 			string message;
 			Match inMatch, outMatch;
 			uint index;
@@ -73,7 +73,7 @@ namespace SIP_o_matic.corelib.DataSources
 			messages.Clear();
 
 			device = new Device() { Name = "OXE" };
-			device.Addresses.Add("127.0.0.1");
+			device.Addresses.Add(new Address( "127.0.0.1"));
 			devices.Add(device);
 
 
@@ -92,13 +92,13 @@ namespace SIP_o_matic.corelib.DataSources
 						dateString = inMatch.Groups["Timestamp"].Value.Replace("  "," ");
 						timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy",CultureInfo.InvariantCulture);
 						
-						sourceAddress = inMatch.Groups["Address"].Value;
-						destinationAddress = "127.0.0.1";
+						sourceAddress = new Address(inMatch.Groups["Address"].Value);
+						destinationAddress = new Address("127.0.0.1");
 
-						device2 = devices.FirstOrDefault(item => item.Name == sourceAddress);
+						device2 = devices.FirstOrDefault(item => item.Name == sourceAddress.Value);
 						if (device2==null)
 						{
-							device2 = new Device(sourceAddress, new string[] { sourceAddress });
+							device2 = new Device(sourceAddress.Value, new Address[] { sourceAddress });
 							devices.Add(device2);
 						}
 
@@ -114,13 +114,13 @@ namespace SIP_o_matic.corelib.DataSources
 							dateString = outMatch.Groups["Timestamp"].Value.Replace("  ", " ");
 							timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture);
 
-							sourceAddress = "127.0.0.1";
-							destinationAddress = outMatch.Groups["Address"].Value;
+							sourceAddress = new Address("127.0.0.1");
+							destinationAddress = new Address(outMatch.Groups["Address"].Value);
 
-							device2 = devices.FirstOrDefault(item => item.Name == destinationAddress);
+							device2 = devices.FirstOrDefault(item => item.Name == destinationAddress.Value);
 							if (device2 == null)
 							{
-								device2 = new Device(destinationAddress, new string[] { destinationAddress });
+								device2 = new Device(destinationAddress.Value, new Address[] { destinationAddress });
 								devices.Add(device2);
 							}
 

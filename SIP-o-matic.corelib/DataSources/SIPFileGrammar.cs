@@ -29,7 +29,7 @@ namespace SIP_o_matic.corelib.DataSources
 													 from _1 in Parse.Char('{')
 													 from adresses in IPAddresses
 													 from _2 in Parse.Char('}')
-													 select new Device(name,adresses);
+													 select new Device(name, adresses.Select(item=>new Address(item)));
 		public static IMultipleParser<Device> Devices = Device.ZeroOrMoreTimes();
 
 
@@ -72,7 +72,7 @@ namespace SIP_o_matic.corelib.DataSources
 													   from _4 in LineFeed
 													   from content in ContentLines
 													   from _1 in SeparatorLine
-													   select new Message(0, timeStamp, source, destination, string.Join("",content));
+													   select new Message(0, timeStamp, new Address(source), new Address(destination), string.Join("",content));
 
 		public static IMultipleParser<Message> Messages = Message.ZeroOrMoreTimes();
 

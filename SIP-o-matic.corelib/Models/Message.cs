@@ -37,15 +37,13 @@ namespace SIP_o_matic.corelib.Models
             set => Content=Encoding.UTF8.GetString(Convert.FromBase64String(value));
 		}
 
-		[XmlAttribute]
-		public required string SourceAddress
+		public required Address SourceAddress
         {
             get;
             set;
         }
 
-		[XmlAttribute]
-		public required string DestinationAddress
+		public required Address DestinationAddress
         {
             get;
             set;
@@ -56,7 +54,7 @@ namespace SIP_o_matic.corelib.Models
 
         }
         [SetsRequiredMembers]
-        public Message(uint Index, DateTime Timestamp, string SourceAddress, string DestinationAddress, string Content)
+        public Message(uint Index, DateTime Timestamp, Address SourceAddress, Address DestinationAddress, string Content)
         {
             this.Index= Index;
             this.Timestamp = Timestamp;

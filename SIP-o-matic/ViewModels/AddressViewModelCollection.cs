@@ -1,4 +1,5 @@
 ﻿using LogLib;
+using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class AddressViewModelCollection : ListViewModel<string, AddressViewModel>
+	public class AddressViewModelCollection : ListViewModel<Address, AddressViewModel>
 	{
 		public AddressViewModelCollection(ILogger Logger) : base(Logger)
 		{
@@ -19,12 +20,12 @@ namespace SIP_o_matic.ViewModels
 			return new AddressViewModel(Logger);
 		}
 
-		public void Add(string Address)
+		public void Add(Address Address)
 		{
 			AddressViewModel addressViewModel;
 
 			if (Model.Contains(Address)) return;
-			if (string.IsNullOrEmpty(Address)) return;
+			if ((Address==null) || (string.IsNullOrEmpty(Address.Value))) return;
 			
 			Model.Add(Address);
 			addressViewModel = new AddressViewModel(Logger);
@@ -32,7 +33,7 @@ namespace SIP_o_matic.ViewModels
 			AddInternal(addressViewModel);
 		}
 
-		public bool Contains(string Address)
+		public bool Contains(Address Address)
 		{
 			return Model.Contains(Address);
 		}

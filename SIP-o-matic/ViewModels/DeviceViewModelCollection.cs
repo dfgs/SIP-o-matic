@@ -39,7 +39,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			return this.FirstOrDefault(item => item.Name == Name);
 		}
-		public DeviceViewModel? FindDeviceByAddress(string Address)
+		public DeviceViewModel? FindDeviceByAddress(Address Address)
 		{
 			return this.FirstOrDefault(item => item.Addresses.Contains( Address));
 		}
@@ -85,7 +85,7 @@ namespace SIP_o_matic.ViewModels
 				AddInternal(deviceViewModel);
 			}
 
-			foreach(string address in Device.Addresses) 
+			foreach(Address address in Device.Addresses) 
 			{
 				deviceViewModel.Addresses.Add(address);
 			}

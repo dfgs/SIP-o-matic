@@ -3,7 +3,6 @@ using ParserLib;
 using PcapngFile;
 using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.Models;
-using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -54,12 +53,12 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public string SourceAddress
+		public Address SourceAddress
 		{
 			get=>Model.SourceAddress; 
 		}
 
-		public string DestinationAddress
+		public Address DestinationAddress
 		{
 			get=> Model.DestinationAddress; 
 		}
@@ -68,13 +67,13 @@ namespace SIP_o_matic.ViewModels
 		private string? sourceDevice;
 		public string SourceDevice
 		{
-			get => sourceDevice ?? SourceAddress;
+			get => sourceDevice ?? SourceAddress.Value;
 			set => this.sourceDevice = value;
 		}
 		private string? destinationDevice;
 		public string DestinationDevice
 		{
-			get => destinationDevice ?? DestinationAddress;
+			get => destinationDevice ?? DestinationAddress.Value;
 			set => this.destinationDevice = value;
 		}
 
@@ -103,14 +102,14 @@ namespace SIP_o_matic.ViewModels
 		protected override void OnLoaded()
 		{
 			StringReader reader;
-			SIPMessage sipMessage;
+            SIPParserLib.SIPMessage sipMessage;
 
 			base.OnLoaded();
 
 			reader = new StringReader(Model.Content, ' ');
 			try
 			{
-				sipMessage = SIPGrammar.SIPMessage.Parse(reader);
+				sipMessage = SIPParserLib.SIPGrammar.SIPMessage.Parse(reader);
 			}
 			catch (Exception ex)
 			{

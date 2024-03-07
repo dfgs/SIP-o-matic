@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 
 namespace SIP_o_matic.corelib.Models
 {
-	public class Address
+	public class Address:IEquatable<Address>
 	{
 		[XmlAttribute]
 		public required string Value
@@ -26,6 +26,17 @@ namespace SIP_o_matic.corelib.Models
 		public Address(string Value)
 		{
 			this.Value = Value;
+		}
+
+		public override string ToString()
+		{
+			return Value;
+		}
+
+		public bool Equals(Address? other)
+		{
+			if (other == null) return false;
+			return other.Value == Value;
 		}
 
 	}

@@ -371,7 +371,7 @@ namespace SIP_o_matic
 				{
 					try
 					{
-						//applicationViewModel.Projects.SelectedItem.Devices.SelectedItem.Addresses.SelectedItem.Value = window.Value;
+						addressViewModel.Value = window.Value;
 					}
 					catch (Exception ex)
 					{

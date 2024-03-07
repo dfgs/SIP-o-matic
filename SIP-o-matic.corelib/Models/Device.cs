@@ -18,7 +18,7 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 		
-		public List<string> Addresses
+		public List<Address> Addresses
 		{
 			get;
 			set;
@@ -27,12 +27,12 @@ namespace SIP_o_matic.corelib.Models
 		
 		public Device()
 		{
-			Addresses = new List<string>();
+			Addresses = new List<Address>();
 		}
 		[SetsRequiredMembers]
-		public Device(string Name,IEnumerable<string> Addresses)
+		public Device(string Name,IEnumerable<Address> Addresses)
 		{
-			this.Addresses = new List<string>();
+			this.Addresses = new List<Address>();
 			this.Name = Name;
 			this.Addresses.AddRange(Addresses);
 		}

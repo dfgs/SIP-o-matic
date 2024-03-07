@@ -38,13 +38,13 @@ namespace SIP_o_matic.corelib.DataSources
 			yield return "html";
 		}
 
-		private string GetIPAddress(string Data)
+		private Address GetIPAddress(string Data)
 		{
 			Match match;
 
 			match=ipRegex.Match(Data);
-			if (!match.Success) return Data;
-			return match.Groups["Value"].Value;
+			if (!match.Success) return new Address(Data);
+			return new Address(match.Groups["Value"].Value);
 		}
 		private string DecodeContent(string Base64Message)
 		{
@@ -67,7 +67,7 @@ namespace SIP_o_matic.corelib.DataSources
 			JsonArray? dataArray;
 			Device _device;
 			string name, addresses;
-			string sourceAddress, destinationAddress;
+			Address sourceAddress, destinationAddress;
 			int? srcDeviceIndex, dstDeviceIndex;
 			string base64Message;
 			Message message;

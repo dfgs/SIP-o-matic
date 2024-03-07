@@ -69,11 +69,11 @@ namespace SIP_o_matic.corelibTest
 			result = SIPFileGrammar.Device.Parse(reader);
 			Assert.AreEqual("SVI-CMA", result.Name);
 			Assert.AreEqual(5, result.Addresses.Count);
-			Assert.AreEqual("10.45.196.12", result.Addresses[0]);
-			Assert.AreEqual("10.45.213.211", result.Addresses[1]);
-			Assert.AreEqual("10.91.226.66", result.Addresses[2]);
-			Assert.AreEqual("10.91.226.67", result.Addresses[3]);
-			Assert.AreEqual("10.45.196.11", result.Addresses[4]);
+			Assert.AreEqual(new Address("10.45.196.12"), result.Addresses[0]);
+			Assert.AreEqual(new Address("10.45.213.211"), result.Addresses[1]);
+			Assert.AreEqual(new Address("10.91.226.66"), result.Addresses[2]);
+			Assert.AreEqual(new Address("10.91.226.67"), result.Addresses[3]);
+			Assert.AreEqual(new Address("10.45.196.11"), result.Addresses[4]);
 		}
 
 		[TestMethod]

@@ -12,7 +12,6 @@ using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.corelib.Models.Transactions;
 using SIP_o_matic.ViewModels;
-using SIPParserLib;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using SIP_o_matic.corelib;
 using System.Windows.Media.Animation;
@@ -202,7 +201,7 @@ namespace SIP_o_matic.Modules
 		{
 			string callID;
 			string fromTag;
-			Address from, to;
+			SIPParserLib.Address from, to;
 
 			LogEnter();
 
@@ -466,8 +465,8 @@ namespace SIP_o_matic.Modules
 
 				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 
-				message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress;
-				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress;
+				message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress.Value;
+				message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress.Value;
 									
 
 				callID = message.SIPMessage.GetCallID();
