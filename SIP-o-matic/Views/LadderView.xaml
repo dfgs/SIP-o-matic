@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
-             mc:Ignorable="d" x:Name="root"
+             mc:Ignorable="d" x:Name="root" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
              d:DesignHeight="450" d:DesignWidth="800">
 	<DockPanel  VerticalAlignment="Stretch" x:Name="dockPanel">
 		<ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" x:Name="headerScrollViewer">

@@ -29,7 +29,7 @@
 
 		<GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 
-		<views:SIPMessageTooltip Grid.Column="2" Margin="8" DataContext="{Binding Messages.SelectedItem.SIPMessage}"/>
+		<views:PinnedMessagesView Grid.Column="2"  />
 	</Grid>
 
 </UserControl>

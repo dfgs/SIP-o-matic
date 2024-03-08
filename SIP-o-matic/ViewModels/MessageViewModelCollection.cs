@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
@@ -14,11 +15,13 @@ namespace SIP_o_matic.ViewModels
 
 		private IDeviceNameProvider deviceNameProvider;
 
+		
 
 		public MessageViewModelCollection(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 		}
+
 
 		protected override MessageViewModel OnCreateItem()
 		{
@@ -47,5 +50,10 @@ namespace SIP_o_matic.ViewModels
 		{
 			AddInternal(Message);
 		}
+
+	
+
+
+
 	}
 }

@@ -100,6 +100,14 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsFlippedProperty, value); }
 		}
 
+		/*public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register("IsPinned", typeof(bool), typeof(MessageViewModel), new PropertyMetadata(false));
+		public bool IsPinned
+		{
+			get { return (bool)GetValue(IsPinnedProperty); }
+			set { SetValue(IsPinnedProperty, value); }
+		}*/
+
+
 		private IDeviceNameProvider deviceNameProvider;
 
 		public MessageViewModel(ILogger Logger,IDeviceNameProvider DeviceNameProvider) : base(Logger)
