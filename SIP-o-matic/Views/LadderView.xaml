@@ -6,10 +6,9 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" x:Name="root"
              d:DesignHeight="450" d:DesignWidth="800">
-	<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"  >
-		<!--DataContext="{Binding TargetNullValue={x:Static local:Consts.KeyFrames}}"-->
-		<DockPanel  VerticalAlignment="Top" x:Name="dockPanel">
-			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}"   >
+	<DockPanel  VerticalAlignment="Stretch" x:Name="dockPanel">
+		<ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" x:Name="headerScrollViewer">
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}"    >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -17,7 +16,7 @@
 				</ItemsControl.ItemsPanel>
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
-						<Border BorderBrush="Gray" Background="WhiteSmoke" BorderThickness="1" Width="300" CornerRadius="5" Margin="5" ToolTip="{Binding}" >
+						<Border BorderBrush="Gray" Background="WhiteSmoke" BorderThickness="1" Width="290" CornerRadius="5" Margin="5" ToolTip="{Binding}" >
 							<Border.Effect>
 								<DropShadowEffect  BlurRadius="5" Opacity="0.25"/>
 							</Border.Effect>
@@ -26,6 +25,9 @@
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
+		</ScrollViewer>
+			
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" x:Name="contentScrollViewer" ScrollChanged="contentScrollViewer_ScrollChanged"  Background="Transparent" PreviewMouseWheel="contentScrollViewer_PreviewMouseWheel" >
 			<Grid>
 				<ItemsControl ItemsSource="{Binding ElementName=root,Path=Devices}"  >
 					<ItemsControl.ItemsPanel>
@@ -43,7 +45,7 @@
 				</ItemsControl>
 
 				<ListBox ItemsSource="{Binding ElementName=root,Path=ItemsSource}" SelectedItem="{Binding ElementName=root, Path=ItemsSource.SelectedItem}" 
-									ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0"
+									ScrollViewer.VerticalScrollBarVisibility="Hidden" Background="{x:Null}" BorderThickness="0" 
 									ItemTemplate="{Binding ElementName=root,Path=ItemTemplate}">
 					<ListBox.ItemsPanel>
 						<ItemsPanelTemplate>
@@ -62,6 +64,6 @@
 					
 				</ListBox>
 			</Grid>
-		</DockPanel>
-	</ScrollViewer>
+		</ScrollViewer>
+	</DockPanel>
 </UserControl>

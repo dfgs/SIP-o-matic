@@ -58,5 +58,18 @@ namespace SIP_o_matic.Views
 		{
 			InitializeComponent();
 		}
+
+		private void contentScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+		{
+			headerScrollViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
+
+		private void contentScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+		{
+			contentScrollViewer.ScrollToVerticalOffset(contentScrollViewer.VerticalOffset - e.Delta);
+			e.Handled = true;
+		}
+
+
 	}
 }
