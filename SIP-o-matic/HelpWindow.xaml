@@ -47,6 +47,9 @@
 						<ListItem>
 							<Paragraph>Pin messages</Paragraph>
 						</ListItem>
+						<ListItem>
+							<Paragraph>SIP content selection</Paragraph>
+						</ListItem>
 					</List>
 					
 				</FlowDocument>

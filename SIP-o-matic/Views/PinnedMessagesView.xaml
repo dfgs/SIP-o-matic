@@ -19,8 +19,8 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<StackPanel Grid.Row="0" DataContext="{Binding Messages.SelectedItem}" >
-			<Border BorderBrush="#55000000" BorderThickness="1,1,1,1">
+		<DockPanel Grid.Row="0" DataContext="{Binding Messages.SelectedItem}"  >
+			<Border BorderBrush="#55000000" BorderThickness="1,1,1,0" DockPanel.Dock="Top">
 				<DockPanel Margin="3">
 					<Button DockPanel.Dock="Right" Command="{x:Static root:RoutedCommands.PinMessage}" CommandParameter="{Binding}" ToolTip="Pin message">
 						<Image Source="/Images/attach.png" Stretch="None" />
@@ -28,17 +28,18 @@
 					<TextBlock Text="{Binding Index,StringFormat='Selected message [{0}]'}" FontWeight="Bold" Foreground="#404040"/>
 				</DockPanel>
 			</Border>
-			<views:SIPMessageTooltip DataContext="{Binding SIPMessage}"  Margin="5"/>
-		</StackPanel>
+			
+			<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" />
+		</DockPanel>
 
-		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Margin="0,0,0,2"/>
+		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0"  Margin="0,0,0,2"/>
 		
 		<ScrollViewer Grid.Row="2">
 			<ItemsControl ItemsSource="{Binding PinnedMessages}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
 						<StackPanel>
-							<Border BorderBrush="#55000000" BorderThickness="1,1,1,1">
+							<Border BorderBrush="#55000000" BorderThickness="1,1,1,0">
 								<DockPanel  Margin="3">
 									<Button DockPanel.Dock="Right" Command="{x:Static root:RoutedCommands.PinMessage}" CommandParameter="{Binding}" ToolTip="Unpin message">
 										<Image Source="/Images/attach.png" Stretch="None" />
@@ -46,7 +47,7 @@
 									<TextBlock Text="{Binding Index,StringFormat='Pinned message [{0}]'}" FontWeight="Bold" Foreground="#404040"/>
 								</DockPanel>
 							</Border>
-							<views:SIPMessageTooltip DataContext="{Binding SIPMessage}" Margin="5"/>
+							<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" />
 						</StackPanel>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>
