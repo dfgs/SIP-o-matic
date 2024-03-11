@@ -110,7 +110,20 @@ namespace SIP_o_matic
 		}
 
 		#region command bindings
+		private void AboutCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = true;
+		}
 
+		private void AboutCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			HelpWindow window;
+
+			window = new HelpWindow();
+			window.Owner = this;
+
+			window.ShowDialog();
+		}
 		private void AnalyzeCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem!=null) && (applicationViewModel.Projects.SelectedItem.Messages.Count>0);

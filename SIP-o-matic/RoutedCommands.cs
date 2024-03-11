@@ -27,5 +27,6 @@ namespace SIP_o_matic
 		public static RoutedCommand EditDeviceOrAddress = new RoutedCommand();
 
 		public static RoutedCommand PinMessage = new RoutedCommand();
+		public static RoutedCommand About = new RoutedCommand();
 	}
 }

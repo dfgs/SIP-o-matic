@@ -33,6 +33,8 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddDevice}" CanExecute="AddDeviceCommandBinding_CanExecute" Executed="AddDeviceCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddAddress}" CanExecute="AddAddressCommandBinding_CanExecute" Executed="AddAddressCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}" CanExecute="RemoveDeviceOrAddressCommandBinding_CanExecute" Executed="RemoveDeviceOrAddressCommandBinding_Executed"/>
+
+		<CommandBinding Command="{x:Static root:RoutedCommands.About}" CanExecute="AboutCommandBinding_CanExecute" Executed="AboutCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
 	<DockPanel>
@@ -108,6 +110,9 @@
 				</Button>
 				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/page_copy.png" Stretch="None"/>
+				</Button>
+				<Button Command="{x:Static root:RoutedCommands.About}"  ToolTip="About" ToolTipService.ShowOnDisabled="true">
+					<Image Source="/Images/help.png" Stretch="None"/>
 				</Button>
 			</ToolBar>
 		</ToolBarTray>
