@@ -21,8 +21,23 @@ namespace SIP_o_matic.Views
 	/// </summary>
 	public partial class PinnedMessagesView : UserControl
 	{
+		private Dictionary<string, string> highlights;
+
+
+
+		public static readonly DependencyProperty HighLightsProperty = DependencyProperty.Register("HighLights", typeof(IEnumerable<KeyValuePair<string, string>>), typeof(PinnedMessagesView), new PropertyMetadata(null));
+		public IEnumerable<KeyValuePair<string,string>> HighLights
+		{
+			get { return (IEnumerable<KeyValuePair<string,string>>)GetValue(HighLightsProperty); }
+			set { SetValue(HighLightsProperty, value); }
+		}
+
+
+
+
 		public PinnedMessagesView()
 		{
+			highlights = new Dictionary<string, string>();
 			InitializeComponent();
 		}
 
@@ -31,7 +46,7 @@ namespace SIP_o_matic.Views
 			e.CanExecute = true;e.Handled = false;
         }
 
-		private void PinMessaggeCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		private void PinMessageCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			MessagesFrameViewModel? frame;
 			MessageViewModel? message;
@@ -44,5 +59,47 @@ namespace SIP_o_matic.Views
 
 			frame.PinMessage(message);
 		}
+
+		private void HighlightSelectionCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true;e.CanExecute = true;
+		}
+
+		private void HighlightSelectionCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			string? color;
+			string? selectedText;
+
+			color = e.Parameter as string;
+			if (color == null) return;
+
+			if (color=="Transparent")
+			{
+				highlights.Clear();
+				this.HighLights = highlights.ToArray();
+				return;
+			}
+
+			selectedText = sipMessageViewSelection.SelectedText;
+			if (string.IsNullOrEmpty(selectedText))
+			{
+				highlights.Remove(color);
+			}
+			else
+			{
+
+				if (highlights.ContainsKey(color))
+				{
+					highlights[color] = selectedText;
+				}
+				else
+				{
+					highlights.Add(color, selectedText);
+				}
+			}
+			this.HighLights = highlights.ToArray();
+		}
+
+
 	}
 }

@@ -28,5 +28,7 @@ namespace SIP_o_matic
 
 		public static RoutedCommand PinMessage = new RoutedCommand();
 		public static RoutedCommand About = new RoutedCommand();
+
+		public static RoutedCommand HighlightSelection = new RoutedCommand();
 	}
 }

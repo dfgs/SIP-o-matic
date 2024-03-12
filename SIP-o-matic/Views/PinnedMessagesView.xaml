@@ -5,21 +5,45 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:views="clr-namespace:SIP_o_matic.Views"
 			 xmlns:root="clr-namespace:SIP_o_matic"
-             mc:Ignorable="d" 
+             mc:Ignorable="d" x:Name="root"
              d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.CommandBindings>
-		<CommandBinding Command="{x:Static root:RoutedCommands.PinMessage}" CanExecute="PinMessageCommandBinding_CanExecute" Executed="PinMessaggeCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.PinMessage}" CanExecute="PinMessageCommandBinding_CanExecute" Executed="PinMessageCommandBinding_Executed"/>
+		<CommandBinding Command="{x:Static root:RoutedCommands.HighlightSelection}" CanExecute="HighlightSelectionCommandBinding_CanExecute" Executed="HighlightSelectionCommandBinding_Executed"/>
 	</UserControl.CommandBindings>
 
 	<Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}">
 		<Grid.RowDefinitions>
-			<RowDefinition Height="100"/>
+			<RowDefinition Height="300"/>
 			<RowDefinition Height="5"/>
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
 		<DockPanel Grid.Row="0" DataContext="{Binding Messages.SelectedItem}"  >
+
+			<ToolBarTray DockPanel.Dock="Top">
+				<ToolBar >
+					<Button Command="{x:Static root:RoutedCommands.HighlightSelection}" CommandParameter="Yellow" ToolTip="Highlight selection" ToolTipService.ShowOnDisabled="true">
+						<Border Width="16" Height="16" Background="Yellow" BorderThickness="1" BorderBrush="Black"/>
+					</Button>
+					<Button Command="{x:Static root:RoutedCommands.HighlightSelection}" CommandParameter="LightGreen" ToolTip="Highlight selection" ToolTipService.ShowOnDisabled="true">
+						<Border Width="16" Height="16" Background="LightGreen" BorderThickness="1" BorderBrush="Black"/>
+					</Button>
+					<Button Command="{x:Static root:RoutedCommands.HighlightSelection}" CommandParameter="LightBlue" ToolTip="Highlight selection" ToolTipService.ShowOnDisabled="true">
+						<Border Width="16" Height="16" Background="LightBlue" BorderThickness="1" BorderBrush="Black"/>
+					</Button>
+					<Button Command="{x:Static root:RoutedCommands.HighlightSelection}" CommandParameter="MistyRose" ToolTip="Highlight selection" ToolTipService.ShowOnDisabled="true">
+						<Border Width="16" Height="16" Background="MistyRose" BorderThickness="1" BorderBrush="Black"/>
+					</Button>
+					<Button Command="{x:Static root:RoutedCommands.HighlightSelection}" CommandParameter="Transparent" ToolTip="Clear highlights" ToolTipService.ShowOnDisabled="true">
+						<Border Width="16" Height="16" Background="Transparent" BorderThickness="1" BorderBrush="Black">
+							<TextBlock Text="X" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+						</Border>
+					</Button>
+				</ToolBar>
+			</ToolBarTray>
+
 			<Border BorderBrush="#55000000" BorderThickness="1,1,1,0" DockPanel.Dock="Top">
 				<DockPanel Margin="3">
 					<Button DockPanel.Dock="Right" Command="{x:Static root:RoutedCommands.PinMessage}" CommandParameter="{Binding}" ToolTip="Pin message">
@@ -28,13 +52,13 @@
 					<TextBlock Text="{Binding Index,StringFormat='Selected message [{0}]'}" FontWeight="Bold" Foreground="#404040"/>
 				</DockPanel>
 			</Border>
-			
-			<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" />
+
+			<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" x:Name="sipMessageViewSelection"  HighLights="{Binding ElementName=root,Path=HighLights,Mode=OneWay}"/>
 		</DockPanel>
 
 		<GridSplitter Grid.Row="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" BorderThickness="0"  Margin="0,0,0,2"/>
 		
-		<ScrollViewer Grid.Row="2">
+		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
 			<ItemsControl ItemsSource="{Binding PinnedMessages}">
 				<ItemsControl.ItemTemplate>
 					<DataTemplate>
@@ -47,7 +71,7 @@
 									<TextBlock Text="{Binding Index,StringFormat='Pinned message [{0}]'}" FontWeight="Bold" Foreground="#404040"/>
 								</DockPanel>
 							</Border>
-							<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" />
+							<views:SIPMessageView BorderBrush="#55000000" SIPMessage="{Binding SIPMessage}" HighLights="{Binding ElementName=root,Path=HighLights,Mode=OneWay}"/>
 						</StackPanel>
 					</DataTemplate>
 				</ItemsControl.ItemTemplate>

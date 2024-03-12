@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-	<RichTextBox x:Name="rtb" FontFamily="Bahnschrift SemiBold" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
+	<RichTextBox x:Name="rtb" FontFamily="Bahnschrift SemiBold" FontSize="12" IsReadOnly="True" VerticalScrollBarVisibility="Auto" SelectionChanged="rtb_SelectionChanged" />
 
 
 </UserControl>
