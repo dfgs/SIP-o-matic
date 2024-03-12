@@ -14,7 +14,10 @@
 		<!--/ListView.ItemContainerStyle-->
 		<ListView.View>
 			<GridView>
-				<GridViewColumn Width="30">
+				<GridViewColumn Width="30" >
+					<GridViewColumn.Header>
+						<GridViewColumnHeader Content="&#x2705;" Click="GridViewColumnHeader_Click"/>
+					</GridViewColumn.Header>
 					<GridViewColumn.CellTemplate>
 						<DataTemplate>
 							<CheckBox IsChecked="{Binding IsChecked}"/>

@@ -37,6 +37,18 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.About}" CanExecute="AboutCommandBinding_CanExecute" Executed="AboutCommandBinding_Executed"/>
 	</Window.CommandBindings>
 
+	<Window.Resources>
+		<ResourceDictionary>
+			<Style TargetType="{x:Type Image}">
+				<Style.Triggers>
+					<Trigger Property="IsEnabled" Value="False">
+						<Setter Property="Opacity" Value="0.3"/>
+					</Trigger>
+				</Style.Triggers>
+			</Style>
+		</ResourceDictionary>
+	</Window.Resources>
+
 	<DockPanel>
 		<StatusBar DockPanel.Dock="Bottom">
 			<TextBlock Text="{Binding Projects.SelectedItem.Name,FallbackValue=No project}"/>

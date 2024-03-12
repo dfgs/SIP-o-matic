@@ -50,6 +50,9 @@
 						<ListItem>
 							<Paragraph>SIP content selection</Paragraph>
 						</ListItem>
+						<ListItem>
+							<Paragraph>SIP content highligth</Paragraph>
+						</ListItem>
 					</List>
 					
 				</FlowDocument>

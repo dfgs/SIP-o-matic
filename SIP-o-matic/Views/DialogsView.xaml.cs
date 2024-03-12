@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIP_o_matic.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,5 +25,20 @@ namespace SIP_o_matic.Views
 		{
 			InitializeComponent();
 		}
+
+		private void GridViewColumnHeader_Click(object sender, RoutedEventArgs e)
+		{
+			DialogViewModelCollection? dialogs;
+
+			dialogs = DataContext as DialogViewModelCollection;
+			if (dialogs == null) return;
+
+			foreach(DialogViewModel dialog in dialogs)
+			{
+				dialog.IsChecked = !dialog.IsChecked;
+			}
+		}
+
+
 	}
 }
