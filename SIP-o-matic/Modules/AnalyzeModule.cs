@@ -479,7 +479,11 @@ namespace SIP_o_matic.Modules
 
 				MessagesFrame.Messages.Add(message);
 			}
-
+			MessagesFrame.Devices.Clear();
+			foreach(string device in MessagesFrame.Messages.SelectMany(item => item.Devices).Distinct())
+			{
+				MessagesFrame.Devices.Add(device);
+			}
 		}
 		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
 		{

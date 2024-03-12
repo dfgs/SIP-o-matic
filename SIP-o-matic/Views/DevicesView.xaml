@@ -6,6 +6,7 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              xmlns:viewModels="clr-namespace:SIP_o_matic.ViewModels"
              xmlns:root="clr-namespace:SIP_o_matic"
+			 xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
 	<UserControl.Resources>
@@ -34,7 +35,7 @@
 			</ToolBar>
 		</ToolBarTray>
 
-		<TreeView ItemsSource="{Binding}"  BorderThickness="0" SelectedItemChanged="TreeView_SelectedItemChanged" x:Name="treeView" />
+		<TreeView ItemsSource="{Binding}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" dd:DragDrop.DropHandler="{Binding}"   BorderThickness="0" SelectedItemChanged="TreeView_SelectedItemChanged" x:Name="treeView" />
 
 	</DockPanel>
 

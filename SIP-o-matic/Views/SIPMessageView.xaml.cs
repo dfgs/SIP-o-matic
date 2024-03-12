@@ -144,6 +144,7 @@ namespace SIP_o_matic.Views
 		
 		private void HighLightText()
 		{
+
 			if (HighLights == null) return;
 
 			TextRange textRange = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
@@ -168,7 +169,7 @@ namespace SIP_o_matic.Views
 
 				for (TextPointer startPointer = rtb.Document.ContentStart;
 							startPointer.CompareTo(rtb.Document.ContentEnd) <= 0;
-								startPointer = startPointer.GetNextContextPosition(LogicalDirection.Forward))
+								startPointer = startPointer!.GetNextContextPosition(LogicalDirection.Forward))
 				{
 					//check if end of text
 					if (startPointer.CompareTo(rtb.Document.ContentEnd) == 0)

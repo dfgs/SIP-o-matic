@@ -113,17 +113,17 @@
 				</Menu>
 				
 
-				<Button Command="{x:Static root:RoutedCommands.Analyze}"  ToolTip="Analyze project" ToolTipService.ShowOnDisabled="true">
+				<Button Command="{x:Static root:RoutedCommands.Analyze}"  ToolTip="Analyze project" ToolTipService.ShowOnDisabled="true" >
 					<Image Source="/Images/bullet_go.png" Stretch="None"/>
 				</Button>
 				<Separator/>
-				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true">
+				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true"  Visibility="Collapsed">
 					<Image Source="/Images/report_disk.png" Stretch="None"/>
 				</Button>
-				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true">
+				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true" Visibility="Collapsed">
 					<Image Source="/Images/page_copy.png" Stretch="None"/>
 				</Button>
-				<Button Command="{x:Static root:RoutedCommands.About}"  ToolTip="About" ToolTipService.ShowOnDisabled="true">
+				<Button Command="{x:Static root:RoutedCommands.About}"  ToolTip="About" ToolTipService.ShowOnDisabled="true" >
 					<Image Source="/Images/help.png" Stretch="None"/>
 				</Button>
 			</ToolBar>

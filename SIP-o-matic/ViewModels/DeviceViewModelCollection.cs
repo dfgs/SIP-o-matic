@@ -1,4 +1,5 @@
-﻿using LogLib;
+﻿using GongSolutions.Wpf.DragDrop;
+using LogLib;
 using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DeviceViewModelCollection : ListViewModel<Device, DeviceViewModel>
+	public class DeviceViewModelCollection : ListViewModel<Device, DeviceViewModel>,IDropTarget
 	{
 
 
@@ -108,5 +109,30 @@ namespace SIP_o_matic.ViewModels
 
 			device.Addresses.Remove(Address);
 		}
+
+		public void DragOver(IDropInfo dropInfo)
+		{
+			DeviceViewModel? sourceItem = dropInfo.Data as DeviceViewModel;
+			DeviceViewModel? targetItem = dropInfo.TargetItem as DeviceViewModel;
+			
+			if ((sourceItem != null) && (targetItem != null) )
+			{
+				dropInfo.DropTargetAdorner = DropTargetAdorners.Insert;
+				dropInfo.Effects = DragDropEffects.Move;
+			}
+		}
+
+		public void Drop(IDropInfo dropInfo)
+		{
+			DeviceViewModel? sourceItem = dropInfo.Data as DeviceViewModel;
+			DeviceViewModel? targetItem = dropInfo.TargetItem as DeviceViewModel;
+
+			if ((sourceItem == null) || (targetItem == null)) return;
+			RemoveInternal(sourceItem);
+			InsertInternal(sourceItem, IndexOf(targetItem));
+
+		}
+
+
 	}
 }

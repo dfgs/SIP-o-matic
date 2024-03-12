@@ -25,9 +25,10 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public IEnumerable<string> Devices
+		public ObservableCollection<string> Devices
 		{
-			get => Messages.SelectMany(message => message.Devices).Distinct();
+			get ;
+			private set;
 		}
 
 		public MessageViewModelCollection Messages
@@ -42,7 +43,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 			Messages = new MessageViewModelCollection(Logger,deviceNameProvider);
-
+			Devices = new ObservableCollection<string>();
 			PinnedMessages = new ObservableCollection<MessageViewModel>();
 
 		}

@@ -1,6 +1,7 @@
 ﻿using SIP_o_matic.corelib.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace SIP_o_matic.Views
 	{
 
 
-		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<string>), typeof(LadderPanel), new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure));
+		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<string>), typeof(LadderPanel), new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure,DevicesPropertyChanged));
 		public IEnumerable<string> Devices
 		{
 			get { return (IEnumerable<string>)GetValue(DevicesProperty); }
@@ -51,6 +52,28 @@ namespace SIP_o_matic.Views
 			
 		}
 
+
+		private static void DevicesPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			LadderPanel? panel;
+			panel = d as LadderPanel;
+			if (panel == null) return;
+			panel.OnDevicesPropertyChanged((IEnumerable<string>)e.OldValue, (IEnumerable<string>)e.NewValue);
+		}
+		private void OnDevicesPropertyChanged(IEnumerable<string> OldValue, IEnumerable<string> NewValue)
+		{
+			INotifyCollectionChanged? collectionChanged;
+
+			collectionChanged = OldValue as INotifyCollectionChanged;
+			if (collectionChanged != null) collectionChanged.CollectionChanged -= CollectionChanged_CollectionChanged;
+			collectionChanged = NewValue as INotifyCollectionChanged;
+			if (collectionChanged != null) collectionChanged.CollectionChanged += CollectionChanged_CollectionChanged;
+		}
+
+		private void CollectionChanged_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+		{
+			this.InvalidateArrange();
+		}
 
 		public static string GetSourceDevice(DependencyObject obj)
 		{
