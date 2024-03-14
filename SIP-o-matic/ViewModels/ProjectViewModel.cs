@@ -171,11 +171,7 @@ namespace SIP_o_matic.ViewModels
 			return device;
 		}
 
-		public IEnumerable<DeviceViewModel> GetDevices()
-		{
-			return Devices;
-		}
-
+		
 
 		public void RemoveDevice(DeviceViewModel Device)
 		{

@@ -20,9 +20,9 @@ namespace SIP_o_matic.corelib.Models
             set;
         }
 
-		[XmlIgnore]
 		private string content;
-        public required string Content
+		[XmlIgnore]
+		public required string Content
         {
 			get => content;
             set { this.content = value; DecodeContent(); }

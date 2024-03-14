@@ -45,7 +45,7 @@ namespace SIP_o_matic.ViewModels
 			this.deviceNameProvider = DeviceNameProvider;
 			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
 			Messages = new MessageViewModelCollection(Model.Messages,deviceNameProvider);
-			Devices = new ObservableCollection<DeviceViewModel>(DeviceNameProvider.GetDevices());
+			Devices = new ObservableCollection<DeviceViewModel>(Messages.SelectMany(message=>message.Devices).Distinct());
 			PinnedMessages = new ObservableCollection<MessageViewModel>();
 
 		}

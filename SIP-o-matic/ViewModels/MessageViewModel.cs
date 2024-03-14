@@ -83,7 +83,14 @@ namespace SIP_o_matic.ViewModels
 			get => deviceNameProvider.GetDevice(Model.DestinationAddress);
 		}
 
-		
+		public IEnumerable<DeviceViewModel> Devices
+		{
+			get
+			{
+				yield return SourceDevice;
+				yield return DestinationDevice;
+			}
+		}
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(MessageViewModel), new PropertyMetadata(false));
 		public bool IsFlipped

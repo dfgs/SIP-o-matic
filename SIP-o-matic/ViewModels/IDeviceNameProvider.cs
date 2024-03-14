@@ -13,6 +13,6 @@ namespace SIP_o_matic.ViewModels
 
 		public DeviceViewModel GetDevice(Address Address);
 		public DeviceViewModel GetDevice(Device Model);
-		public IEnumerable<DeviceViewModel> GetDevices();
+		
 	}
 }
