@@ -10,15 +10,15 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ProjectViewModelCollection : ListViewModel<Project, ProjectViewModel>
+	public class ProjectViewModelCollection : GenericViewModelList<Project, ProjectViewModel>
 	{
-		public ProjectViewModelCollection(ILogger Logger) : base(Logger)
+		public ProjectViewModelCollection(IList<Project> Source) : base(Source)
 		{
 		}
-
-		protected override ProjectViewModel OnCreateItem()
+		
+		protected override ProjectViewModel OnCreateItem(Project SourceItem)
 		{
-			return new ProjectViewModel(Logger);
+			return new ProjectViewModel(SourceItem);
 		}
 
 		public void AddNew()
@@ -27,29 +27,21 @@ namespace SIP_o_matic.ViewModels
 			ProjectViewModel projectViewModel;
 
 			project= new Project();
-			projectViewModel = new ProjectViewModel(Logger);
-			projectViewModel.Load(project);
+			projectViewModel = new ProjectViewModel(project);
 
 			AddInternal(projectViewModel);
 
 			SelectedItem= projectViewModel;
 		}
 
-		public void Remove(ProjectViewModel Item)
-		{
-			if (Item == null) return;
-			RemoveInternal(Item);
-			SelectedItem = this.FirstOrDefault();
-		}
+		
 		public async Task AddAsync(string Path)
 		{
 			ProjectViewModel projectViewModel;
 
-			projectViewModel = new ProjectViewModel(Logger);
+			projectViewModel = await ProjectViewModel.LoadAsync(Path); 
 			AddInternal(projectViewModel);
 			SelectedItem = projectViewModel;
-
-			await projectViewModel.LoadAsync(Path);
 		}
 
 	}

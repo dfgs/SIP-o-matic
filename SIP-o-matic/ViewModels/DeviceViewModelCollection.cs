@@ -13,7 +13,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DeviceViewModelCollection : ListViewModel<Device, DeviceViewModel>,IDropTarget
+	public class DeviceViewModelCollection : GenericViewModelList<Device, DeviceViewModel>,IDropTarget
 	{
 
 
@@ -27,12 +27,12 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public DeviceViewModelCollection(ILogger Logger) : base(Logger)
+		public DeviceViewModelCollection(IList<Device> Source) : base(Source)
 		{
 		}
-		protected override DeviceViewModel OnCreateItem()
+		protected override DeviceViewModel OnCreateItem(Device SourceItem)
 		{
-			return new DeviceViewModel(Logger);
+			return new DeviceViewModel(SourceItem);
 		}
 
 
@@ -45,31 +45,7 @@ namespace SIP_o_matic.ViewModels
 			return this.FirstOrDefault(item => item.Addresses.Contains( Address));
 		}
 
-		/*private DeviceViewModel? FindDeviceByAddress(string Address)
-		{
-			return this.FirstOrDefault(item => item.Addresses.Contains(Address));
-		}*/
-
-		public void Clear()
-		{
-			Model.Clear();
-			ClearInternal();
-		}
-
-
-		/*private void AddDevice(SourceFileViewModel FileViewModel, Device Device)
-		{
-			DeviceViewModel? deviceViewModel;
-
-			deviceViewModel = FindDeviceByName(Device.Name);
-			if (deviceViewModel == null)
-			{
-				deviceViewModel = new DeviceViewModel(Logger);
-				deviceViewModel.Load(Device);
-				Devices.Add(deviceViewModel);
-			}
-		}
-		*/
+		
 		public void Add(Device Device)
 		{
 			DeviceViewModel? deviceViewModel;
@@ -79,26 +55,20 @@ namespace SIP_o_matic.ViewModels
 			if (deviceViewModel ==null)
 			{
 				newDevice=new Device() { Name = Device.Name };
-				Model.Add(newDevice);
+				Source.Add(newDevice);
 
-				deviceViewModel = OnCreateItem();
-				deviceViewModel.Load(newDevice);
+				deviceViewModel = OnCreateItem(newDevice);
 				AddInternal(deviceViewModel);
 			}
 
 			foreach(Address address in Device.Addresses) 
 			{
-				deviceViewModel.Addresses.Add(address);
+				deviceViewModel.Addresses.Add(new AddressViewModel(address));
 			}
 			
 			
 		}
-
-		public void Remove(DeviceViewModel Device)
-		{
-			Model.Remove(Device.GetModel());
-			RemoveInternal(Device);
-		}
+		
 
 		public void Remove(AddressViewModel Address)
 		{

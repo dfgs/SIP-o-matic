@@ -22,8 +22,8 @@ namespace SIP_o_matic.Views
 	{
 
 
-		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<string>), typeof(LadderView), new PropertyMetadata(null));
-		public IEnumerable<string> Devices
+		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<object>), typeof(LadderView), new PropertyMetadata(null));
+		public IEnumerable<object> Devices
 		{
 			get { return (IEnumerable<string>)GetValue(DevicesProperty); }
 			set { SetValue(DevicesProperty, value); }

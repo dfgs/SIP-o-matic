@@ -39,15 +39,49 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
-
+		[XmlIgnore]
+		public MessagesFrame MessagesFrame
+		{
+			get;
+			set;
+		}
 
 		public Project()
 		{
-			Devices= new List<Device>();
-			Messages = new List<Message>();
-			KeyFrames = new List<KeyFrame>();
-			Dialogs = new List<Dialog>();
+			this.Devices= new List<Device>();
+			this.Messages = new List<Message>();
+			this.KeyFrames = new List<KeyFrame>();
+			this.Dialogs = new List<Dialog>();
+			this.MessagesFrame = new MessagesFrame();
 		}
+
+		public Device GetDevice(Address Address)
+		{
+			Device? device;
+			if (Address == null) throw new ArgumentNullException(nameof(Address));
+			
+			device= Devices.FirstOrDefault(item => item.Addresses.Contains(Address)); 
+			if (device==null)
+			{
+				device = new Device(Address.ToString(), new Address[] { Address });
+			}
+			return device;
+		}
+
+		/*public string GetDevice(Address Address)
+		{
+			if (Address == null) return "Undefined";
+			return this.FindDeviceByAddress(Address)?.Name ?? Address.Value;
+		}*/
+		/*public Device? FindDeviceByName(string Name)
+		{
+			return Devices.FirstOrDefault(item => item.Name == Name);
+		}
+		public Device? FindDeviceByAddress(Address Address)
+		{
+			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
+		}*/
+
 		public async Task SaveAsync(string Path)
 		{
 			XmlSerializer serializer;

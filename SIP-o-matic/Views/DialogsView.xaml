@@ -28,8 +28,8 @@
 				<GridViewColumn Header="Call ID" DisplayMemberBinding="{Binding CallID}" Width="400"/>
 				<GridViewColumn Header="Caller" DisplayMemberBinding="{Binding Caller}" Width="200"/>
 				<GridViewColumn Header="Callee" DisplayMemberBinding="{Binding Callee}" Width="200"/>
-				<GridViewColumn Header="Source device" DisplayMemberBinding="{Binding SourceDevice}" Width="200"/>
-				<GridViewColumn Header="Destination device" DisplayMemberBinding="{Binding DestinationDevice}" Width="200"/>
+				<GridViewColumn Header="Source device" DisplayMemberBinding="{Binding SourceDevice.Name}" Width="200"/>
+				<GridViewColumn Header="Destination device" DisplayMemberBinding="{Binding DestinationDevice.Name}" Width="200"/>
 			</GridView>
         </ListView.View>
     </ListView>

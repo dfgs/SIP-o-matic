@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ApplicationViewModel:ViewModel<string>
+	public class ApplicationViewModel: GenericViewModel<string>
 	{
 
 
@@ -22,10 +22,9 @@ namespace SIP_o_matic.ViewModels
 		}
 
 		
-		public ApplicationViewModel(ILogger Logger):base(Logger)
+		public ApplicationViewModel(string Model):base(Model)
 		{
-			Projects = new ProjectViewModelCollection(Logger);
-			Projects.Load(new List<Project>());
+			Projects = new ProjectViewModelCollection(new List<Project>());
 		}
 		public async Task OpenProjectAsync(string Path)
 		{

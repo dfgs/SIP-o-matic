@@ -9,40 +9,29 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class AddressViewModelCollection : ListViewModel<Address, AddressViewModel>
+	public class AddressViewModelCollection : GenericViewModelList<Address, AddressViewModel>
 	{
-		public AddressViewModelCollection(ILogger Logger) : base(Logger)
+		public AddressViewModelCollection(IList<Address> Source) : base(Source)
 		{
 		}
 
-		protected override AddressViewModel OnCreateItem()
+		protected override AddressViewModel OnCreateItem(Address SourceItem)
 		{
-			return new AddressViewModel(Logger);
+			return new AddressViewModel(SourceItem);
 		}
 
-		public void Add(Address Address)
+		
+		public override void Add(AddressViewModel Item)
 		{
-			AddressViewModel addressViewModel;
-
-			if (Model.Contains(Address)) return;
-			if ((Address==null) || (string.IsNullOrEmpty(Address.Value))) return;
-			
-			Model.Add(Address);
-			addressViewModel = new AddressViewModel(Logger);
-			addressViewModel.Load(Address);
-			AddInternal(addressViewModel);
+			if (!Contains(Item.GetModel()))	base.Add(Item);
 		}
 
 		public bool Contains(Address Address)
 		{
-			return Model.Contains(Address);
+			return Source.Contains(Address);
 		}
 
-		public void Remove(AddressViewModel Address)
-		{
-			Model.Remove(Address.GetModel());
-			RemoveInternal(Address);
-		}
+		
 
 
 

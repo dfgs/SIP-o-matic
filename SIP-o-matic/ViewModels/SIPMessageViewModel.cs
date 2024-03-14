@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class SIPMessageViewModel : ViewModel<SIPMessage>, IRequest,IResponse
+	public class SIPMessageViewModel : GenericViewModel<SIPMessage>
 	{
 		public enum Types { Response, Request };
 
@@ -75,145 +75,58 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public SIPMessageViewModel(ILogger Logger) : base(Logger)
-		{
-		}
-
-		protected override void OnLoaded()
+		public SIPMessageViewModel(SIPMessage Model) : base(Model)
 		{
 			StringReader reader;
 			IParseResult result;
-
-			base.OnLoaded();
 
 			SDP = null;
 			if (string.IsNullOrEmpty(Model.Body)) return;
 
 			reader = new StringReader(Model.Body);
-			result=SDPGrammar.SDP.TryParse(reader);
+			result = SDPGrammar.SDP.TryParse(reader);
 			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
-			
 		}
+
+	
 		public  string GetCallID()
 		{
-			string? value;
-
-			value = Model.GetHeader<CallIDHeader>()?.Value;
-			if (value == null)
-			{
-				string error = $"CallID header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return value;
+			return Model.GetCallID();
 		}
 		public  string GetViaBranch()
 		{
-			string? value;
+			return Model.GetViaBranch();
 
-			value = Model.GetHeader<ViaHeader>()?.Value;
-			if (value == null)
-			{
-				string error = $"Via branch header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return value;
 		}
 
 		public  string GetCSeq()
 		{
-			string? value;
+			return Model.GetCSeq();
 
-			value = Model.GetHeader<CSeqHeader>()?.Value;
-			if (value == null)
-			{
-				string error = $"CSeq header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return value;
 		}
 		public  string GetFromTag()
 		{
-			SIPURL? fromURL;
-			string? value;
-			URLParameter? parameter;
+			return Model.GetFromTag();
 
-			fromURL = Model.GetHeader<FromHeader>()?.Value.URI as SIPURL;
-			if (fromURL == null)
-			{
-				string error = $"Invalid or missing from URI in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			parameter = fromURL.Parameters.FirstOrDefault(item => item.Name == "tag");
-			if (parameter == null)
-			{
-				string error = $"Tag parameter missing in from header";
-				throw new InvalidOperationException(error);
-			}
-
-			value = parameter.Value.Value;
-			if (value == null)
-			{
-				string error = $"From tag missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-			return value;
 
 		}
 		public  string? GetToTag()
 		{
-			SIPURL? toURL;
-			string? value;
-			URLParameter? parameter;
+			return Model.GetToTag();
 
-			toURL = Model.GetHeader<ToHeader>()?.Value.URI as SIPURL;
-			if (toURL == null)
-			{
-				string error = $"Invalid or missing to URI in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			parameter = toURL.Parameters.FirstOrDefault(item => item.Name == "tag");
-			if (parameter == null)
-			{
-				string error = $"Tag parameter missing in to header";
-				throw new InvalidOperationException(error);
-			}
-			value = parameter.Value.Value;
-
-			return value;
 
 		}
 
 		public  Address GetFrom()
 		{
-			Address? value;
+			return Model.GetFrom();
 
-			value = Model.GetHeader<FromHeader>()?.Value;
-			if (value == null)
-			{
-				string error = $"From header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return value.Value;
 		}
 
 		public  Address GetTo()
 		{
-			Address? value;
+			return Model.GetTo();
 
-			value = Model.GetHeader<ToHeader>()?.Value;
-			if (value == null)
-			{
-				string error = $"To header missing in SIP message";
-				throw new InvalidOperationException(error);
-			}
-
-			return value.Value;
 		}
 
 	}

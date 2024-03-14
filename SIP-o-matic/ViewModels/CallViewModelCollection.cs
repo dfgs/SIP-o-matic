@@ -9,15 +9,17 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class CallViewModelCollection : ListViewModel<Call, CallViewModel>
+	public class CallViewModelCollection : GenericViewModelList<Call, CallViewModel>
 	{
-		public CallViewModelCollection(ILogger Logger) : base(Logger)
+		private IDeviceNameProvider deviceNameProvider;
+		public CallViewModelCollection(IList<Call> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
 		{
+			this.deviceNameProvider = DeviceNameProvider;
 		}
 
-		protected override CallViewModel OnCreateItem()
+		protected override CallViewModel OnCreateItem(Call SourceItem)
 		{
-			return new CallViewModel(Logger);
+			return new CallViewModel(SourceItem,deviceNameProvider);
 		}
 
 

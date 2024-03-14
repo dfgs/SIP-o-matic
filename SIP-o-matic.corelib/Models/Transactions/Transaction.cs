@@ -46,17 +46,17 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 		private StateMachine<States, Triggers> fsm;
 		
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> InviteTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> ReferTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> AckTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> NotifyTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> ByeTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> OptionsTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> RegisterTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> MessageTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> CancelTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> SubscribeTrigger;
-		protected StateMachine<States, Triggers>.TriggerWithParameters<IRequest> UpdateTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> InviteTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ReferTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> AckTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> NotifyTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> ByeTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> OptionsTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> RegisterTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> MessageTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> CancelTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> SubscribeTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> UpdateTrigger;
 
 
 		public required string CallID
@@ -111,8 +111,8 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		public bool IsTerminated => fsm.IsInState(TerminatedState);
 
 
-		private IRequest? previousRequest;
-		private IResponse? previousResponse;
+		private Request? previousRequest;
+		private Response? previousResponse;
 
 
 
@@ -133,24 +133,24 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 			fsm = new StateMachine<States, Triggers>(States.Undefined);
 
-			InviteTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.INVITE);
-			AckTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.ACK);
-			ReferTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.REFER);
-			NotifyTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.NOTIFY);
-			ByeTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.BYE);
-			OptionsTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.OPTIONS);
-			RegisterTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.REGISTER);
-			MessageTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.MESSAGE);
-			CancelTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.CANCEL);
-			SubscribeTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.SUBSCRIBE);
-			UpdateTrigger = fsm.SetTriggerParameters<IRequest>(Triggers.UPDATE);
+			InviteTrigger = fsm.SetTriggerParameters<Request>(Triggers.INVITE);
+			AckTrigger = fsm.SetTriggerParameters<Request>(Triggers.ACK);
+			ReferTrigger = fsm.SetTriggerParameters<Request>(Triggers.REFER);
+			NotifyTrigger = fsm.SetTriggerParameters<Request>(Triggers.NOTIFY);
+			ByeTrigger = fsm.SetTriggerParameters<Request>(Triggers.BYE);
+			OptionsTrigger = fsm.SetTriggerParameters<Request>(Triggers.OPTIONS);
+			RegisterTrigger = fsm.SetTriggerParameters<Request>(Triggers.REGISTER);
+			MessageTrigger = fsm.SetTriggerParameters<Request>(Triggers.MESSAGE);
+			CancelTrigger = fsm.SetTriggerParameters<Request>(Triggers.CANCEL);
+			SubscribeTrigger = fsm.SetTriggerParameters<Request>(Triggers.SUBSCRIBE);
+			UpdateTrigger = fsm.SetTriggerParameters<Request>(Triggers.UPDATE);
 
 			OnConfigureFSM(fsm);
 		}
 
 		protected abstract void OnConfigureFSM(StateMachine<States, Triggers> fsm);
 
-		
+
 
 		/*public bool Match(Request Request)
 		{
@@ -160,15 +160,15 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		{
 			return (CallID == Response.GetCallID()) && (this.ViaBranch == Response.GetViaBranch()) && (this.CSeq == Response.GetCSeq());
 		}*/
-
-		public bool Match(ISIPMessage MessageInfo)
+		public bool Match(SIPMessage SIPMessage)
 		{
-			return (CallID == MessageInfo.GetCallID()) && (this.ViaBranch == MessageInfo.GetViaBranch()) && (this.CSeq == MessageInfo.GetCSeq());
+			return (CallID == SIPMessage.GetCallID()) && (this.ViaBranch == SIPMessage.GetViaBranch()) && (this.CSeq == SIPMessage.GetCSeq());
 		}
+	
 
-		protected bool AssertMessageBelongsToTransaction(ISIPMessage MessageInfo)
+		protected bool AssertMessageBelongsToTransaction(SIPMessage SIPMessage)
 		{
-			return Match(MessageInfo);
+			return Match(SIPMessage);
 		}
 		
 
@@ -177,9 +177,9 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			return UmlDotGraph.Format(fsm.GetInfo());
 		}
 
-		public bool Update(IRequest Request,uint MessageIndex)
+		public bool Update(Request Request,uint MessageIndex)
 		{
-			if ((previousRequest!=null) && (previousRequest.Method== Request.Method))
+			if ((previousRequest!=null) && (previousRequest.RequestLine.Method== Request.RequestLine.Method))
 			{
 				Retransmissions++;
 				return false;
@@ -188,7 +188,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 			MessagesIndices.Add(MessageIndex);
 
-			switch (Request.Method)
+			switch (Request.RequestLine.Method)
 			{
 				case "INVITE":
 					fsm.Fire(InviteTrigger, Request);
@@ -223,13 +223,13 @@ namespace SIP_o_matic.corelib.Models.Transactions
 				case "UPDATE":
 					fsm.Fire(UpdateTrigger, Request);
 					break;
-				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.Method})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}
 			return true;
 		}
-		public bool Update(IResponse Response,uint MessageIndex)
+		public bool Update(Response Response,uint MessageIndex)
 		{
-			if ((previousResponse!=null) && (previousResponse.StatusCode==Response.StatusCode))
+			if ((previousResponse!=null) && (previousResponse.StatusLine.StatusCode==Response.StatusLine.StatusCode))
 			{
 				Retransmissions++;
 				return false;
@@ -242,7 +242,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			return true;
 		}
 
-		protected abstract StateMachine<States, Triggers>.TriggerWithParameters<IResponse> OnGetUpdateTrigger(IResponse Response);
+		protected abstract StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response);
 
 	}
 }

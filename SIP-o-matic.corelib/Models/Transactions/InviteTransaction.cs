@@ -16,10 +16,10 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Prov1xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Prov180Trigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov1xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Prov180Trigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
 
 
 		protected override States TerminatedState => States.InviteTerminated;
@@ -35,10 +35,10 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		{
 			// Undefined => Calling => Proceeding => Ringing => Terminated
 
-			Prov1xxTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Prov1xx);
-			Prov180Trigger = fsm.SetTriggerParameters<IResponse>(Triggers.Prov180);
-			Final2xxTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Error);
+			Prov1xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Prov1xx);
+			Prov180Trigger = fsm.SetTriggerParameters<Response>(Triggers.Prov180);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
 
 			fsm.Configure(States.Undefined)
 				.PermitIf(InviteTrigger, States.InviteStarted,AssertMessageBelongsToTransaction, TransactionErrorMessage)
@@ -75,15 +75,15 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<IResponse> OnGetUpdateTrigger(IResponse Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
-			switch (Response.StatusCode)
+			switch (Response.StatusLine.StatusCode)
 			{
 				case 180: return Prov180Trigger!;
 				case >= 100 and <= 199:return Prov1xxTrigger!;
 				case >= 200 and <= 299:return Final2xxTrigger!;
 				case >= 400 and < 699: return ErrorTrigger!;
-				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusCode})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
 		}
 

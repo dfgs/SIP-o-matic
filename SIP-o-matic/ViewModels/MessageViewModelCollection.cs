@@ -10,46 +10,28 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class MessageViewModelCollection : ListViewModel<Message, MessageViewModel>
+	public class MessageViewModelCollection : GenericViewModelList<Message, MessageViewModel>
 	{
 
 		private IDeviceNameProvider deviceNameProvider;
 
 		
 
-		public MessageViewModelCollection(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
+		public MessageViewModelCollection(IList<Message> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 		}
 
 
-		protected override MessageViewModel OnCreateItem()
+		protected override MessageViewModel OnCreateItem(Message SourceItem)
 		{
-			return new MessageViewModel(Logger,deviceNameProvider);
+			return new MessageViewModel(SourceItem,deviceNameProvider);
 		}
-		public void Clear()
-		{
-			Model.Clear();
-			ClearInternal();
-		}
+		
+		
+		
 
-		public void Add(Message Message)
-		{
-			MessageViewModel messageViewModel;
-
-			Model.Add(Message);
-
-			messageViewModel=new MessageViewModel(Logger, deviceNameProvider);
-			messageViewModel.Load(Message);
-			
-			AddInternal(messageViewModel);
-
-		}
-
-		public void Add(MessageViewModel Message)
-		{
-			AddInternal(Message);
-		}
+	
 
 	
 

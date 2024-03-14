@@ -4,7 +4,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class AddressViewModel : ViewModel<Address>
+	public class AddressViewModel : GenericViewModel<Address>
 	{
 		public string Value
 		{
@@ -17,7 +17,7 @@ namespace SIP_o_matic.ViewModels
 			
 		}
 
-		public AddressViewModel(ILogger Logger) : base(Logger)
+		public AddressViewModel(Address Address) : base(Address)
 		{
 		}
 

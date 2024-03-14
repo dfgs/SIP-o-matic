@@ -15,6 +15,8 @@ using SIP_o_matic.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using SIP_o_matic.corelib;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using SIPParserLib;
 
 namespace SIP_o_matic.Modules
 {
@@ -27,7 +29,7 @@ namespace SIP_o_matic.Modules
 		}
 
 		private List<Transaction> Transactions;
-		private ProjectViewModel _project;
+		private Project _project;
 		private KeyFrame? previousKeyFrame = null;
 		private DateTime firstEvent;
 
@@ -39,7 +41,7 @@ namespace SIP_o_matic.Modules
 		private ColorManager messageColorManager;
 
 
-		public AnalyzeModule(ILogger Logger, ProjectViewModel Project) : base(Logger)
+		public AnalyzeModule(ILogger Logger, Project Project) : base(Logger)
 		{
 			ProgressStep step;
 
@@ -91,16 +93,16 @@ namespace SIP_o_matic.Modules
 		private async Task CleanProjectAsync(CancellationToken CancellationToken, int Index)
 		{
 			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
-			_project.ClearKeyFrames();
+			_project.KeyFrames.Clear();
 			await Task.Delay(100);
 		}
 
-		private string GetLegName(string CallID, string SourceDevice, string DestinationDevice)
+		private string GetLegName(string CallID, Device SourceDevice, Device DestinationDevice)
 		{
 			int index;
 			string key;
 
-			key = $"{CallID}/{Utils.Hash(SourceDevice, DestinationDevice)}";
+			key = $"{CallID}/{Utils.Hash(SourceDevice.Name, DestinationDevice.Name)}";
 
 			index = legs.IndexOf(key);
 			if (index == -1)
@@ -162,7 +164,7 @@ namespace SIP_o_matic.Modules
 			return messageColorManager.GetColorString(index);
 		}
 
-		private Transaction CreateNewTransaction(IRequest Request,string SourceDevice, string DestinationDevice)
+		private Transaction CreateNewTransaction(Request Request, Device SourceDevice, Device DestinationDevice)
 		{
 			string viaBranch;
 			string cseq;
@@ -177,7 +179,7 @@ namespace SIP_o_matic.Modules
 			//fromTag=Request.GetFromTag();
 			
 
-			switch (Request.Method)
+			switch (Request.RequestLine.Method)
 			{
 				case "INVITE": return new InviteTransaction(callID, viaBranch, cseq);
 				case "ACK": return new AckTransaction(callID,  viaBranch, cseq);
@@ -191,13 +193,13 @@ namespace SIP_o_matic.Modules
 				case "SUBSCRIBE": return new SubscribeTransaction(callID, viaBranch, cseq);
 				case "UPDATE": return new UpdateTransaction(callID, viaBranch, cseq);
 				default:
-					string error = $"Failed to create new transaction: Invalid request method {Request.Method}";
+					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
 					Log(LogLevels.Error, error);
 					throw new NotImplementedException(error);
 			}
 		}
 		
-		private Call CreateNewCall(IRequest Request, string SourceDevice, string DestinationDevice)
+		private Call CreateNewCall(Request Request, Device SourceDevice, Device DestinationDevice)
 		{
 			string callID;
 			string fromTag;
@@ -216,7 +218,7 @@ namespace SIP_o_matic.Modules
 
 		
 
-		private async Task<bool> UpdateKeyFrameFromRequestAsync(KeyFrame KeyFrame, IRequest Request, string SourceDevice, string DestinationDevice, uint MessageIndex)
+		private async Task<bool> UpdateKeyFrameFromRequestAsync(KeyFrame KeyFrame, Request Request, Device SourceDevice, Device DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -244,7 +246,7 @@ namespace SIP_o_matic.Modules
 					|| (transaction is SubscribeTransaction)
 				) return false;// ignore options transactions
 
-				call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request) && (Utils.Hash(SourceDevice, DestinationDevice) == Utils.Hash(item.SourceDevice, item.DestinationDevice)));
+				call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Request) && (Utils.Hash(SourceDevice.Name, DestinationDevice.Name) == Utils.Hash(item.SourceDevice.Name, item.DestinationDevice.Name)));
 				if (call == null)
 				{
 					call = CreateNewCall(Request, SourceDevice, DestinationDevice);
@@ -256,7 +258,7 @@ namespace SIP_o_matic.Modules
 			else return false;
 
 		}
-		private async Task<bool> UpdateKeyFrameFromResponseAsync(KeyFrame KeyFrame, IResponse Response, string SourceDevice, string DestinationDevice, uint MessageIndex)
+		private async Task<bool> UpdateKeyFrameFromResponseAsync(KeyFrame KeyFrame, Response Response, Device SourceDevice, Device DestinationDevice, uint MessageIndex)
 		{
 			Call? call;
 			Transaction? transaction;
@@ -281,7 +283,7 @@ namespace SIP_o_matic.Modules
 				|| (transaction is SubscribeTransaction)
 				) return false;// ignore options transactions
 
-			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response) && (Utils.Hash(SourceDevice,DestinationDevice)==Utils.Hash(item.SourceDevice,item.DestinationDevice )));
+			call = KeyFrame.Calls.FirstOrDefault(item => item.Match(Response) && (Utils.Hash(SourceDevice.Name,DestinationDevice.Name) ==Utils.Hash(item.SourceDevice.Name,item.DestinationDevice.Name )));
 			if (call == null)
 			{
 				string error = "Cannot find matching call for response";
@@ -302,7 +304,7 @@ namespace SIP_o_matic.Modules
 
 		}
 
-		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, ProjectViewModel Project,  MessageViewModel Message)
+		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, Project Project,  Message Message)
 		{
 
 			LogEnter();
@@ -314,11 +316,12 @@ namespace SIP_o_matic.Modules
 				Log(LogLevels.Error, error);
 				throw new InvalidOperationException(error);
 			}
+			
 
-			switch (Message.SIPMessage.MessageType)
+			switch (Message.SIPMessage)
 			{
-				case SIPMessageViewModel.Types.Request:return await UpdateKeyFrameFromRequestAsync(KeyFrame, Message.SIPMessage, Message.SourceDevice, Message.DestinationDevice, Message.Index);
-				case SIPMessageViewModel.Types.Response:return await UpdateKeyFrameFromResponseAsync(KeyFrame, Message.SIPMessage, Message.SourceDevice, Message.DestinationDevice, Message.Index);
+				case Request request:return await UpdateKeyFrameFromRequestAsync(KeyFrame, request, _project.GetDevice(Message.SourceAddress), _project.GetDevice(Message.DestinationAddress), Message.Index);
+				case Response response:return await UpdateKeyFrameFromResponseAsync(KeyFrame, response, _project.GetDevice(Message.SourceAddress), _project.GetDevice(Message.DestinationAddress), Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
@@ -330,8 +333,8 @@ namespace SIP_o_matic.Modules
 		private async Task CreateKeyFramesAsync(CancellationToken CancellationToken, int Index)
 		{
 			KeyFrame newKeyFrame;
-			MessageViewModel message;
-
+			Message message;
+			Dialog? dialog;
 
 			LogEnter();
 
@@ -342,7 +345,10 @@ namespace SIP_o_matic.Modules
 			}
 
 			message = _project.Messages[Index];
-			if (!_project.Dialogs.ContainsCheckedDialogForMessage(message)) return;	// filer only selected dialogs
+			if (message.SIPMessage == null) return;
+
+			dialog = _project.Dialogs.FirstOrDefault(item=>item.IsChecked && item.Match(message.SIPMessage));
+			if (dialog==null) return;	// filer only selected dialogs
 
 
 			try
@@ -362,7 +368,7 @@ namespace SIP_o_matic.Modules
 
 				if (await UpdateKeyFrameAsync(newKeyFrame,_project,  message))
 				{
-					_project.KeyFrames.Add(newKeyFrame);
+					_project.KeyFrames.Add( newKeyFrame);
 				}
 
 				previousKeyFrame = newKeyFrame;
@@ -379,7 +385,7 @@ namespace SIP_o_matic.Modules
 
 
 
-		private async Task FormatKeyFrameAsync(CancellationToken CancellationToken,KeyFrameViewModel KeyFrame)
+		private async Task FormatKeyFrameAsync(CancellationToken CancellationToken,KeyFrame KeyFrame)
 		{
 
 			KeyFrame.TimeSpan = KeyFrame.Timestamp - firstEvent;
@@ -401,7 +407,7 @@ namespace SIP_o_matic.Modules
 			}
 
 
-			await foreach (CallViewModel call in KeyFrame.Calls.ToAsyncEnumerable())
+			await foreach (Call call in KeyFrame.Calls.ToAsyncEnumerable())
 			{
 				if (CancellationToken.IsCancellationRequested)
 				{
@@ -414,10 +420,6 @@ namespace SIP_o_matic.Modules
 				else call.LegDescription = $"{call.LegName} (replaces {GetLegName(call.ReplacedCallID, call.SourceDevice, call.DestinationDevice)})";
 
 				call.Color = GetColor(call.Caller, call.Callee);
-
-				call.MessageIndicesDescription = string.Join(',', call.MessageIndices.Select(index => $"[{index}]"));
-
-
 			}
 		}
 
@@ -425,7 +427,7 @@ namespace SIP_o_matic.Modules
 
 		public async Task FormatKeyFramesAsync(CancellationToken CancellationToken, int Index)
 		{
-			KeyFrameViewModel keyFrame;
+			KeyFrame keyFrame;
 
 			LogEnter();
 
@@ -445,15 +447,15 @@ namespace SIP_o_matic.Modules
 
 
 
-		private async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, MessagesFrameViewModel MessagesFrame)
+		private async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, MessagesFrame MessagesFrame)
 		{
 			string callID;
 			string viaBranch;
 			string cseq;
 			string fromTag;
+			Dialog? dialog;
 
-
-			await foreach (MessageViewModel message in _project.Messages.ToAsyncEnumerable())
+			await foreach (Message message in _project.Messages.ToAsyncEnumerable())
 			{
 				if (CancellationToken.IsCancellationRequested)
 				{
@@ -461,13 +463,12 @@ namespace SIP_o_matic.Modules
 					break;
 				}
 
-				if (!_project.Dialogs.ContainsCheckedDialogForMessage(message)) continue;// filer only selected dialogs
+				if (message.SIPMessage == null) continue;
+
+				dialog = _project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(message.SIPMessage));
+				if (dialog==null) continue;// filer only selected dialogs
 
 				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
-
-				//message.SourceDevice = _project.Devices.FindDeviceByAddress(message.SourceAddress)?.Name ?? message.SourceAddress.Value;
-				//message.DestinationDevice = _project.Devices.FindDeviceByAddress(message.DestinationAddress)?.Name ?? message.DestinationAddress.Value;
-									
 
 				callID = message.SIPMessage.GetCallID();
 				viaBranch = message.SIPMessage.GetViaBranch();
@@ -480,14 +481,14 @@ namespace SIP_o_matic.Modules
 				MessagesFrame.Messages.Add(message);
 			}
 			MessagesFrame.Devices.Clear();
-			foreach(string device in MessagesFrame.Messages.SelectMany(item => item.Devices).Distinct())
+			foreach(Device device in MessagesFrame.Messages.SelectMany(item => new Device[] { _project.GetDevice(item.SourceAddress), _project.GetDevice(item.DestinationAddress) }).Distinct())
 			{
 				MessagesFrame.Devices.Add(device);
 			}
 		}
 		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
 		{
-			MessagesFrameViewModel messageFrame;
+			MessagesFrame? messageFrame=null;
 
 			LogEnter();
 
@@ -499,10 +500,9 @@ namespace SIP_o_matic.Modules
 
 			if (_project.Messages.Count == 0) return;
 
-			messageFrame = new MessagesFrameViewModel(_project.Logger,_project);
-			messageFrame.Load("");
-			await FormatMessagesFrameAsync(CancellationToken, messageFrame);
-			_project.MessagesFrame = messageFrame;
+			messageFrame = new MessagesFrame();
+			await FormatMessagesFrameAsync(CancellationToken, messageFrame!);
+			_project.MessagesFrame = messageFrame!;
 
 		}
 

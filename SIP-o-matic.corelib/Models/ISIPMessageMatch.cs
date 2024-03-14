@@ -11,6 +11,6 @@ namespace SIP_o_matic.corelib.Models
 	{
 		//bool Match(Request Request);
 		//bool Match(Response Response);
-		bool Match(ISIPMessage MessageInfo);
+		bool Match(SIPMessage SIPMessage);
 	}
 }

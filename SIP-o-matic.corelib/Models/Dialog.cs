@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Xml.Serialization;
 using static SIP_o_matic.corelib.Models.Transactions.Transaction;
 
 namespace SIP_o_matic.corelib.Models
@@ -62,6 +63,12 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
+		[XmlIgnore]
+		public bool IsChecked
+		{
+			get;
+			set;
+		}
 
 		public Dialog()
 		{
@@ -82,12 +89,12 @@ namespace SIP_o_matic.corelib.Models
 
 		}
 
-		
-		public bool Match(ISIPMessage MessageInfo)
+		public bool Match(SIPMessage SIPMessage)
 		{
-			return (CallID == MessageInfo.GetCallID()) &&
-				((this.FromTag == MessageInfo.GetFromTag() || (this.FromTag == MessageInfo.GetToTag())));
+			return (CallID == SIPMessage.GetCallID()) &&
+				((this.FromTag == SIPMessage.GetFromTag() || (this.FromTag == SIPMessage.GetToTag())));
 		}
+		
 
 		
 		

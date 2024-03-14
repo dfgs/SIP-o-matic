@@ -13,7 +13,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class MessageViewModel : ViewModel<Message>
+	public class MessageViewModel : GenericViewModel<Message>
 	{
 
 
@@ -31,13 +31,11 @@ namespace SIP_o_matic.ViewModels
 		}
 		public string TransactionColor
 		{
-			get;
-			set;
+			get => Model.TransactionColor;
 		}
 		public string DialogColor
 		{
-			get;
-			set;
+			get => Model.DialogColor;
 		}
 		public string Description
 		{
@@ -76,23 +74,17 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public string SourceDevice
+		public DeviceViewModel SourceDevice
 		{
-			get => deviceNameProvider.GetDeviceName(Model.SourceAddress);
+			get => deviceNameProvider.GetDevice(Model.SourceAddress);
 		}
-		public string DestinationDevice
+		public DeviceViewModel DestinationDevice
 		{
-			get => deviceNameProvider.GetDeviceName(Model.DestinationAddress);
+			get => deviceNameProvider.GetDevice(Model.DestinationAddress);
 		}
 
-		public IEnumerable<string> Devices
-		{
-			get
-			{
-				if (SourceDevice!=null) yield return SourceDevice;
-				if (DestinationDevice != null) yield return DestinationDevice;
-			}
-		}
+		
+
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(MessageViewModel), new PropertyMetadata(false));
 		public bool IsFlipped
 		{
@@ -100,39 +92,21 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsFlippedProperty, value); }
 		}
 
-		/*public static readonly DependencyProperty IsPinnedProperty = DependencyProperty.Register("IsPinned", typeof(bool), typeof(MessageViewModel), new PropertyMetadata(false));
-		public bool IsPinned
-		{
-			get { return (bool)GetValue(IsPinnedProperty); }
-			set { SetValue(IsPinnedProperty, value); }
-		}*/
-
+		
 
 		private IDeviceNameProvider deviceNameProvider;
 
-		public MessageViewModel(ILogger Logger,IDeviceNameProvider DeviceNameProvider) : base(Logger)
-		{
-			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
-			this.deviceNameProvider = DeviceNameProvider;
-			this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
-
-			SIPMessage = new SIPMessageViewModel(Logger);
-			TransactionColor = "Black";DialogColor = "Blue";
-
-		}
-
-		private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
-		{
-			OnPropertyChanged(nameof(SourceDevice));
-			OnPropertyChanged(nameof(DestinationDevice));
-		}
-
-		protected override void OnLoaded()
+		public MessageViewModel(Message Model,IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
 			StringReader reader;
-            SIPParserLib.SIPMessage sipMessage;
+			SIPParserLib.SIPMessage sipMessage;
 
-			base.OnLoaded();
+			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
+			this.deviceNameProvider = DeviceNameProvider;
+			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
+
+	
+		
 
 			reader = new StringReader(Model.Content, ' ');
 			try
@@ -145,10 +119,16 @@ namespace SIP_o_matic.ViewModels
 				throw new InvalidOperationException(error);
 			}
 
-			SIPMessage.Load(sipMessage);
-			
-
+			SIPMessage = new SIPMessageViewModel(sipMessage);
 		}
+
+		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		{
+			OnPropertyChanged(nameof(SourceDevice));
+			OnPropertyChanged(nameof(DestinationDevice));
+		}*/
+
+		
 
 	}
 }

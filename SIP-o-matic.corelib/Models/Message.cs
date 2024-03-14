@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using SIPParserLib;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Serialization;
 
 namespace SIP_o_matic.corelib.Models
@@ -24,17 +20,39 @@ namespace SIP_o_matic.corelib.Models
             set;
         }
 
-        [XmlIgnore]
+		[XmlIgnore]
+		private string content;
         public required string Content
         {
-            get;
-            set;
+			get => content;
+            set { this.content = value; DecodeContent(); }
         }
 
-        public string EncodedContent
+		[XmlIgnore]
+		public SIPMessage? SIPMessage
+		{
+			get;
+			private set;
+		}
+
+		[XmlIgnore]
+		public string DialogColor
+		{
+			get;
+			set;
+		}
+
+		[XmlIgnore]
+		public string TransactionColor
+		{
+			get;
+			set;
+		}
+
+		public string EncodedContent
         {
-            get => Convert.ToBase64String( Encoding.UTF8.GetBytes(Content));
-            set => Content=Encoding.UTF8.GetString(Convert.FromBase64String(value));
+            get => Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Content));
+            set => Content= System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(value));
 		}
 
 		public required Address SourceAddress
@@ -51,7 +69,9 @@ namespace SIP_o_matic.corelib.Models
 
         public Message()
         {
-
+            this.DialogColor = "Black";
+            this.TransactionColor = "Black";
+			this.content = "";
         }
         [SetsRequiredMembers]
         public Message(uint Index, DateTime Timestamp, Address SourceAddress, Address DestinationAddress, string Content)
@@ -60,7 +80,30 @@ namespace SIP_o_matic.corelib.Models
             this.Timestamp = Timestamp;
             this.SourceAddress = SourceAddress;
             this.DestinationAddress = DestinationAddress;
-            this.Content = Content;
-        }
-    }
+            this.content = Content;
+			this.Content = Content;
+			this.DialogColor = "Black";
+			this.TransactionColor = "Black";
+			
+		}
+
+        private void DecodeContent()
+        {
+			ParserLib.StringReader reader;
+	
+			
+			reader = new ParserLib.StringReader(content, ' ');
+			try
+			{
+				SIPMessage = SIPParserLib.SIPGrammar.SIPMessage.Parse(reader);
+			}
+			catch (Exception ex)
+			{
+				string error = $"Failed to decode SIP message ({ex.Message})\r\r{content}";
+				throw new InvalidOperationException(error);
+			}
+
+		}
+
+	}
 }

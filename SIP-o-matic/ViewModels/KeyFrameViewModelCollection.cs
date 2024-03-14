@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class KeyFrameViewModelCollection : ListViewModel<KeyFrame, KeyFrameViewModel>
+	public class KeyFrameViewModelCollection : GenericViewModelList<KeyFrame, KeyFrameViewModel>
 	{
 
 
@@ -46,8 +46,11 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(MoveToNextCommandProperty, value); }
 		}
 
-		public KeyFrameViewModelCollection(ILogger Logger) : base(Logger)
+		private IDeviceNameProvider deviceNameProvider;
+
+		public KeyFrameViewModelCollection(IList<KeyFrame> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
 		{
+			this.deviceNameProvider = DeviceNameProvider;
 			MoveToStartCommand = new ViewModelCommand(MoveToStartCanExecute, MoveToStartExecuted);
 			MoveToEndCommand = new ViewModelCommand(MoveToEndCanExecute, MoveToEndExecuted);
 			MoveToNextCommand = new ViewModelCommand(MoveToNextCanExecute, MoveToNextExecuted);
@@ -106,33 +109,20 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		protected override KeyFrameViewModel OnCreateItem()
+		protected override KeyFrameViewModel OnCreateItem(KeyFrame SourceItem)
 		{
-			return new KeyFrameViewModel(Logger);
+			return new KeyFrameViewModel(SourceItem,deviceNameProvider);
 		}
 
-		public void Clear()
-		{
-			Model.Clear();
-			ClearInternal();
-		}
-		public void Add(KeyFrame KeyFrame)
-		{
-			KeyFrameViewModel keyFrameViewModel;
-
-			Model.Add(KeyFrame);
-
-			keyFrameViewModel = new KeyFrameViewModel(Logger);
-			keyFrameViewModel.Load(KeyFrame);
-			AddInternal(keyFrameViewModel);
-		}
+		
+		
 
 		internal static KeyFrameViewModelCollection CreateTestData()
 		{
 			KeyFrameViewModel keyFrame;
 			KeyFrameViewModelCollection keyFrames;
 
-			keyFrames = new KeyFrameViewModelCollection(NullLogger.Instance);
+			keyFrames = new KeyFrameViewModelCollection(new List<KeyFrame>(),null);
 			keyFrame = KeyFrameViewModel.CreateTestData();
 			keyFrames.AddInternal(keyFrame);
 

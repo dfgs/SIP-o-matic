@@ -9,8 +9,10 @@ namespace SIP_o_matic.ViewModels
 {
 	public interface IDeviceNameProvider
 	{
-		public event EventHandler DeviceNameUpdated;
+		//public event EventHandler DeviceNameUpdated;
 
-		public string GetDeviceName(Address Address);
+		public DeviceViewModel GetDevice(Address Address);
+		public DeviceViewModel GetDevice(Device Model);
+		public IEnumerable<DeviceViewModel> GetDevices();
 	}
 }

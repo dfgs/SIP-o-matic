@@ -37,7 +37,7 @@ namespace SIP_o_matic
 
 			//Logger = NullLogger.Instance;
 			Logger = new FileLogger(new DefaultLogFormatter(), "SIP-o-matic.log");
-			applicationViewModel = new ApplicationViewModel(Logger);
+			applicationViewModel = new ApplicationViewModel("");
 
 
 			InitializeComponent();
@@ -73,12 +73,14 @@ namespace SIP_o_matic
 
 			try
 			{
-				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem, FileSource, FileNames);
+				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem.GetModel(), FileSource, FileNames);
 
 				analyzeWindow = new ProgressWindow(Logger);
 				analyzeWindow.Owner = this;
 				analyzeWindow.Steps.AddRange(module.ProgressSteps);
 				analyzeWindow.ShowDialog();
+
+				applicationViewModel.Projects.SelectedItem.RefreshDeviceAndMessages();
 			}
 			catch (Exception ex)
 			{
@@ -96,12 +98,15 @@ namespace SIP_o_matic
 			if ((applicationViewModel.Projects.SelectedItem == null) || (applicationViewModel.Projects.SelectedItem.Messages.Count == 0)) return;
 			try
 			{
-				module = new AnalyzeModule(Logger, applicationViewModel.Projects.SelectedItem);
+				module = new AnalyzeModule(Logger, applicationViewModel.Projects.SelectedItem.GetModel());
 
 				analyzeWindow = new ProgressWindow(Logger);
 				analyzeWindow.Owner = this;
 				analyzeWindow.Steps.AddRange(module.ProgressSteps);
 				analyzeWindow.ShowDialog();
+
+				applicationViewModel.Projects.SelectedItem.RefreshFrames();
+
 			}
 			catch (Exception ex)
 			{

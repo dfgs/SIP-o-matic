@@ -13,16 +13,15 @@ using Address = SIP_o_matic.corelib.Models.Address;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DialogViewModel : ViewModel<Dialog>,ISIPMessageMatch
+	public class DialogViewModel : GenericViewModel<Dialog>
 	{
 
 
 
-		public static readonly DependencyProperty IsCheckedProperty = DependencyProperty.Register("IsChecked", typeof(bool), typeof(DialogViewModel), new PropertyMetadata(false));
 		public bool IsChecked
 		{
-			get { return (bool)GetValue(IsCheckedProperty); }
-			set { SetValue(IsCheckedProperty, value); }
+			get => Model.IsChecked;
+			set { Model.IsChecked = value;OnPropertyChanged(nameof(IsChecked)); }
 		}
 
 
@@ -60,16 +59,16 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
-		public string SourceDevice
+		public DeviceViewModel SourceDevice
 		{
-			get => deviceNameProvider.GetDeviceName(Model.SourceAddress);
+			get => deviceNameProvider.GetDevice(Model.SourceAddress);
 		}
-		public string DestinationDevice
+		public DeviceViewModel DestinationDevice
 		{
-			get => deviceNameProvider.GetDeviceName(Model.DestinationAddress);
+			get => deviceNameProvider.GetDevice(Model.DestinationAddress);
 		}
 
-		public IEnumerable<string> Devices
+		public IEnumerable<DeviceViewModel> Devices
 		{
 			get
 			{
@@ -91,24 +90,21 @@ namespace SIP_o_matic.ViewModels
 		private IDeviceNameProvider deviceNameProvider;
 
 
-		public DialogViewModel(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
+		public DialogViewModel(Dialog Model, IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
 			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
 			this.deviceNameProvider = DeviceNameProvider;
-			this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
+			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
 
 		}
 
-		private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
 		{
 			OnPropertyChanged(nameof(SourceDevice));
 			OnPropertyChanged(nameof(DestinationDevice));
-		}
+		}*/
 
-		public bool Match(ISIPMessage MessageInfo)
-		{
-			return Model.Match(MessageInfo);
-		}
+		
 
 
 

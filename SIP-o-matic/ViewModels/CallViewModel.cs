@@ -1,4 +1,5 @@
 ﻿using LogLib;
+using Microsoft.Office.Interop.PowerPoint;
 using SIP_o_matic.corelib.Models;
 using SIPParserLib;
 using System;
@@ -11,24 +12,24 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class CallViewModel : ViewModel<Call>
+	public class CallViewModel : GenericViewModel<Call>
 	{
 		public string CallID
 		{
 			get => Model.CallID;
 		}
 
-		public string SourceDevice
+		public DeviceViewModel SourceDevice
 		{
-			get=>Model.SourceDevice;
+			get=>deviceNameProvider.GetDevice(Model.SourceDevice);
 		}
 
-		public string DestinationDevice
+		public DeviceViewModel DestinationDevice
 		{
-			get=> Model.DestinationDevice;
+			get=> deviceNameProvider.GetDevice(Model.DestinationDevice);
 		}
 
-		public IEnumerable<string> Devices
+		public IEnumerable<DeviceViewModel> Devices
 		{
 			get
 			{
@@ -56,20 +57,17 @@ namespace SIP_o_matic.ViewModels
 
 		public string LegName
 		{
-			get;
-			set;
+			get => Model.LegName;
 		}
 
 		public string LegDescription
 		{
-			get;
-			set;
+			get => Model.LegDescription;
 		}
 
 		public string Color
 		{
-			get;
-			set;
+			get => Model.Color;
 		}
 
 		public uint[] MessageIndices
@@ -79,8 +77,7 @@ namespace SIP_o_matic.ViewModels
 
 		public string MessageIndicesDescription
 		{
-			get;
-			set;
+			get => string.Join(',', MessageIndices.Select(index => $"[{index}]"));
 		}
 
 		public string? ReplacedCallID
@@ -109,12 +106,11 @@ namespace SIP_o_matic.ViewModels
 			get { return (bool)GetValue(IsFlippedProperty); }
 			set { SetValue(IsFlippedProperty, value); }
 		}
-		public CallViewModel(ILogger Logger) : base(Logger)
+
+		private IDeviceNameProvider deviceNameProvider;
+		public CallViewModel(Call Model,IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
-			LegName = "Undefined";
-			LegDescription = "Undefined";
-			Color = "Black";
-			MessageIndicesDescription = "";
+			this.deviceNameProvider = DeviceNameProvider;
 		}
 	}
 }

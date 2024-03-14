@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class MessagesFrameViewModel : ViewModel<string>
+	public class MessagesFrameViewModel : GenericViewModel<MessagesFrame>
 	{
 	
 
@@ -23,9 +23,10 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
+				
 
 
-		public ObservableCollection<string> Devices
+		public ObservableCollection<DeviceViewModel> Devices
 		{
 			get ;
 			private set;
@@ -39,25 +40,20 @@ namespace SIP_o_matic.ViewModels
 
 		private IDeviceNameProvider deviceNameProvider;
 
-		public MessagesFrameViewModel(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
+		public MessagesFrameViewModel(MessagesFrame Model, IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
 			this.deviceNameProvider = DeviceNameProvider;
-			Messages = new MessageViewModelCollection(Logger,deviceNameProvider);
-			Devices = new ObservableCollection<string>();
+			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
+			Messages = new MessageViewModelCollection(Model.Messages,deviceNameProvider);
+			Devices = new ObservableCollection<DeviceViewModel>(DeviceNameProvider.GetDevices());
 			PinnedMessages = new ObservableCollection<MessageViewModel>();
 
 		}
-		protected override void OnLoaded()
-		{
-			base.OnLoaded();
-			Messages.Load(new List<Message>());
-		}
-		public void Clear()
-		{
-			Messages.Clear();
-		}
 
-		
+		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		{
+			Devices = new ObservableCollection<Device>(Model.Devices);
+		}*/
 
 		public void PinMessage(MessageViewModel Message)
 		{

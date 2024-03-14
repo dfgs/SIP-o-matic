@@ -27,9 +27,9 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 		
 
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<IResponse> OnGetUpdateTrigger(IResponse Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
-			throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusCode})");
+			throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 		}
 	}
 }

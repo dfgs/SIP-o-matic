@@ -15,8 +15,8 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 	
 
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? Final2xxTrigger;
-		private StateMachine<States, Triggers>.TriggerWithParameters<IResponse>? ErrorTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? Final2xxTrigger;
+		private StateMachine<States, Triggers>.TriggerWithParameters<Response>? ErrorTrigger;
 
 
 
@@ -33,8 +33,8 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		{
 			// Undefined => Transfering => Proceeding => Terminated
 
-			Final2xxTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Final2xx);
-			ErrorTrigger = fsm.SetTriggerParameters<IResponse>(Triggers.Error);
+			Final2xxTrigger = fsm.SetTriggerParameters<Response>(Triggers.Final2xx);
+			ErrorTrigger = fsm.SetTriggerParameters<Response>(Triggers.Error);
 
 
 			fsm.Configure(States.Undefined)
@@ -51,13 +51,13 @@ namespace SIP_o_matic.corelib.Models.Transactions
 
 		
 		
-		protected override StateMachine<States, Triggers>.TriggerWithParameters<IResponse> OnGetUpdateTrigger(IResponse Response)
+		protected override StateMachine<States, Triggers>.TriggerWithParameters<Response> OnGetUpdateTrigger(Response Response)
 		{
-			switch (Response.StatusCode)
+			switch (Response.StatusLine.StatusCode)
 			{
 				case 200:return Final2xxTrigger!;
 				case >= 400 and < 699: return ErrorTrigger!;
-				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusCode})");
+				default: throw new InvalidOperationException($"Unsupported transaction transition ({Response.StatusLine.StatusCode})");
 			}
 		}
 

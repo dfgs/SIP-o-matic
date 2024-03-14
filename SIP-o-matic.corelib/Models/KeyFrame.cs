@@ -16,7 +16,16 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
-
+		public TimeSpan TimeSpan
+		{
+			get;
+			set;
+		}
+		public string TimeSpanDisplay
+		{
+			get;
+			set;
+		}
 		public List<Call> Calls
 		{
 			get;
@@ -34,6 +43,8 @@ namespace SIP_o_matic.corelib.Models
 		{
 			this.Calls= new List<Call>();
 			this.Timestamp = Timestamp;
+			this.TimeSpan = TimeSpan.Zero;
+			this.TimeSpanDisplay = "";
 		}
 
 		

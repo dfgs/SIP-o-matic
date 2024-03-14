@@ -1,9 +1,13 @@
 ﻿using LogLib;
 using ModuleLib;
+using ParserLib;
+using PcapngFile;
+using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.DataSources;
 using SIP_o_matic.ViewModels;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +15,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace SIP_o_matic.Modules
 {
@@ -23,12 +28,12 @@ namespace SIP_o_matic.Modules
 		}
 
 		private string[] fileNames;
-		private ProjectViewModel project;
+		private Project project;
 
 		private List<IDataSource> dataSources;
 		private string fileSource;
 
-		public FileImporterModule(ILogger Logger, ProjectViewModel Project,string FileSource, IEnumerable<string> FileNames) : base(Logger)
+		public FileImporterModule(ILogger Logger, Project Project,string FileSource, IEnumerable<string> FileNames) : base(Logger)
 		{
 			ProgressStep step;
 
@@ -130,26 +135,37 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					return;
 				}
+			
 				Log(LogLevels.Debug, $"Adding message:\r\n{message.Content}");
+
+				
 				project.Messages.Add(message);
 				await Task.Delay(1);
 			}
 		}
 
+		
+
+
 		private async Task ExtractDialogsAsync(CancellationToken CancellationToken, int Index)
 		{
-			MessageViewModel message;
-			Dialog dialog;
-
+			Message message;
+			Dialog? dialog=null;
+			
 			message = project.Messages[Index];
 
-			if (!message.SIPMessage.IsRequest) return;
-			if (message.SIPMessage.Method != "INVITE") return;
-			if (project.Dialogs.ContainsDialogForMessage(message)) return;
+			if (message.SIPMessage == null) return;
+
+			if (!(message.SIPMessage is Request request)) return;
+			if (request.RequestLine.Method != "INVITE") return;
+
+			dialog = project.Dialogs.FirstOrDefault(item => item.Match(message.SIPMessage));
+			if (dialog != null) return;
 			
-			
-			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString()??"Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined");
-			project.Dialogs.Add(dialog);
+
+			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString() ?? "Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined") ;
+			project.Dialogs.Add(dialog!);
+
 			await Task.Delay(1);
 			
 		}

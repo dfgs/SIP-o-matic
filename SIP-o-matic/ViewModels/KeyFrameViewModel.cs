@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class KeyFrameViewModel : ViewModel<KeyFrame>
+	public class KeyFrameViewModel : GenericViewModel<KeyFrame>
 	{
 		public DateTime Timestamp
 		{
@@ -24,7 +24,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public IEnumerable<string> Devices
+		public IEnumerable<DeviceViewModel> Devices
 		{
 			get => Calls.SelectMany(call=>call.Devices).Distinct();
 		}
@@ -32,17 +32,14 @@ namespace SIP_o_matic.ViewModels
 		
 		public TimeSpan TimeSpan
 		{
-			get;
-			set;
+			get => Model.TimeSpan;
 		}
 
 
 
-		public static readonly DependencyProperty TimeSpanDisplayProperty = DependencyProperty.Register("TimeSpanDisplay", typeof(string), typeof(KeyFrameViewModel), new PropertyMetadata(null));
 		public string TimeSpanDisplay
 		{
-			get { return (string)GetValue(TimeSpanDisplayProperty); }
-			set { SetValue(TimeSpanDisplayProperty, value); }
+			get => Model.TimeSpanDisplay;
 		}
 
 				
@@ -52,32 +49,27 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
+		private IDeviceNameProvider deviceNameProvider;
 
-		public KeyFrameViewModel(ILogger Logger) : base(Logger)
+		public KeyFrameViewModel(KeyFrame Model, IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
-			Calls = new CallViewModelCollection(Logger);
+			this.deviceNameProvider = DeviceNameProvider;
+			Calls = new CallViewModelCollection(Model.Calls,deviceNameProvider);
 		}
 
-		protected override void OnLoaded()
-		{
-			base.OnLoaded();
-			Calls.Load(Model.Calls);
-		}
+		
 
 		internal static KeyFrameViewModel CreateTestData()
 		{
 			KeyFrameViewModel keyFrame;
 			KeyFrame model;
 
-			keyFrame = new KeyFrameViewModel(NullLogger.Instance);
-			keyFrame.TimeSpan = TimeSpan.Zero;
-
 			model = new KeyFrame(DateTime.Now);
 			model.MessageIndex = 1;
-			model.Calls.Add(new Call("abc-def1", "SBC1", "SBC2", "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
-			model.Calls.Add(new Call("abc-def2", "SBC2", "SBC3", "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
+			model.Calls.Add(new Call("abc-def1",new Device("SBC1",new Address[] { }) , new Device("SBC2", new Address[] { }), "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
+			model.Calls.Add(new Call("abc-def2", new Device("SBC2", new Address[] { }), new Device("SBC3", new Address[] { }), "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
 
-			keyFrame.Load(model);
+			keyFrame = new KeyFrameViewModel(model,null);
 
 			return keyFrame;
 		}

@@ -10,7 +10,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DeviceViewModel : ViewModel<Device>
+	public class DeviceViewModel : GenericViewModel<Device>
 	{
 		public string Name
 		{
@@ -28,16 +28,12 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public DeviceViewModel(ILogger Logger) : base(Logger)
+		public DeviceViewModel(Device Model) : base(Model)
 		{
-			Addresses = new AddressViewModelCollection(Logger);
+			Addresses = new AddressViewModelCollection(Model.Addresses);
 		}
 
-		protected override void OnLoaded()
-		{
-			base.OnLoaded();
-			Addresses.Load(Model.Addresses);
-		}
+		
 
 		public Device GetModel()
 		{

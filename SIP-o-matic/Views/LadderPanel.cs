@@ -14,10 +14,10 @@ namespace SIP_o_matic.Views
 	{
 
 
-		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<string>), typeof(LadderPanel), new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure,DevicesPropertyChanged));
-		public IEnumerable<string> Devices
+		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(IEnumerable<object>), typeof(LadderPanel), new FrameworkPropertyMetadata(null,FrameworkPropertyMetadataOptions.AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure,DevicesPropertyChanged));
+		public IEnumerable<object> Devices
 		{
-			get { return (IEnumerable<string>)GetValue(DevicesProperty); }
+			get { return (IEnumerable<object>)GetValue(DevicesProperty); }
 			set { SetValue(DevicesProperty, value); }
 		}
 
@@ -29,8 +29,8 @@ namespace SIP_o_matic.Views
 		}
 
 
-		public static readonly DependencyProperty SourceDeviceProperty = DependencyProperty.RegisterAttached("SourceDevice", typeof(string), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
-		public static readonly DependencyProperty DestinationDeviceProperty = DependencyProperty.RegisterAttached("DestinationDevice", typeof(string), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+		public static readonly DependencyProperty SourceDeviceProperty = DependencyProperty.RegisterAttached("SourceDevice", typeof(object), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+		public static readonly DependencyProperty DestinationDeviceProperty = DependencyProperty.RegisterAttached("DestinationDevice", typeof(object), typeof(LadderPanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentArrange | FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.RegisterAttached("IsFlipped", typeof(bool), typeof(LadderPanel), new FrameworkPropertyMetadata(false,FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
 
@@ -58,9 +58,9 @@ namespace SIP_o_matic.Views
 			LadderPanel? panel;
 			panel = d as LadderPanel;
 			if (panel == null) return;
-			panel.OnDevicesPropertyChanged((IEnumerable<string>)e.OldValue, (IEnumerable<string>)e.NewValue);
+			panel.OnDevicesPropertyChanged((IEnumerable<object>)e.OldValue, (IEnumerable<object>)e.NewValue);
 		}
-		private void OnDevicesPropertyChanged(IEnumerable<string> OldValue, IEnumerable<string> NewValue)
+		private void OnDevicesPropertyChanged(IEnumerable<object> OldValue, IEnumerable<object> NewValue)
 		{
 			INotifyCollectionChanged? collectionChanged;
 
@@ -75,20 +75,20 @@ namespace SIP_o_matic.Views
 			this.InvalidateArrange();
 		}
 
-		public static string GetSourceDevice(DependencyObject obj)
+		public static object GetSourceDevice(DependencyObject obj)
 		{
-			return (string)obj.GetValue(SourceDeviceProperty);
+			return obj.GetValue(SourceDeviceProperty);
 		}
 
-		public static void SetSourceDevice(DependencyObject obj, string value)
+		public static void SetSourceDevice(DependencyObject obj, object value)
 		{
 			obj.SetValue(SourceDeviceProperty, value);
 		}
-		public static string GetDestinationDevice(DependencyObject obj)
+		public static object GetDestinationDevice(DependencyObject obj)
 		{
-			return (string)obj.GetValue(DestinationDeviceProperty);
+			return obj.GetValue(DestinationDeviceProperty);
 		}
-		public static void SetDestinationDevice(DependencyObject obj, string value)
+		public static void SetDestinationDevice(DependencyObject obj, object value)
 		{
 			obj.SetValue(DestinationDeviceProperty, value);
 		}
@@ -125,15 +125,15 @@ namespace SIP_o_matic.Views
 
 		protected override Size ArrangeOverride(Size finalSize)
 		{
-			string sourceDevice;
-			string destinationDevice;
+			object sourceDevice;
+			object destinationDevice;
 			int sourceColumn,destinationColumn;
 			Rect rect;
 			double x1,x2,y = 0;
-			List<string> devices;
+			List<object> devices;
 
-			if (Devices == null) devices=new List<string>();
-			else devices = new List<string>(Devices);
+			if (Devices == null) devices=new List<object>();
+			else devices = new List<object>(Devices);
 
 			foreach (UIElement element in Children)
 			{

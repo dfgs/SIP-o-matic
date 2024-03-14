@@ -28,13 +28,13 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
-		public required string SourceDevice
+		public required Device SourceDevice
 		{
 			get;
 			set;
 		}
 
-		public required string DestinationDevice
+		public required Device DestinationDevice
 		{
 			get;
 			set;
@@ -61,7 +61,23 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
+		public string LegName
+		{
+			get;
+			set;
+		}
 
+		public string LegDescription
+		{
+			get;
+			set;
+		}
+
+		public string Color
+		{
+			get;
+			set;
+		}
 		public required bool IsAck
 		{
 			get;
@@ -78,6 +94,7 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
+		
 
 		public string? ReplacedCallID
 		{
@@ -92,7 +109,7 @@ namespace SIP_o_matic.corelib.Models
 		}
 
 		[SetsRequiredMembers]
-		public Call(string callID, string SourceDevice,string DestinationDevice,string FromTag, string Caller, string Callee, States InitialState,bool IsAck)
+		public Call(string callID, Device SourceDevice, Device DestinationDevice,string FromTag, string Caller, string Callee, States InitialState,bool IsAck)
 		{
 	
 			CallID = callID;
@@ -103,7 +120,12 @@ namespace SIP_o_matic.corelib.Models
 			this.Callee = Callee;
 			this.IsAck = IsAck;
 			MessageIndices = new uint[] { };
+			
 			IsUpdated = false;
+
+			this.LegName = "Undefined";
+			this.LegDescription = "Undefined";
+			this.Color = "Black";
 
 			notifyTerminatedTrigger= new StateMachine<States, Transaction.States>.TriggerWithParameters<Transaction>(Transaction.States.NotifyTerminated);
 
@@ -327,11 +349,13 @@ namespace SIP_o_matic.corelib.Models
 				((this.FromTag == Response.GetFromTag() || (this.FromTag == Response.GetToTag())));
 		}*/
 
-		public bool Match(ISIPMessage MessageInfo)
+		public bool Match(SIPMessage SIPMessage)
 		{
-			return (CallID == MessageInfo.GetCallID()) &&
-				((this.FromTag == MessageInfo.GetFromTag() || (this.FromTag == MessageInfo.GetToTag())));
+			return (CallID == SIPMessage.GetCallID()) &&
+				((this.FromTag == SIPMessage.GetFromTag() || (this.FromTag == SIPMessage.GetToTag())));
 		}
+
+		
 
 		public bool Update(Transaction Transaction)
 		{

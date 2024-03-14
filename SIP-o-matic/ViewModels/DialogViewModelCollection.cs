@@ -9,33 +9,23 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class DialogViewModelCollection : ListViewModel<Dialog, DialogViewModel>
+	public class DialogViewModelCollection : GenericViewModelList<Dialog, DialogViewModel>
 	{
 
 		private IDeviceNameProvider deviceNameProvider;
 
-		public DialogViewModelCollection(ILogger Logger, IDeviceNameProvider DeviceNameProvider) : base(Logger)
+		public DialogViewModelCollection(IList<Dialog> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 		}
 
-		protected override DialogViewModel OnCreateItem()
+		protected override DialogViewModel OnCreateItem(Dialog SourceItem)
 		{
-			return new DialogViewModel(Logger,deviceNameProvider);
+			return new DialogViewModel(SourceItem,deviceNameProvider);
 		}
 
-		public bool ContainsDialogForMessage(MessageViewModel Message)
-		{
-			return this.FirstOrDefault(item => item.Match(Message.SIPMessage)) != null;
-		}
-		public bool ContainsCheckedDialogForMessage(MessageViewModel Message)
-		{
-			DialogViewModel? item;
-
-			item=this.FirstOrDefault(item => item.Match(Message.SIPMessage));
-			if (item == null) return false;
-			return item.IsChecked;
-		}
+		
+		
 
 		public override int GetNewItemIndex(DialogViewModel Item)
 		{
@@ -50,10 +40,9 @@ namespace SIP_o_matic.ViewModels
 		{
 			DialogViewModel dialogViewModel;
 
-			Model.Add(Dialog);
+			Source.Add(Dialog);
 
-			dialogViewModel = new DialogViewModel(Logger,deviceNameProvider);
-			dialogViewModel.Load(Dialog);
+			dialogViewModel = new DialogViewModel(Dialog,deviceNameProvider);
 
 			AddInternal(dialogViewModel);
 

@@ -3,6 +3,7 @@ using PcapngFile;
 using SIP_o_matic.corelib.DataSources;
 using SIP_o_matic.corelib.Models;
 using SIP_o_matic.Views;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -14,10 +15,11 @@ using System.Windows;
 using System.Xml.Linq;
 using System.Xml.Serialization;
 using ViewModelLib;
+using Address = SIP_o_matic.corelib.Models.Address;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class ProjectViewModel : ViewModel<Project>, IDeviceNameProvider
+	public class ProjectViewModel : GenericViewModel<Project>, IDeviceNameProvider
 	{
 		public event EventHandler? DeviceNameUpdated;
 
@@ -36,31 +38,41 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(PathProperty, value); }
 		}
 
-	
+
+		public static readonly DependencyProperty DevicesProperty = DependencyProperty.Register("Devices", typeof(DeviceViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public DeviceViewModelCollection Devices
 		{
-			get;
-			private set;
+			get { return (DeviceViewModelCollection)GetValue(DevicesProperty); }
+			private set { SetValue(DevicesProperty, value); }
 		}
-		
 
+
+
+
+
+		public static readonly DependencyProperty MessagesProperty = DependencyProperty.Register("Messages", typeof(MessageViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public MessageViewModelCollection Messages
 		{
-			get;
-			private set;
+			get { return (MessageViewModelCollection)GetValue(MessagesProperty); }
+			private set { SetValue(MessagesProperty, value); }
 		}
 
-		
+
+
+
+		public static readonly DependencyProperty KeyFramesProperty = DependencyProperty.Register("KeyFrames", typeof(KeyFrameViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public KeyFrameViewModelCollection KeyFrames
 		{
-			get;
-			private set;
+			get { return (KeyFrameViewModelCollection)GetValue(KeyFramesProperty); }
+			set { SetValue(KeyFramesProperty, value); }
 		}
 
+
+		public static readonly DependencyProperty DialogsProperty = DependencyProperty.Register("Dialogs", typeof(DialogViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
 		public DialogViewModelCollection Dialogs
 		{
-			get;
-			private set;
+			get { return (DialogViewModelCollection)GetValue(DialogsProperty); }
+			private set { SetValue(DialogsProperty, value); }
 		}
 
 		public static readonly DependencyProperty MessagesFrameProperty = DependencyProperty.Register("MessagesFrame", typeof(MessagesFrameViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
@@ -70,33 +82,29 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(MessagesFrameProperty, value); }
 		}
 
-
-
-
-		public ProjectViewModel(ILogger Logger):base(Logger)
+		public ProjectViewModel(Project Model) : base(Model)
 		{
-			Devices = new DeviceViewModelCollection(Logger);
-			Messages = new MessageViewModelCollection(Logger,this);
-			KeyFrames = new KeyFrameViewModelCollection(Logger);
-			MessagesFrame = new MessagesFrameViewModel(Logger,this);
-			Dialogs = new DialogViewModelCollection(Logger,this);
+			Devices = new DeviceViewModelCollection(Model.Devices);
+			Messages = new MessageViewModelCollection(Model.Messages,this);
+			KeyFrames = new KeyFrameViewModelCollection(Model.KeyFrames,this);
+			MessagesFrame = new MessagesFrameViewModel(Model.MessagesFrame, this);
+			Dialogs = new DialogViewModelCollection(Model.Dialogs,this);
 		}
 
-		protected override void OnLoaded()
+		public void RefreshDeviceAndMessages()
 		{
-			base.OnLoaded();
-			Devices.Load(Model.Devices);
-			Messages.Load(Model.Messages);
-			KeyFrames.Load(Model.KeyFrames);
-			MessagesFrame.Load("");
-			Dialogs.Load(Model.Dialogs);
+			Devices = new DeviceViewModelCollection(Model.Devices);
+			Messages = new MessageViewModelCollection(Model.Messages, this);
+			Dialogs = new DialogViewModelCollection(Model.Dialogs, this);
 		}
 
-		public void ClearKeyFrames()
+		public void RefreshFrames()
 		{
-			KeyFrames.Clear();
-			MessagesFrame.Clear();
+			KeyFrames = new KeyFrameViewModelCollection(Model.KeyFrames,this);
+			MessagesFrame = new MessagesFrameViewModel(Model.MessagesFrame, this);
 		}
+
+		
 
 		public async Task SaveAsync(string Path)
 		{
@@ -108,15 +116,17 @@ namespace SIP_o_matic.ViewModels
 
 		}
 
-		public async Task LoadAsync(string Path)
+		public static async Task<ProjectViewModel> LoadAsync(string Path)
 		{
-			Project? project = null;
+			Project model;
+			ProjectViewModel project;
 
-			this.Path = Path;
-			this.Name = System.IO.Path.GetFileName(Path);
-
-			await TryAsync(() => Project.LoadAsync(Path)).Then(result => project = result).OrThrow("Failed to open project");
-			Load(project!);
+			model = await Project.LoadAsync(Path);
+			project = new ProjectViewModel(model);
+			project.Path = Path;
+			project.Name= System.IO.Path.GetFileName(Path);
+			
+			return project;
 		}
 		public async Task ExportSIPAsync(string Path)
 		{
@@ -145,16 +155,34 @@ namespace SIP_o_matic.ViewModels
 			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
 		}
 
-		public string GetDeviceName(Address Address)
+		public DeviceViewModel GetDevice(Address Address)
 		{
-			if (Address == null) return "Undefined";
-			return this.Devices.FindDeviceByAddress(Address)?.Name ?? Address.Value;
+			DeviceViewModel? device;
+			device=Devices.FirstOrDefault(item=>item.Addresses.Contains(Address));
+			if (device == null) throw new InvalidOperationException($"Cannot find device with IP {Address}");
+			return device;
 		}
+
+		public DeviceViewModel GetDevice(Device Model)
+		{
+			DeviceViewModel? device;
+			device = Devices.FirstOrDefault(item => item.GetModel()==Model);
+			if (device == null) throw new InvalidOperationException($"Cannot find device with name {Model.Name}");
+			return device;
+		}
+
+		public IEnumerable<DeviceViewModel> GetDevices()
+		{
+			return Devices;
+		}
+
+
 		public void RemoveDevice(DeviceViewModel Device)
 		{
 			Devices.Remove(Device);
 			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
 		}
+
 		public void RemoveAddress(AddressViewModel Address)
 		{
 			Devices.Remove(Address);
@@ -166,11 +194,18 @@ namespace SIP_o_matic.ViewModels
 			Devices.Add(Device);
 			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
 		}
+
 		public void AddAddressToDevice(DeviceViewModel Device,Address Address)
 		{
-			Device.Addresses.Add(Address);
+			Device.Addresses.Add(new AddressViewModel(Address));
 			if (DeviceNameUpdated != null) DeviceNameUpdated(this, EventArgs.Empty);
 		}
 
+		public Project GetModel()
+		{
+			return Model;
+		}
+
+		
 	}
 }
