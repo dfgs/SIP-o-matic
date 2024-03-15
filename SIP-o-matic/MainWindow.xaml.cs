@@ -67,17 +67,19 @@ namespace SIP_o_matic
 		private void AddFiles(string FileSource, params string[] FileNames)
 		{
 			ProgressWindow analyzeWindow;
-			FileImporterModule module;
+			FileImporterModule fileImporterModule;
+			ModelAnalyzeModule modelAnalyzeModule;
 
 			if (applicationViewModel.Projects.SelectedItem == null) return;
 
 			try
 			{
-				module = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem.GetModel(), FileSource, FileNames);
+				fileImporterModule = new FileImporterModule(Logger, applicationViewModel.Projects.SelectedItem.GetModel(), FileSource, FileNames);
+				modelAnalyzeModule = new ModelAnalyzeModule(Logger, applicationViewModel.Projects.SelectedItem.GetModel());
 
 				analyzeWindow = new ProgressWindow(Logger);
 				analyzeWindow.Owner = this;
-				analyzeWindow.Steps.AddRange(module.ProgressSteps);
+				analyzeWindow.Steps.AddRange(fileImporterModule.ProgressSteps.Union(modelAnalyzeModule.ProgressSteps));
 				analyzeWindow.ShowDialog();
 
 				applicationViewModel.Projects.SelectedItem.RefreshDeviceAndMessages();
@@ -180,6 +182,9 @@ namespace SIP_o_matic
 		private async void OpenFileCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
 			OpenFileDialog dialog;
+			ProgressWindow analyzeWindow;
+			ModelAnalyzeModule modelAnalyzeModule;
+			ProjectViewModel newProject;
 
 			dialog = new OpenFileDialog();
 			dialog.Title = "Open xml file";
@@ -191,7 +196,17 @@ namespace SIP_o_matic
 			{
 				try
 				{
-					await applicationViewModel.OpenProjectAsync(dialog.FileName);
+					newProject= await applicationViewModel.OpenProjectAsync(dialog.FileName);
+
+					modelAnalyzeModule = new ModelAnalyzeModule(Logger, newProject.GetModel());
+
+					analyzeWindow = new ProgressWindow(Logger);
+					analyzeWindow.Owner = this;
+					analyzeWindow.Steps.AddRange(modelAnalyzeModule.ProgressSteps);
+					analyzeWindow.ShowDialog();
+
+					newProject.RefreshDeviceAndMessages();
+
 				}
 				catch (Exception ex)
 				{

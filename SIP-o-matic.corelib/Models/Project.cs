@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SIPParserLib;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -21,6 +22,7 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
+
 		public List<Message> Messages
 		{
 			get;
@@ -34,13 +36,22 @@ namespace SIP_o_matic.corelib.Models
 			set;
 		}
 
+		[XmlIgnore]
 		public List<Dialog> Dialogs
 		{
 			get;
 			set;
 		}
+
 		[XmlIgnore]
 		public MessagesFrame MessagesFrame
+		{
+			get;
+			set;
+		}
+
+		[XmlIgnore]
+		public List<SIPMessage> SIPMessages
 		{
 			get;
 			set;
@@ -53,6 +64,7 @@ namespace SIP_o_matic.corelib.Models
 			this.KeyFrames = new List<KeyFrame>();
 			this.Dialogs = new List<Dialog>();
 			this.MessagesFrame = new MessagesFrame();
+			this.SIPMessages = new List<SIPMessage>();
 		}
 
 		public Device GetDevice(Address Address)
@@ -67,20 +79,6 @@ namespace SIP_o_matic.corelib.Models
 			}
 			return device;
 		}
-
-		/*public string GetDevice(Address Address)
-		{
-			if (Address == null) return "Undefined";
-			return this.FindDeviceByAddress(Address)?.Name ?? Address.Value;
-		}*/
-		/*public Device? FindDeviceByName(string Name)
-		{
-			return Devices.FirstOrDefault(item => item.Name == Name);
-		}
-		public Device? FindDeviceByAddress(Address Address)
-		{
-			return Devices.FirstOrDefault(item => item.Addresses.Contains(Address));
-		}*/
 
 		public async Task SaveAsync(string Path)
 		{

@@ -20,20 +20,19 @@ namespace SIP_o_matic.corelib.Models
             set;
         }
 
-		private string content;
 		[XmlIgnore]
 		public required string Content
         {
-			get => content;
-            set { this.content = value; DecodeContent(); }
+			get;
+			set;
         }
 
-		[XmlIgnore]
+		/*[XmlIgnore]
 		public SIPMessage? SIPMessage
 		{
 			get;
 			private set;
-		}
+		}*/
 
 		[XmlIgnore]
 		public string DialogColor
@@ -71,7 +70,7 @@ namespace SIP_o_matic.corelib.Models
         {
             this.DialogColor = "Black";
             this.TransactionColor = "Black";
-			this.content = "";
+			this.Content = "";
         }
         [SetsRequiredMembers]
         public Message(uint Index, DateTime Timestamp, Address SourceAddress, Address DestinationAddress, string Content)
@@ -80,30 +79,13 @@ namespace SIP_o_matic.corelib.Models
             this.Timestamp = Timestamp;
             this.SourceAddress = SourceAddress;
             this.DestinationAddress = DestinationAddress;
-            this.content = Content;
 			this.Content = Content;
 			this.DialogColor = "Black";
 			this.TransactionColor = "Black";
 			
 		}
 
-        private void DecodeContent()
-        {
-			ParserLib.StringReader reader;
-	
-			
-			reader = new ParserLib.StringReader(content, ' ');
-			try
-			{
-				SIPMessage = SIPParserLib.SIPGrammar.SIPMessage.Parse(reader);
-			}
-			catch (Exception ex)
-			{
-				string error = $"Failed to decode SIP message ({ex.Message})\r\r{content}";
-				throw new InvalidOperationException(error);
-			}
-
-		}
+		
 
 	}
 }

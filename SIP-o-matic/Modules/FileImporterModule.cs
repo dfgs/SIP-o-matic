@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using Address = SIP_o_matic.corelib.Models.Address;
 
 namespace SIP_o_matic.Modules
 {
@@ -63,12 +64,7 @@ namespace SIP_o_matic.Modules
 			step.MaximumGetter = () => fileNames.Length;
 			step.Init();
 			progressSteps.Add(step);
-
-			step = new ProgressStep() { Label = "Extract dialogs", TaskFactory = ExtractDialogsAsync };
-			step.MaximumGetter = () => project.Messages.Count;
-			step.Init();
-			progressSteps.Add(step);
-
+	
 
 		}
 
@@ -108,6 +104,7 @@ namespace SIP_o_matic.Modules
 		private async Task ExtractDevicesAsync(CancellationToken CancellationToken,  int Index)
 		{
 			IDataSource dataSource;
+			Device? existingDevice;
 
 
 			dataSource = dataSources[Index];
@@ -118,7 +115,15 @@ namespace SIP_o_matic.Modules
 					Log(LogLevels.Information, "Task cancelled");
 					return;
 				}
-				project.Devices.Add(device);
+				existingDevice = project.Devices.FirstOrDefault(item => item.Name == device.Name);
+				if (existingDevice!=null)
+				{
+					foreach(Address address in device.Addresses)
+					{
+						if (!existingDevice.Addresses.Contains(address)) existingDevice.Addresses.Add(address);
+					}
+				}
+				else project.Devices.Add(device);
 				await Task.Delay(1);
 			}
 		}
@@ -147,28 +152,7 @@ namespace SIP_o_matic.Modules
 		
 
 
-		private async Task ExtractDialogsAsync(CancellationToken CancellationToken, int Index)
-		{
-			Message message;
-			Dialog? dialog=null;
-			
-			message = project.Messages[Index];
-
-			if (message.SIPMessage == null) return;
-
-			if (!(message.SIPMessage is Request request)) return;
-			if (request.RequestLine.Method != "INVITE") return;
-
-			dialog = project.Dialogs.FirstOrDefault(item => item.Match(message.SIPMessage));
-			if (dialog != null) return;
-			
-
-			dialog = new Dialog(message.Timestamp, message.SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, message.SIPMessage.GetFromTag(), message.SIPMessage.GetToTag(), message.SIPMessage.GetFrom().ToHumanString() ?? "Undefined", message.SIPMessage.GetTo().ToHumanString() ?? "Undefined") ;
-			project.Dialogs.Add(dialog!);
-
-			await Task.Delay(1);
-			
-		}
+	
 
 
 

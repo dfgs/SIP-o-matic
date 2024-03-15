@@ -35,13 +35,14 @@ namespace SIP_o_matic.ViewModels
 		}
 
 		
-		public async Task AddAsync(string Path)
+		public async Task<ProjectViewModel> AddAsync(string Path)
 		{
 			ProjectViewModel projectViewModel;
 
 			projectViewModel = await ProjectViewModel.LoadAsync(Path); 
 			AddInternal(projectViewModel);
 			SelectedItem = projectViewModel;
+			return projectViewModel;
 		}
 
 	}

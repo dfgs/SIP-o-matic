@@ -29,7 +29,7 @@ namespace SIP_o_matic.Modules
 		}
 
 		private List<Transaction> Transactions;
-		private Project _project;
+		private Project project;
 		private KeyFrame? previousKeyFrame = null;
 		private DateTime firstEvent;
 
@@ -46,7 +46,7 @@ namespace SIP_o_matic.Modules
 			ProgressStep step;
 
 			if (Project == null) throw new ArgumentNullException(nameof(Project));
-			this._project= Project;
+			this.project= Project;
 
 			legs = new List<string>();
 			callColors = new List<string>();
@@ -67,17 +67,17 @@ namespace SIP_o_matic.Modules
 			progressSteps.Add(step);
 
 			step = new ProgressStep() { Label = "Format messages frame", TaskFactory = FormatMessagesFrameAsync };
-			step.MaximumGetter = () => 1;
+			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
 			progressSteps.Add(step);
 
 			step = new ProgressStep() { Label = "Create key frames", TaskFactory = CreateKeyFramesAsync };
-			step.MaximumGetter = () => _project.Messages.Count;
+			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
 			progressSteps.Add(step);
 
 			step = new ProgressStep() { Label = "Format key frames", TaskFactory = FormatKeyFramesAsync };
-			step.MaximumGetter = () => _project.KeyFrames.Count;
+			step.MaximumGetter = () => project.KeyFrames.Count;
 			step.Init();
 			progressSteps.Add(step);
 
@@ -93,7 +93,8 @@ namespace SIP_o_matic.Modules
 		private async Task CleanProjectAsync(CancellationToken CancellationToken, int Index)
 		{
 			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
-			_project.KeyFrames.Clear();
+			project.KeyFrames.Clear();
+			project.MessagesFrame = new MessagesFrame();
 			await Task.Delay(100);
 		}
 
@@ -304,13 +305,13 @@ namespace SIP_o_matic.Modules
 
 		}
 
-		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, Project Project,  Message Message)
+		private async Task<bool> UpdateKeyFrameAsync( KeyFrame KeyFrame, Project Project,  Message Message,SIPMessage SIPMessage)
 		{
 
 			LogEnter();
 			
 			
-			if (Message.SIPMessage==null)
+			if (SIPMessage==null)
 			{
 				string error = "No parsed SIP message found";
 				Log(LogLevels.Error, error);
@@ -318,10 +319,10 @@ namespace SIP_o_matic.Modules
 			}
 			
 
-			switch (Message.SIPMessage)
+			switch (SIPMessage)
 			{
-				case Request request:return await UpdateKeyFrameFromRequestAsync(KeyFrame, request, _project.GetDevice(Message.SourceAddress), _project.GetDevice(Message.DestinationAddress), Message.Index);
-				case Response response:return await UpdateKeyFrameFromResponseAsync(KeyFrame, response, _project.GetDevice(Message.SourceAddress), _project.GetDevice(Message.DestinationAddress), Message.Index);
+				case Request request:return await UpdateKeyFrameFromRequestAsync(KeyFrame, request, project.GetDevice(Message.SourceAddress), project.GetDevice(Message.DestinationAddress), Message.Index);
+				case Response response:return await UpdateKeyFrameFromResponseAsync(KeyFrame, response, project.GetDevice(Message.SourceAddress), project.GetDevice(Message.DestinationAddress), Message.Index);
 				default:
 					string error = "Invalid SIP message type";
 					Log(LogLevels.Error, error);
@@ -334,6 +335,7 @@ namespace SIP_o_matic.Modules
 		{
 			KeyFrame newKeyFrame;
 			Message message;
+			SIPMessage? SIPMessage;
 			Dialog? dialog;
 
 			LogEnter();
@@ -344,10 +346,14 @@ namespace SIP_o_matic.Modules
 				return;
 			}
 
-			message = _project.Messages[Index];
-			if (message.SIPMessage == null) return;
+			message = project.Messages[Index];
+			SIPMessage = project.SIPMessages[Index];
+			
+			if (SIPMessage == null) return;
 
-			dialog = _project.Dialogs.FirstOrDefault(item=>item.IsChecked && item.Match(message.SIPMessage));
+
+
+			dialog = project.Dialogs.FirstOrDefault(item=>item.IsChecked && item.Match(SIPMessage));
 			if (dialog==null) return;	// filer only selected dialogs
 
 
@@ -366,9 +372,9 @@ namespace SIP_o_matic.Modules
 
 				newKeyFrame.MessageIndex = message.Index;
 
-				if (await UpdateKeyFrameAsync(newKeyFrame,_project,  message))
+				if (await UpdateKeyFrameAsync(newKeyFrame,project,  message,SIPMessage))
 				{
-					_project.KeyFrames.Add( newKeyFrame);
+					project.KeyFrames.Add( newKeyFrame);
 				}
 
 				previousKeyFrame = newKeyFrame;
@@ -437,9 +443,9 @@ namespace SIP_o_matic.Modules
 				return;
 			}
 
-			if (_project.KeyFrames.Count == 0) return;
+			if (project.KeyFrames.Count == 0) return;
 
-			keyFrame= _project.KeyFrames[Index];
+			keyFrame= project.KeyFrames[Index];
 			await FormatKeyFrameAsync(CancellationToken,  keyFrame);
 
 		}
@@ -447,63 +453,45 @@ namespace SIP_o_matic.Modules
 
 
 
-		private async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, MessagesFrame MessagesFrame)
+
+		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
 		{
 			string callID;
 			string viaBranch;
 			string cseq;
 			string fromTag;
 			Dialog? dialog;
+			Message message;
+			SIPMessage? SIPMessage;
+			Device sourceDevice, destinationDevice;
 
-			await foreach (Message message in _project.Messages.ToAsyncEnumerable())
-			{
-				if (CancellationToken.IsCancellationRequested)
-				{
-					Log(LogLevels.Information, "Task cancelled");
-					break;
-				}
+			message = project.Messages[Index];
+			SIPMessage = project.SIPMessages[Index];
+			if (SIPMessage == null) return;
+			
+			dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(SIPMessage));
+			if (dialog == null) return;// filer only selected dialogs
 
-				if (message.SIPMessage == null) continue;
+			Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 
-				dialog = _project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(message.SIPMessage));
-				if (dialog==null) continue;// filer only selected dialogs
+			callID = SIPMessage.GetCallID();
+			viaBranch = SIPMessage.GetViaBranch();
+			cseq = SIPMessage.GetCSeq();
+			fromTag = SIPMessage.GetFromTag();
 
-				Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
+			message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
+			message.DialogColor = GetDialogColor(callID, fromTag);
 
-				callID = message.SIPMessage.GetCallID();
-				viaBranch = message.SIPMessage.GetViaBranch();
-				cseq = message.SIPMessage.GetCSeq();
-				fromTag = message.SIPMessage.GetFromTag();
+			project.MessagesFrame.Messages.Add(message);
 
-				message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
-				message.DialogColor = GetDialogColor(callID, fromTag);
+			sourceDevice = project.GetDevice(message.SourceAddress);
+			destinationDevice = project.GetDevice(message.DestinationAddress);
 
-				MessagesFrame.Messages.Add(message);
-			}
-			MessagesFrame.Devices.Clear();
-			foreach(Device device in MessagesFrame.Messages.SelectMany(item => new Device[] { _project.GetDevice(item.SourceAddress), _project.GetDevice(item.DestinationAddress) }).Distinct())
-			{
-				MessagesFrame.Devices.Add(device);
-			}
-		}
-		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
-		{
-			MessagesFrame? messageFrame=null;
+			if (!project.MessagesFrame.Devices.Contains(sourceDevice)) project.MessagesFrame.Devices.Add(sourceDevice);
+			if (!project.MessagesFrame.Devices.Contains(destinationDevice)) project.MessagesFrame.Devices.Add(destinationDevice);
 
-			LogEnter();
 
-			if (CancellationToken.IsCancellationRequested)
-			{
-				Log(LogLevels.Information, "Task cancelled");
-				return;
-			}
-
-			if (_project.Messages.Count == 0) return;
-
-			messageFrame = new MessagesFrame();
-			await FormatMessagesFrameAsync(CancellationToken, messageFrame!);
-			_project.MessagesFrame = messageFrame!;
-
+			await Task.Delay(1);
 		}
 
 

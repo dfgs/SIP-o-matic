@@ -26,9 +26,9 @@ namespace SIP_o_matic.ViewModels
 		{
 			Projects = new ProjectViewModelCollection(new List<Project>());
 		}
-		public async Task OpenProjectAsync(string Path)
+		public async Task<ProjectViewModel> OpenProjectAsync(string Path)
 		{
-			await Projects.AddAsync(Path);
+			return await Projects.AddAsync(Path);
 		}
 
 		public void CloseCurrentProject()
