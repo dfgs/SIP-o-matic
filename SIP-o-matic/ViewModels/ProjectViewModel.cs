@@ -159,7 +159,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			DeviceViewModel? device;
 			device=Devices.FirstOrDefault(item=>item.Addresses.Contains(Address));
-			if (device == null) throw new InvalidOperationException($"Cannot find device with IP {Address}");
+			if (device == null) device=new DeviceViewModel(new Device(Address.ToString(),new Address[] {Address }));
 			return device;
 		}
 
@@ -167,7 +167,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			DeviceViewModel? device;
 			device = Devices.FirstOrDefault(item => item.GetModel()==Model);
-			if (device == null) throw new InvalidOperationException($"Cannot find device with name {Model.Name}");
+			if (device == null) device = new DeviceViewModel(Model);
 			return device;
 		}
 
