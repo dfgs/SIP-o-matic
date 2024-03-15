@@ -27,13 +27,10 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		public DeviceViewModelCollection(IList<Device> Source) : base(Source)
+		public DeviceViewModelCollection(IList<Device> Source) : base(Source, (SourceItem) => new DeviceViewModel(SourceItem))
 		{
 		}
-		protected override DeviceViewModel OnCreateItem(Device SourceItem)
-		{
-			return new DeviceViewModel(SourceItem);
-		}
+		
 
 
 		public DeviceViewModel? FindDeviceByName(string Name)
@@ -57,7 +54,7 @@ namespace SIP_o_matic.ViewModels
 				newDevice=new Device() { Name = Device.Name };
 				Source.Add(newDevice);
 
-				deviceViewModel = OnCreateItem(newDevice);
+				deviceViewModel = new DeviceViewModel(newDevice);
 				AddInternal(deviceViewModel);
 			}
 

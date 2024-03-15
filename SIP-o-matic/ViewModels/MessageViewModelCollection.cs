@@ -13,20 +13,14 @@ namespace SIP_o_matic.ViewModels
 	public class MessageViewModelCollection : GenericViewModelList<Message, MessageViewModel>
 	{
 
-		private IDeviceNameProvider deviceNameProvider;
 
 		
 
-		public MessageViewModelCollection(IList<Message> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
+		public MessageViewModelCollection(IList<Message> Source, IDeviceNameProvider DeviceNameProvider) : base(Source,(SourceItem)=>new MessageViewModel(SourceItem,DeviceNameProvider) )
 		{
-			this.deviceNameProvider = DeviceNameProvider;
 		}
 
 
-		protected override MessageViewModel OnCreateItem(Message SourceItem)
-		{
-			return new MessageViewModel(SourceItem,deviceNameProvider);
-		}
 		
 		
 		

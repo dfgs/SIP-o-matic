@@ -48,7 +48,7 @@ namespace SIP_o_matic.ViewModels
 
 		private IDeviceNameProvider deviceNameProvider;
 
-		public KeyFrameViewModelCollection(IList<KeyFrame> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
+		public KeyFrameViewModelCollection(IList<KeyFrame> Source, IDeviceNameProvider DeviceNameProvider) : base(Source, (SourceItem) => new KeyFrameViewModel(SourceItem, DeviceNameProvider))
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 			MoveToStartCommand = new ViewModelCommand(MoveToStartCanExecute, MoveToStartExecuted);
@@ -109,10 +109,7 @@ namespace SIP_o_matic.ViewModels
 
 
 
-		protected override KeyFrameViewModel OnCreateItem(KeyFrame SourceItem)
-		{
-			return new KeyFrameViewModel(SourceItem,deviceNameProvider);
-		}
+		
 
 		
 		

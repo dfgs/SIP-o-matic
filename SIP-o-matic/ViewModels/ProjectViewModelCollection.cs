@@ -12,14 +12,11 @@ namespace SIP_o_matic.ViewModels
 {
 	public class ProjectViewModelCollection : GenericViewModelList<Project, ProjectViewModel>
 	{
-		public ProjectViewModelCollection(IList<Project> Source) : base(Source)
+		public ProjectViewModelCollection(IList<Project> Source) : base(Source, (SourceItem) => new ProjectViewModel(SourceItem))
 		{
 		}
 		
-		protected override ProjectViewModel OnCreateItem(Project SourceItem)
-		{
-			return new ProjectViewModel(SourceItem);
-		}
+		
 
 		public void AddNew()
 		{

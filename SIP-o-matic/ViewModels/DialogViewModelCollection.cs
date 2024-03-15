@@ -12,20 +12,12 @@ namespace SIP_o_matic.ViewModels
 	public class DialogViewModelCollection : GenericViewModelList<Dialog, DialogViewModel>
 	{
 
-		private IDeviceNameProvider deviceNameProvider;
 
-		public DialogViewModelCollection(IList<Dialog> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
+		public DialogViewModelCollection(IList<Dialog> Source, IDeviceNameProvider DeviceNameProvider) : base(Source, (SourceItem) => new DialogViewModel(SourceItem, DeviceNameProvider))
 		{
-			this.deviceNameProvider = DeviceNameProvider;
 		}
 
-		protected override DialogViewModel OnCreateItem(Dialog SourceItem)
-		{
-			return new DialogViewModel(SourceItem,deviceNameProvider);
-		}
-
-		
-		
+			
 
 		public override int GetNewItemIndex(DialogViewModel Item)
 		{
@@ -36,16 +28,6 @@ namespace SIP_o_matic.ViewModels
 			return Count ;
 		}
 
-		public void Add(Dialog Dialog)
-		{
-			DialogViewModel dialogViewModel;
-
-			Source.Add(Dialog);
-
-			dialogViewModel = new DialogViewModel(Dialog,deviceNameProvider);
-
-			AddInternal(dialogViewModel);
-
-		}
+		
 	}
 }

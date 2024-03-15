@@ -11,14 +11,11 @@ namespace SIP_o_matic.ViewModels
 {
 	public class AddressViewModelCollection : GenericViewModelList<Address, AddressViewModel>
 	{
-		public AddressViewModelCollection(IList<Address> Source) : base(Source)
+		public AddressViewModelCollection(IList<Address> Source) : base(Source ,(SourceItem) => new AddressViewModel(SourceItem))
 		{
 		}
 
-		protected override AddressViewModel OnCreateItem(Address SourceItem)
-		{
-			return new AddressViewModel(SourceItem);
-		}
+		
 
 		
 		public override void Add(AddressViewModel Item)

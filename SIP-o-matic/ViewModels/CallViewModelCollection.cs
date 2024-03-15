@@ -11,16 +11,11 @@ namespace SIP_o_matic.ViewModels
 {
 	public class CallViewModelCollection : GenericViewModelList<Call, CallViewModel>
 	{
-		private IDeviceNameProvider deviceNameProvider;
-		public CallViewModelCollection(IList<Call> Source, IDeviceNameProvider DeviceNameProvider) : base(Source)
+		public CallViewModelCollection(IList<Call> Source, IDeviceNameProvider DeviceNameProvider) : base(Source, (SourceItem) => new CallViewModel(SourceItem, DeviceNameProvider))
 		{
-			this.deviceNameProvider = DeviceNameProvider;
 		}
 
-		protected override CallViewModel OnCreateItem(Call SourceItem)
-		{
-			return new CallViewModel(SourceItem,deviceNameProvider);
-		}
+	
 
 
 	}
