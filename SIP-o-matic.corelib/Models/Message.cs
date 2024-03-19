@@ -27,12 +27,7 @@ namespace SIP_o_matic.corelib.Models
 			set;
         }
 
-		/*[XmlIgnore]
-		public SIPMessage? SIPMessage
-		{
-			get;
-			private set;
-		}*/
+		
 
 		[XmlIgnore]
 		public string DialogColor
