@@ -170,8 +170,20 @@ namespace SIP_o_matic.ViewModels
 			if (device == null) device = new DeviceViewModel(Model);
 			return device;
 		}
+		public SIPMessage? GetSIPMessage(Message Message)
+		{
+			int index;
+			index = Model.Messages.IndexOf(Message);
+			return Model.SIPMessages[index];
+		}
 
-		
+		public SDP? GetSDPBody(Message Message)
+		{
+			int index;
+			index = Model.Messages.IndexOf(Message);
+			return Model.SDPBodies[index];
+		}
+
 
 		public void RemoveDevice(DeviceViewModel Device)
 		{

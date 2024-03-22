@@ -50,6 +50,11 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
+			step = new ProgressStep() { Label = "Decode SDP bodies", TaskFactory = DecodeSDPBodiesAsync };
+			step.MaximumGetter = () => project.Messages.Count;
+			step.Init();
+			progressSteps.Add(step);
+
 			step = new ProgressStep() { Label = "Create dialogs", TaskFactory = CreateDialogsAsync };
 			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
@@ -93,11 +98,10 @@ namespace SIP_o_matic.Modules
 			await Task.Delay(1);
 
 		}
-
 		private async Task CreateDialogsAsync(CancellationToken CancellationToken, int Index)
 		{
 			Message message;
-			Dialog? dialog=null;
+			Dialog? dialog = null;
 			SIPMessage? SIPMessage;
 
 
@@ -111,9 +115,43 @@ namespace SIP_o_matic.Modules
 
 			dialog = project.Dialogs.FirstOrDefault(item => item.Match(SIPMessage));
 			if (dialog != null) return;
-			
-			dialog = new Dialog(message.Timestamp, SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, SIPMessage.GetFromTag(), SIPMessage.GetToTag(), SIPMessage.GetFrom().ToHumanString() ?? "Undefined", SIPMessage.GetTo().ToHumanString() ?? "Undefined") ;
+
+			dialog = new Dialog(message.Timestamp, SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, SIPMessage.GetFromTag(), SIPMessage.GetToTag(), SIPMessage.GetFrom().ToHumanString() ?? "Undefined", SIPMessage.GetTo().ToHumanString() ?? "Undefined");
 			project.Dialogs.Add(dialog!);
+
+			await Task.Delay(1);
+
+		}
+		private async Task DecodeSDPBodiesAsync(CancellationToken CancellationToken, int Index)
+		{
+			Message message;
+			SIPMessage? SIPMessage;
+			StringReader reader;
+			IParseResult result;
+			SDP? SDP;
+
+			message = project.Messages[Index];
+			SIPMessage = project.SIPMessages[Index];
+
+			if (SIPMessage == null)
+			{
+				project.SDPBodies.Add(null);
+				return;
+			}
+
+			SDP = null;
+			if (string.IsNullOrEmpty(SIPMessage.Body))
+			{
+				project.SDPBodies.Add(null);
+				return;
+			}
+
+
+			reader = new StringReader(SIPMessage.Body);
+			result = SDPGrammar.SDP.TryParse(reader);
+			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
+
+			project.SDPBodies.Add(SDP);
 
 			await Task.Delay(1);
 			

@@ -3,6 +3,7 @@ using ParserLib;
 using PcapngFile;
 using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.Models;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using ViewModelLib;
+using Address = SIP_o_matic.corelib.Models.Address;
 
 namespace SIP_o_matic.ViewModels
 {
@@ -40,11 +42,11 @@ namespace SIP_o_matic.ViewModels
 		{
 			get
 			{
-				return $"[{Index}] {SIPMessage.Description}";
+				return $"[{Index}] {SIPMessage?.Description??""}";
 			}
 		}
 
-		public SIPMessageViewModel SIPMessage
+		public SIPMessageViewModel? SIPMessage
 		{
 			get;
 			private set;
@@ -87,30 +89,18 @@ namespace SIP_o_matic.ViewModels
 	
 		private IDeviceNameProvider deviceNameProvider;
 
-		public MessageViewModel(Message Model,IDeviceNameProvider DeviceNameProvider) : base(Model,DeviceNameProvider)
+		public MessageViewModel(Message Model, IDeviceNameProvider DeviceNameProvider) : base(Model,DeviceNameProvider)
 		{
-			StringReader reader;
-			SIPParserLib.SIPMessage sipMessage;
+            SIPParserLib.SIPMessage? sipMessage;
+			SDP? sdp;
 
 			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
 			this.deviceNameProvider = DeviceNameProvider;
-			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
 
-	
-		
-
-			reader = new StringReader(Model.Content, ' ');
-			try
-			{
-				sipMessage = SIPParserLib.SIPGrammar.SIPMessage.Parse(reader);
-			}
-			catch (Exception ex)
-			{
-				string error = $"Failed to decode SIP message ({ex.Message})\r\r{Model.Content}";
-				throw new InvalidOperationException(error);
-			}
-
-			SIPMessage = new SIPMessageViewModel(sipMessage);
+			sipMessage = DeviceNameProvider.GetSIPMessage(Model);
+			sdp = DeviceNameProvider.GetSDPBody(Model);
+			if (sipMessage == null) this.SIPMessage = null;
+			else this.SIPMessage = new SIPMessageViewModel(sipMessage,sdp);
 		}
 
 		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)

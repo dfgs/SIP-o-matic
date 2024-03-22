@@ -71,6 +71,11 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
+			step = new ProgressStep() { Label = "Create RTP events", TaskFactory = CreateRTPEventsAsync };
+			step.MaximumGetter = () => project.UDPStreams.Count;
+			step.Init();
+			progressSteps.Add(step);
+
 			step = new ProgressStep() { Label = "Create key frames", TaskFactory = CreateKeyFramesAsync };
 			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
@@ -493,6 +498,60 @@ namespace SIP_o_matic.Modules
 
 			await Task.Delay(1);
 		}
+
+
+
+		private async Task CreateRTPEventsAsync(CancellationToken CancellationToken, int Index)
+		{
+			UDPStream stream;
+			SIPMessage? sipMessage;
+			Dialog? dialog;
+			SDP? sdp;
+			ConnectionField? connectionField;
+			MediaField? mediaField;
+
+			LogEnter();
+
+			if (CancellationToken.IsCancellationRequested)
+			{
+				Log(LogLevels.Information, "Task cancelled");
+				return;
+			}
+
+			stream= project.UDPStreams[Index];
+
+			
+			for(int t=0;t<project.Messages.Count;t++)
+			{
+				sdp = project.SDPBodies[t];
+				if (sdp == null) continue;
+
+				sipMessage = project.SIPMessages[t];
+				if (sipMessage == null) continue;
+
+				dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(sipMessage));
+				if (dialog == null) continue; // filer only selected dialogs//*/
+
+				connectionField = sdp.GetField<ConnectionField>();
+				if (connectionField == null) continue;
+
+				mediaField = sdp.GetField<MediaField>();
+				if (mediaField == null) continue;
+
+				if ( (stream.DestinationPort==mediaField.Port) && (stream.DestinationAddress.ToString()==connectionField.Address) )
+				{
+					int tt = 0;
+				}
+
+			}
+
+			await Task.Delay(1);
+
+
+
+
+		}
+
 
 
 	}

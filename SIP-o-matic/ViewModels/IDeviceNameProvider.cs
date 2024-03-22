@@ -1,4 +1,5 @@
 ﻿using SIP_o_matic.corelib.Models;
+using SIPParserLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,11 @@ namespace SIP_o_matic.ViewModels
 	{
 		//public event EventHandler DeviceNameUpdated;
 
-		public DeviceViewModel GetDevice(Address Address);
+		public DeviceViewModel GetDevice(corelib.Models.Address Address);
 		public DeviceViewModel GetDevice(Device Model);
-		
+
+		public SIPMessage? GetSIPMessage(Message Message);
+		public SDP? GetSDPBody(Message Message);
+
 	}
 }

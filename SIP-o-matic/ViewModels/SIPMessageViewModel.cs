@@ -75,17 +75,10 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public SIPMessageViewModel(SIPMessage Model) : base(Model)
+		public SIPMessageViewModel(SIPMessage Model,SDP? SDP) : base(Model)
 		{
-			StringReader reader;
-			IParseResult result;
 
-			SDP = null;
-			if (string.IsNullOrEmpty(Model.Body)) return;
-
-			reader = new StringReader(Model.Body);
-			result = SDPGrammar.SDP.TryParse(reader);
-			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
+			this.SDP = SDP;
 		}
 
 	
