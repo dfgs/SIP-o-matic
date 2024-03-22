@@ -21,11 +21,24 @@ namespace SIP_o_matic.ViewModels
 		{
 		}
 
+		public override int GetNewItemIndex(IEventViewModel Item)
+		{
+			if (Count == 0) return 0;
+			if (Item.Timestamp > this[Count - 1].Timestamp) return Count;
+			for(int t=0;t<Count;t++)
+			{
+				if (Item.Timestamp < this[t].Timestamp) return t;
+			}
+			return Count;
+		}
+
+
 		private static IEventViewModel CreateEvent(IEvent Item,IDeviceNameProvider DeviceNameProvider)
 		{
 			switch(Item)
 			{
 				case Message message:return new MessageViewModel(message, DeviceNameProvider);
+				case RTPStart rtpStart:return new RTPStartViewModel(rtpStart, DeviceNameProvider);
 				default:throw new InvalidOperationException();
 			}
 		}

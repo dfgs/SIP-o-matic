@@ -87,15 +87,12 @@ namespace SIP_o_matic.ViewModels
 		}
 
 	
-		private IDeviceNameProvider deviceNameProvider;
+		//private IDeviceNameProvider deviceNameProvider;
 
 		public MessageViewModel(Message Model, IDeviceNameProvider DeviceNameProvider) : base(Model,DeviceNameProvider)
 		{
             SIPParserLib.SIPMessage? sipMessage;
 			SDP? sdp;
-
-			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
-			this.deviceNameProvider = DeviceNameProvider;
 
 			sipMessage = DeviceNameProvider.GetSIPMessage(Model);
 			sdp = DeviceNameProvider.GetSDPBody(Model);

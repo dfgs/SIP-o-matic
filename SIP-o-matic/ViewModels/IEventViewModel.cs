@@ -10,6 +10,10 @@ namespace SIP_o_matic.ViewModels
 {
     public interface IEventViewModel:IGenericViewModel<IEvent>
     {
+		DateTime Timestamp
+		{
+			get;
+		}
 		IEnumerable<DeviceViewModel> Devices
 		{
 			get;

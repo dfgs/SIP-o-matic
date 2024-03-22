@@ -509,6 +509,7 @@ namespace SIP_o_matic.Modules
 			SDP? sdp;
 			ConnectionField? connectionField;
 			MediaField? mediaField;
+			RTPStart rtpStart;
 
 			LogEnter();
 
@@ -540,7 +541,9 @@ namespace SIP_o_matic.Modules
 
 				if ( (stream.DestinationPort==mediaField.Port) && (stream.DestinationAddress.ToString()==connectionField.Address) )
 				{
-					int tt = 0;
+					rtpStart = new RTPStart(stream.Timestamp,stream.SourceAddress,stream.DestinationAddress );
+					project.MessagesFrame.Events.Add(rtpStart);
+
 				}
 
 			}

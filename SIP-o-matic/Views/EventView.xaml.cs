@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace SIP_o_matic.Views
 {
 	/// <summary>
-	/// Logique d'interaction pour MessageView.xaml
+	/// Logique d'interaction pour EventView.xaml
 	/// </summary>
-	public partial class MessageView : UserControl
+	public partial class EventView : UserControl
 	{
-		public MessageView()
+		public EventView()
 		{
 			InitializeComponent();
 		}

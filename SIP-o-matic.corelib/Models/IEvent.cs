@@ -8,6 +8,11 @@ namespace SIP_o_matic.corelib.Models
 {
 	public interface IEvent
 	{
+		DateTime Timestamp
+		{
+			get;
+		}
+
 		Address SourceAddress
 		{
 			get;

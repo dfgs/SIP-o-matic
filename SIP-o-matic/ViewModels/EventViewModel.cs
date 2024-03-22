@@ -13,6 +13,8 @@ namespace SIP_o_matic.ViewModels
 	{
 		IEvent IGenericViewModel<IEvent>.Model => Model;
 
+		public DateTime Timestamp => Model.Timestamp;
+
 		public DeviceViewModel SourceDevice
 		{
 			get => deviceNameProvider.GetDevice(Model.SourceAddress);
@@ -31,10 +33,15 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
+
+		
+
 		private IDeviceNameProvider deviceNameProvider;
 		protected EventViewModel(T Model,IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
+			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
 			this.deviceNameProvider = DeviceNameProvider;
 		}
+
 	}
 }

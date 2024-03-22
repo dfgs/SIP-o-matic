@@ -17,7 +17,7 @@
 		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Events}" >
 			<views:LadderView.ItemTemplate>
 				<DataTemplate>
-					<views:MessageView Margin="0,0,0,16"/>
+					<views:EventView Margin="0,0,0,16"/>
 				</DataTemplate>
 			</views:LadderView.ItemTemplate>
 			<views:LadderView.ItemToolTip>
