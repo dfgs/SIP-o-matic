@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.corelib.Models
 {
-	public class MessagesFrame
+	public class EventsFrame
 	{
 		public List<Device> Devices
 		{
@@ -16,16 +16,16 @@ namespace SIP_o_matic.corelib.Models
 			private set;
 		}
 
-		public List<Message> Messages
+		public List<IEvent> Events
 		{
 			get;
 			private set;
 		}
 
-		public MessagesFrame()
+		public EventsFrame()
 		{
 			this.Devices = new List<Device>();
-			this.Messages = new List<Message>();
+			this.Events = new List<IEvent>();
 		}
 
 	}

@@ -21,7 +21,7 @@
 			<RowDefinition Height="*"/>
 		</Grid.RowDefinitions>
 
-		<DockPanel Grid.Row="0" DataContext="{Binding Messages.SelectedItem}"  >
+		<DockPanel Grid.Row="0" DataContext="{Binding Events.SelectedItem}"  >
 
 			<ToolBarTray DockPanel.Dock="Top">
 				<ToolBar >

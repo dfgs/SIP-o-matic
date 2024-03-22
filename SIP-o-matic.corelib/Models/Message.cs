@@ -4,8 +4,8 @@ using System.Xml.Serialization;
 
 namespace SIP_o_matic.corelib.Models
 {
-    public class Message
-    {
+    public class Message: IEvent
+	{
 		[XmlAttribute]
 		public required uint Index
 		{

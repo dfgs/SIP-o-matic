@@ -75,11 +75,11 @@ namespace SIP_o_matic.ViewModels
 			private set { SetValue(DialogsProperty, value); }
 		}
 
-		public static readonly DependencyProperty MessagesFrameProperty = DependencyProperty.Register("MessagesFrame", typeof(MessagesFrameViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
-		public MessagesFrameViewModel MessagesFrame
+		public static readonly DependencyProperty EventsFrameProperty = DependencyProperty.Register("EventsFrame", typeof(EventsFrameViewModel), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public EventsFrameViewModel EventsFrame
 		{
-			get { return (MessagesFrameViewModel)GetValue(MessagesFrameProperty); }
-			set { SetValue(MessagesFrameProperty, value); }
+			get { return (EventsFrameViewModel)GetValue(EventsFrameProperty); }
+			set { SetValue(EventsFrameProperty, value); }
 		}
 
 		public ProjectViewModel(Project Model) : base(Model)
@@ -87,7 +87,7 @@ namespace SIP_o_matic.ViewModels
 			Devices = new DeviceViewModelCollection(Model.Devices);
 			Messages = new MessageViewModelCollection(Model.Messages,this);
 			KeyFrames = new KeyFrameViewModelCollection(Model.KeyFrames,this);
-			MessagesFrame = new MessagesFrameViewModel(Model.MessagesFrame, this);
+			EventsFrame = new EventsFrameViewModel(Model.MessagesFrame, this);
 			Dialogs = new DialogViewModelCollection(Model.Dialogs,this);
 		}
 
@@ -101,7 +101,7 @@ namespace SIP_o_matic.ViewModels
 		public void RefreshFrames()
 		{
 			KeyFrames = new KeyFrameViewModelCollection(Model.KeyFrames,this);
-			MessagesFrame = new MessagesFrameViewModel(Model.MessagesFrame, this);
+			EventsFrame = new EventsFrameViewModel(Model.MessagesFrame, this);
 		}
 
 		

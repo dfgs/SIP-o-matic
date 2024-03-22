@@ -13,9 +13,8 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class MessageViewModel : GenericViewModel<Message>
+	public class MessageViewModel : EventViewModel<Message>, IEventViewModel
 	{
-
 
 		public uint Index
 		{
@@ -74,23 +73,9 @@ namespace SIP_o_matic.ViewModels
 		}
 
 
-		public DeviceViewModel SourceDevice
-		{
-			get => deviceNameProvider.GetDevice(Model.SourceAddress);
-		}
-		public DeviceViewModel DestinationDevice
-		{
-			get => deviceNameProvider.GetDevice(Model.DestinationAddress);
-		}
+ 
 
-		public IEnumerable<DeviceViewModel> Devices
-		{
-			get
-			{
-				yield return SourceDevice;
-				yield return DestinationDevice;
-			}
-		}
+		
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(MessageViewModel), new PropertyMetadata(false));
 		public bool IsFlipped
@@ -99,11 +84,10 @@ namespace SIP_o_matic.ViewModels
 			set { SetValue(IsFlippedProperty, value); }
 		}
 
-		
-
+	
 		private IDeviceNameProvider deviceNameProvider;
 
-		public MessageViewModel(Message Model,IDeviceNameProvider DeviceNameProvider) : base(Model)
+		public MessageViewModel(Message Model,IDeviceNameProvider DeviceNameProvider) : base(Model,DeviceNameProvider)
 		{
 			StringReader reader;
 			SIPParserLib.SIPMessage sipMessage;

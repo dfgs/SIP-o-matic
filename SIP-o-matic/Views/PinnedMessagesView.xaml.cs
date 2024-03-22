@@ -48,10 +48,10 @@ namespace SIP_o_matic.Views
 
 		private void PinMessageCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			MessagesFrameViewModel? frame;
+			EventsFrameViewModel? frame;
 			MessageViewModel? message;
 
-			frame = DataContext as MessagesFrameViewModel;
+			frame = DataContext as EventsFrameViewModel;
 			if (frame == null) return;
 
 			message = e.Parameter as MessageViewModel;

@@ -44,7 +44,7 @@ namespace SIP_o_matic.corelib.Models
 		}
 
 		[XmlIgnore]
-		public MessagesFrame MessagesFrame
+		public EventsFrame MessagesFrame
 		{
 			get;
 			set;
@@ -63,7 +63,7 @@ namespace SIP_o_matic.corelib.Models
 			this.Messages = new List<Message>();
 			this.KeyFrames = new List<KeyFrame>();
 			this.Dialogs = new List<Dialog>();
-			this.MessagesFrame = new MessagesFrame();
+			this.MessagesFrame = new EventsFrame();
 			this.SIPMessages = new List<SIPMessage>();
 		}
 

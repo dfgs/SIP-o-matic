@@ -18,9 +18,9 @@ namespace SIP_o_matic.Views
 	/// <summary>
 	/// Logique d'interaction pour MessagesView.xaml
 	/// </summary>
-	public partial class MessagesView : UserControl
+	public partial class EventsView : UserControl
 	{
-		public MessagesView()
+		public EventsView()
 		{
 			InitializeComponent();
 		}

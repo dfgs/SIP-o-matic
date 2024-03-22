@@ -94,7 +94,7 @@ namespace SIP_o_matic.Modules
 		{
 			if (CancellationToken.IsCancellationRequested) throw new Exception("Analysis canceled");
 			project.KeyFrames.Clear();
-			project.MessagesFrame = new MessagesFrame();
+			project.MessagesFrame = new EventsFrame();
 			await Task.Delay(100);
 		}
 
@@ -482,7 +482,7 @@ namespace SIP_o_matic.Modules
 			message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
 			message.DialogColor = GetDialogColor(callID, fromTag);
 
-			project.MessagesFrame.Messages.Add(message);
+			project.MessagesFrame.Events.Add(message);
 
 			sourceDevice = project.GetDevice(message.SourceAddress);
 			destinationDevice = project.GetDevice(message.DestinationAddress);

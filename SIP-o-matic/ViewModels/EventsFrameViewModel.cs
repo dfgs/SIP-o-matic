@@ -11,11 +11,11 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class MessagesFrameViewModel : GenericViewModel<MessagesFrame>
+	public class EventsFrameViewModel : GenericViewModel<EventsFrame>
 	{
 	
 
-		public static readonly DependencyProperty PinnedMessagesProperty = DependencyProperty.Register("PinnedMessages", typeof(ObservableCollection<MessageViewModel>), typeof(MessagesFrameViewModel), new PropertyMetadata(null));
+		public static readonly DependencyProperty PinnedMessagesProperty = DependencyProperty.Register("PinnedMessages", typeof(ObservableCollection<MessageViewModel>), typeof(EventsFrameViewModel), new PropertyMetadata(null));
 		public ObservableCollection<MessageViewModel> PinnedMessages
 		{
 			get { return (ObservableCollection<MessageViewModel>)GetValue(PinnedMessagesProperty); }
@@ -32,7 +32,7 @@ namespace SIP_o_matic.ViewModels
 			private set;
 		}
 
-		public MessageViewModelCollection Messages
+		public EventViewModelCollection Events
 		{
 			get;
 			private set;
@@ -40,12 +40,12 @@ namespace SIP_o_matic.ViewModels
 
 		private IDeviceNameProvider deviceNameProvider;
 
-		public MessagesFrameViewModel(MessagesFrame Model, IDeviceNameProvider DeviceNameProvider) : base(Model)
+		public EventsFrameViewModel(EventsFrame Model, IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
 			this.deviceNameProvider = DeviceNameProvider;
 			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
-			Messages = new MessageViewModelCollection(Model.Messages,deviceNameProvider);
-			Devices = new ObservableCollection<DeviceViewModel>(Messages.SelectMany(message=>message.Devices).Distinct());
+			Events = new EventViewModelCollection(Model.Events,deviceNameProvider);
+			Devices = new ObservableCollection<DeviceViewModel>(Events.SelectMany(item => item.Devices).Distinct());
 			PinnedMessages = new ObservableCollection<MessageViewModel>();
 
 		}
