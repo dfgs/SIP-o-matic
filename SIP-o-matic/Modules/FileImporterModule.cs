@@ -64,7 +64,12 @@ namespace SIP_o_matic.Modules
 			step.MaximumGetter = () => fileNames.Length;
 			step.Init();
 			progressSteps.Add(step);
-	
+
+			step = new ProgressStep() { Label = "Extract RTP", TaskFactory = ExtractUDPStreamsAsync };
+			step.MaximumGetter = () => fileNames.Length;
+			step.Init();
+			progressSteps.Add(step);
+
 
 		}
 
@@ -149,10 +154,26 @@ namespace SIP_o_matic.Modules
 			}
 		}
 
-		
+
+		private async Task ExtractUDPStreamsAsync(CancellationToken CancellationToken, int Index)
+		{
+			IDataSource dataSource;
+
+			dataSource = dataSources[Index];
+			foreach (UDPStream udpStream in dataSource.EnumerateUDPStreams())
+			{
+				if (CancellationToken.IsCancellationRequested)
+				{
+					Log(LogLevels.Information, "Task cancelled");
+					return;
+				}
+
+				project.UDPStreams.Add(udpStream);
+				await Task.Delay(1);
+			}
+		}
 
 
-	
 
 
 

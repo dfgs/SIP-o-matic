@@ -177,7 +177,10 @@ namespace SIP_o_matic.corelib.DataSources
 			return messages;
 		}
 
-
+		public IEnumerable<UDPStream> EnumerateUDPStreams()
+		{
+			yield break;
+		}
 
 
 	}

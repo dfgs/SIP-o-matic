@@ -15,6 +15,7 @@ namespace SIP_o_matic.DataSources
 	{
 		private List<Device> devices;
 		private List<Message> messages;
+		private List<UDPStream> transmissions;
 
 		public string Description => "Wiresharp pcapng";
 
@@ -23,6 +24,7 @@ namespace SIP_o_matic.DataSources
 		{
 			devices = new List<Device>();
 			messages = new List<Message>();
+			transmissions = new List<UDPStream>();
 		}
 
 		public IEnumerable<string> GetSupportedFileExts()
@@ -36,6 +38,9 @@ namespace SIP_o_matic.DataSources
 			PacketReader packetReader;
 			UDPSegmentReader udpSegmentReader;
 			TCPSegmentReader tcpSegmentReader;
+			UDPStream transmission;
+			UDPStream? existingTransmission;
+			DateTime timeStamp;
 
 			Frame frame;
 			Packet packet;
@@ -63,11 +68,27 @@ namespace SIP_o_matic.DataSources
 					frame = frameReader.Read(block.Data);
 					packet = packetReader.Read(frame.Payload);
 
+					timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime();
+					sourceAddress = new Address(packet.Header.SourceAddress.ToString());
+					destinationAddress = new Address(packet.Header.DestinationAddress.ToString());
+
 					switch (packet.Header.Protocol)
 					{
 						case Protocols.UDP:
 							udpSegment = udpSegmentReader.Read(packet.Payload);
 							content = Encoding.UTF8.GetString(udpSegment.Payload);
+
+							transmission = new UDPStream(timeStamp, sourceAddress, destinationAddress, udpSegment.Header.DestinationPort);
+							existingTransmission = transmissions.FirstOrDefault(item => item.Matches(transmission));
+							if (existingTransmission != null)
+							{
+								existingTransmission.LastTimestamp = transmission.Timestamp;
+							}
+							else
+							{
+								transmissions.Add(transmission);
+							}
+
 							break;
 						case Protocols.TCP:
 							tcpSegment = tcpSegmentReader.Read(packet.Payload);
@@ -82,8 +103,6 @@ namespace SIP_o_matic.DataSources
 						)
 					{
 						//new Message(index++, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime(), packet.Header.SourceAddress.ToString(), packet.Header.DestinationAddress.ToString(), message);
-						sourceAddress = new Address(packet.Header.SourceAddress.ToString());
-						destinationAddress = new Address(packet.Header.DestinationAddress.ToString());
 
 						device = devices.FirstOrDefault(item => item.Name == sourceAddress.Value);
 						if (device == null)
@@ -100,10 +119,11 @@ namespace SIP_o_matic.DataSources
 						}
 
 
-						Message message = new Message(index++, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime(),sourceAddress, destinationAddress, content);
+						Message message = new Message(index++, timeStamp,sourceAddress, destinationAddress, content);
 						messages.Add(message);
 					}
-					//await Task.Delay(2000);
+
+					
 
 				}
 
@@ -123,11 +143,14 @@ namespace SIP_o_matic.DataSources
 			return messages;
 		}
 
+		public IEnumerable<UDPStream> EnumerateUDPStreams()
+		{
+			return transmissions;
+		}
 
-		
 
 
-		
+
 
 
 

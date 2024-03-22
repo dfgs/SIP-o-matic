@@ -16,9 +16,9 @@ namespace SIP_o_matic.corelib.DataSources
 
 		IEnumerable<Message> EnumerateMessages();
 		IEnumerable<Device> EnumerateDevices();
+		IEnumerable<UDPStream> EnumerateUDPStreams();
 
 		IEnumerable<string> GetSupportedFileExts();
-
 		Task LoadAsync(string FileName);
 
 

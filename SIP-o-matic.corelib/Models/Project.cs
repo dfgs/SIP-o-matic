@@ -28,7 +28,11 @@ namespace SIP_o_matic.corelib.Models
 			get;
 			set;
 		}
-
+		public List<UDPStream> UDPStreams
+		{
+			get;
+			set;
+		}
 		[XmlIgnore]
 		public List<KeyFrame> KeyFrames
 		{
@@ -61,6 +65,7 @@ namespace SIP_o_matic.corelib.Models
 		{
 			this.Devices= new List<Device>();
 			this.Messages = new List<Message>();
+			this.UDPStreams = new List<UDPStream>();
 			this.KeyFrames = new List<KeyFrame>();
 			this.Dialogs = new List<Dialog>();
 			this.MessagesFrame = new EventsFrame();
