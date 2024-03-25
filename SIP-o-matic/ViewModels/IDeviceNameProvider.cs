@@ -15,8 +15,9 @@ namespace SIP_o_matic.ViewModels
 		public DeviceViewModel GetDevice(corelib.Models.Address Address);
 		public DeviceViewModel GetDevice(Device Model);
 
-		public SIPMessage? GetSIPMessage(Message Message);
-		public SDP? GetSDPBody(Message Message);
+		public SIPMessageViewModel GetSIPMessage(Message Message);
+		public SDPViewModel GetSDPBody(Message Message);
+		public SDPViewModel GetSDPBody(ISIPMessage Message);
 
 	}
 }

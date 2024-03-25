@@ -340,7 +340,7 @@ namespace SIP_o_matic.Modules
 		{
 			KeyFrame newKeyFrame;
 			Message message;
-			SIPMessage? SIPMessage;
+			ISIPMessage SIPMessage;
 			Dialog? dialog;
 
 			LogEnter();
@@ -354,11 +354,11 @@ namespace SIP_o_matic.Modules
 			message = project.Messages[Index];
 			SIPMessage = project.SIPMessages[Index];
 			
-			if (SIPMessage == null) return;
+			if (!(SIPMessage is SIPMessage validSIPMessage)) return;
 
 
 
-			dialog = project.Dialogs.FirstOrDefault(item=>item.IsChecked && item.Match(SIPMessage));
+			dialog = project.Dialogs.FirstOrDefault(item=>item.IsChecked && item.Match(validSIPMessage));
 			if (dialog==null) return;	// filer only selected dialogs
 
 
@@ -377,7 +377,7 @@ namespace SIP_o_matic.Modules
 
 				newKeyFrame.MessageIndex = message.Index;
 
-				if (await UpdateKeyFrameAsync(newKeyFrame,project,  message,SIPMessage))
+				if (await UpdateKeyFrameAsync(newKeyFrame,project,  message, validSIPMessage))
 				{
 					project.KeyFrames.Add( newKeyFrame);
 				}
@@ -467,22 +467,22 @@ namespace SIP_o_matic.Modules
 			string fromTag;
 			Dialog? dialog;
 			Message message;
-			SIPMessage? SIPMessage;
+			ISIPMessage SIPMessage;
 			Device sourceDevice, destinationDevice;
 
 			message = project.Messages[Index];
 			SIPMessage = project.SIPMessages[Index];
-			if (SIPMessage == null) return;
-			
-			dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(SIPMessage));
+			if (!(SIPMessage is SIPMessage validSIPMessage)) return;
+
+			dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(validSIPMessage));
 			if (dialog == null) return;// filer only selected dialogs
 
 			Log(LogLevels.Debug, $"Formatting message\r\n{message.Content}");
 
-			callID = SIPMessage.GetCallID();
-			viaBranch = SIPMessage.GetViaBranch();
-			cseq = SIPMessage.GetCSeq();
-			fromTag = SIPMessage.GetFromTag();
+			callID = validSIPMessage.GetCallID();
+			viaBranch = validSIPMessage.GetViaBranch();
+			cseq = validSIPMessage.GetCSeq();
+			fromTag = validSIPMessage.GetFromTag();
 
 			message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
 			message.DialogColor = GetDialogColor(callID, fromTag);
@@ -504,9 +504,9 @@ namespace SIP_o_matic.Modules
 		private async Task CreateRTPEventsAsync(CancellationToken CancellationToken, int Index)
 		{
 			UDPStream stream;
-			SIPMessage? sipMessage;
+			ISIPMessage SIPMessage;
 			Dialog? dialog;
-			SDP? sdp;
+			IBody body;
 			ConnectionField? connectionField;
 			MediaField? mediaField;
 			RTPStart rtpStart;
@@ -524,19 +524,19 @@ namespace SIP_o_matic.Modules
 			
 			for(int t=0;t<project.Messages.Count;t++)
 			{
-				sdp = project.SDPBodies[t];
-				if (sdp == null) continue;
+				body = project.SDPBodies[t];
+				if (!(body is SDP validSDP)) return;
 
-				sipMessage = project.SIPMessages[t];
-				if (sipMessage == null) continue;
+				SIPMessage = project.SIPMessages[t];
+				if (!(SIPMessage is SIPMessage validSIPMessage)) return;
 
-				dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(sipMessage));
+				dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(validSIPMessage));
 				if (dialog == null) continue; // filer only selected dialogs//*/
 
-				connectionField = sdp.GetField<ConnectionField>();
+				connectionField = validSDP.GetField<ConnectionField>();
 				if (connectionField == null) continue;
 
-				mediaField = sdp.GetField<MediaField>();
+				mediaField = validSDP.GetField<MediaField>();
 				if (mediaField == null) continue;
 
 				if ( (stream.DestinationPort==mediaField.Port) && (stream.DestinationAddress.ToString()==connectionField.Address) )

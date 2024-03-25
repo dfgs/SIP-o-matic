@@ -93,7 +93,7 @@ namespace SIP_o_matic.Modules
 			{
 				string error = $"Failed to decode SIP message ({ex.Message})\r\r{Content}";
 				Log(LogLevels.Error, error);
-				project.SIPMessages.Add(null);
+				project.SIPMessages.Add(new InvalidSIPMessage());
 			}
 			await Task.Delay(1);
 
@@ -102,21 +102,21 @@ namespace SIP_o_matic.Modules
 		{
 			Message message;
 			Dialog? dialog = null;
-			SIPMessage? SIPMessage;
+			ISIPMessage SIPMessage;
 
 
 			message = project.Messages[Index];
 			SIPMessage = project.SIPMessages[Index];
 
-			if (SIPMessage == null) return;
+			if (!(SIPMessage is SIPMessage validSIPMessage)) return;
 
-			if (!(SIPMessage is Request request)) return;
+			if (!(validSIPMessage is Request request)) return;
 			if (request.RequestLine.Method != "INVITE") return;
 
-			dialog = project.Dialogs.FirstOrDefault(item => item.Match(SIPMessage));
+			dialog = project.Dialogs.FirstOrDefault(item => item.Match(validSIPMessage));
 			if (dialog != null) return;
 
-			dialog = new Dialog(message.Timestamp, SIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, SIPMessage.GetFromTag(), SIPMessage.GetToTag(), SIPMessage.GetFrom().ToHumanString() ?? "Undefined", SIPMessage.GetTo().ToHumanString() ?? "Undefined");
+			dialog = new Dialog(message.Timestamp, validSIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, validSIPMessage.GetFromTag(), validSIPMessage.GetToTag(), validSIPMessage.GetFrom().ToHumanString() ?? "Undefined", validSIPMessage.GetTo().ToHumanString() ?? "Undefined");
 			project.Dialogs.Add(dialog!);
 
 			await Task.Delay(1);
@@ -124,32 +124,30 @@ namespace SIP_o_matic.Modules
 		}
 		private async Task DecodeSDPBodiesAsync(CancellationToken CancellationToken, int Index)
 		{
-			Message message;
-			SIPMessage? SIPMessage;
+			ISIPMessage SIPMessage;
 			StringReader reader;
 			IParseResult result;
-			SDP? SDP;
+			IBody SDP;
 
-			message = project.Messages[Index];
 			SIPMessage = project.SIPMessages[Index];
 
-			if (SIPMessage == null)
+			if (!(SIPMessage is SIPMessage validSIPMessage))
 			{
-				project.SDPBodies.Add(null);
+				project.SDPBodies.Add(new EmptySDP());
 				return;
 			}
 
-			SDP = null;
-			if (string.IsNullOrEmpty(SIPMessage.Body))
+			if (string.IsNullOrEmpty(validSIPMessage.Body))
 			{
-				project.SDPBodies.Add(null);
+				project.SDPBodies.Add(new EmptySDP());
 				return;
 			}
 
 
-			reader = new StringReader(SIPMessage.Body);
+			reader = new StringReader(validSIPMessage.Body);
 			result = SDPGrammar.SDP.TryParse(reader);
 			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
+			else SDP = new EmptySDP();
 
 			project.SDPBodies.Add(SDP);
 

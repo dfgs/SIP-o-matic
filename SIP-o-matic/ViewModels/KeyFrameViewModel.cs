@@ -59,19 +59,6 @@ namespace SIP_o_matic.ViewModels
 
 		
 
-		internal static KeyFrameViewModel CreateTestData()
-		{
-			KeyFrameViewModel keyFrame;
-			KeyFrame model;
-
-			model = new KeyFrame(DateTime.Now);
-			model.MessageIndex = 1;
-			model.Calls.Add(new Call("abc-def1",new Device("SBC1",new Address[] { }) , new Device("SBC2", new Address[] { }), "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
-			model.Calls.Add(new Call("abc-def2", new Device("SBC2", new Address[] { }), new Device("SBC3", new Address[] { }), "tagabc", "+33144556677", "+33699884455", Call.States.OnHook, false));
-
-			keyFrame = new KeyFrameViewModel(model,null);
-
-			return keyFrame;
-		}
+		
 	}
 }

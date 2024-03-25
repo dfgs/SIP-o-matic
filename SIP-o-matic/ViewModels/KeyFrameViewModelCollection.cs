@@ -114,17 +114,7 @@ namespace SIP_o_matic.ViewModels
 		
 		
 
-		internal static KeyFrameViewModelCollection CreateTestData()
-		{
-			KeyFrameViewModel keyFrame;
-			KeyFrameViewModelCollection keyFrames;
-
-			keyFrames = new KeyFrameViewModelCollection(new List<KeyFrame>(),null);
-			keyFrame = KeyFrameViewModel.CreateTestData();
-			keyFrames.AddInternal(keyFrame);
-
-			return keyFrames;
-		}
+		
 
 	}
 }

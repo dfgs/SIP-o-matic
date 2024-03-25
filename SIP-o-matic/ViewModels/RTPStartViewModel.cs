@@ -23,10 +23,7 @@ namespace SIP_o_matic.ViewModels
 			get => "RTP Start";
 		}
 		
-		public DateTime Timestamp
-		{
-			get => Model.Timestamp;
-		}
+		
 
 		public Address SourceAddress
 		{

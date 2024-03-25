@@ -11,7 +11,7 @@ using ViewModelLib;
 
 namespace SIP_o_matic.ViewModels
 {
-	public class SIPMessageViewModel : GenericViewModel<SIPMessage>
+	public class SIPMessageViewModel : GenericViewModel<ISIPMessage>
 	{
 		public enum Types { Response, Request };
 
@@ -66,60 +66,63 @@ namespace SIP_o_matic.ViewModels
 
 		public IEnumerable<MessageHeader> Headers
 		{
-			get => Model.Headers;
+			get
+			{
+				if (Model is SIPMessage sipMessage) return sipMessage.Headers;
+				else return Enumerable.Empty<MessageHeader>();
+			}
 		}
 
-		public SDP? SDP
+		public SDPViewModel SDP
 		{
 			get;
 			private set;
 		}
 
-		public SIPMessageViewModel(SIPMessage Model,SDP? SDP) : base(Model)
+		public SIPMessageViewModel(ISIPMessage Model,IDeviceNameProvider DeviceNameProvider) : base(Model)
 		{
-
-			this.SDP = SDP;
+			this.SDP = DeviceNameProvider.GetSDPBody(Model);
 		}
 
 	
-		public  string GetCallID()
+		public string GetCallID()
 		{
-			return Model.GetCallID();
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetCallID();
 		}
-		public  string GetViaBranch()
+		public string GetViaBranch()
 		{
-			return Model.GetViaBranch();
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetViaBranch();
 		}
 
 		public  string GetCSeq()
 		{
-			return Model.GetCSeq();
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetCSeq();
 		}
+
 		public  string GetFromTag()
 		{
-			return Model.GetFromTag();
-
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetFromTag();
 		}
 		public  string? GetToTag()
 		{
-			return Model.GetToTag();
-
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetToTag();
 		}
 
 		public  Address GetFrom()
 		{
-			return Model.GetFrom();
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetFrom();
 		}
 
 		public  Address GetTo()
 		{
-			return Model.GetTo();
-
+			if (!(Model is SIPMessage validSIPMessage)) throw new InvalidOperationException("Invalid SIP message");
+			return validSIPMessage.GetTo();
 		}
 
 	}

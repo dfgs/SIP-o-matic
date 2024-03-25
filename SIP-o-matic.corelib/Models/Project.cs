@@ -55,13 +55,13 @@ namespace SIP_o_matic.corelib.Models
 		}
 
 		[XmlIgnore]
-		public List<SIPMessage> SIPMessages
+		public List<ISIPMessage> SIPMessages
 		{
 			get;
 			set;
 		}
 		[XmlIgnore]
-		public List<SDP> SDPBodies
+		public List<IBody> SDPBodies
 		{
 			get;
 			set;
@@ -74,8 +74,8 @@ namespace SIP_o_matic.corelib.Models
 			this.KeyFrames = new List<KeyFrame>();
 			this.Dialogs = new List<Dialog>();
 			this.MessagesFrame = new EventsFrame();
-			this.SIPMessages = new List<SIPMessage>();
-			this.SDPBodies = new List<SDP>();
+			this.SIPMessages = new List<ISIPMessage>();
+			this.SDPBodies = new List<IBody>();
 		}
 
 		public Device GetDevice(Address Address)

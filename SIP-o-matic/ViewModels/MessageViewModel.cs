@@ -22,10 +22,7 @@ namespace SIP_o_matic.ViewModels
 		{
 			get => Model.Index;
 		}
-		public DateTime Timestamp
-		{
-			get => Model.Timestamp;
-		}
+		
 		public string Content
 		{
 			get =>Model.Content;
@@ -46,7 +43,7 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
-		public SIPMessageViewModel? SIPMessage
+		public SIPMessageViewModel SIPMessage
 		{
 			get;
 			private set;
@@ -91,13 +88,7 @@ namespace SIP_o_matic.ViewModels
 
 		public MessageViewModel(Message Model, IDeviceNameProvider DeviceNameProvider) : base(Model,DeviceNameProvider)
 		{
-            SIPParserLib.SIPMessage? sipMessage;
-			SDP? sdp;
-
-			sipMessage = DeviceNameProvider.GetSIPMessage(Model);
-			sdp = DeviceNameProvider.GetSDPBody(Model);
-			if (sipMessage == null) this.SIPMessage = null;
-			else this.SIPMessage = new SIPMessageViewModel(sipMessage,sdp);
+ 			this.SIPMessage = DeviceNameProvider.GetSIPMessage(Model);
 		}
 
 		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)

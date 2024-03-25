@@ -56,8 +56,18 @@ namespace SIP_o_matic.ViewModels
 			get { return (MessageViewModelCollection)GetValue(MessagesProperty); }
 			private set { SetValue(MessagesProperty, value); }
 		}
-
-
+		public static readonly DependencyProperty SIPMessagesProperty = DependencyProperty.Register("SIPMessages", typeof(SIPMessageViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public SIPMessageViewModelCollection SIPMessages
+		{
+			get { return (SIPMessageViewModelCollection)GetValue(SIPMessagesProperty); }
+			private set { SetValue(SIPMessagesProperty, value); }
+		}
+		public static readonly DependencyProperty SDPBodiesProperty = DependencyProperty.Register("SDPBodies", typeof(SDPViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
+		public SDPViewModelCollection SDPBodies
+		{
+			get { return (SDPViewModelCollection)GetValue(SDPBodiesProperty); }
+			private set { SetValue(SDPBodiesProperty, value); }
+		}
 
 
 		public static readonly DependencyProperty KeyFramesProperty = DependencyProperty.Register("KeyFrames", typeof(KeyFrameViewModelCollection), typeof(ProjectViewModel), new PropertyMetadata(null));
@@ -85,7 +95,11 @@ namespace SIP_o_matic.ViewModels
 		public ProjectViewModel(Project Model) : base(Model)
 		{
 			Devices = new DeviceViewModelCollection(Model.Devices);
-			Messages = new MessageViewModelCollection(Model.Messages,this);
+
+			SDPBodies = new SDPViewModelCollection(Model.SDPBodies);
+			SIPMessages = new SIPMessageViewModelCollection(Model.SIPMessages,this);
+			Messages = new MessageViewModelCollection(Model.Messages, this);
+
 			KeyFrames = new KeyFrameViewModelCollection(Model.KeyFrames,this);
 			EventsFrame = new EventsFrameViewModel(Model.MessagesFrame, this);
 			Dialogs = new DialogViewModelCollection(Model.Dialogs,this);
@@ -94,7 +108,11 @@ namespace SIP_o_matic.ViewModels
 		public void RefreshDeviceAndMessages()
 		{
 			Devices = new DeviceViewModelCollection(Model.Devices);
+
+			SDPBodies = new SDPViewModelCollection(Model.SDPBodies);
+			SIPMessages = new SIPMessageViewModelCollection(Model.SIPMessages, this);
 			Messages = new MessageViewModelCollection(Model.Messages, this);
+
 			Dialogs = new DialogViewModelCollection(Model.Dialogs, this);
 		}
 
@@ -170,18 +188,25 @@ namespace SIP_o_matic.ViewModels
 			if (device == null) device = new DeviceViewModel(Model);
 			return device;
 		}
-		public SIPMessage? GetSIPMessage(Message Message)
+		public SIPMessageViewModel GetSIPMessage(Message Message)
 		{
 			int index;
 			index = Model.Messages.IndexOf(Message);
-			return Model.SIPMessages[index];
+			return SIPMessages[index];
 		}
 
-		public SDP? GetSDPBody(Message Message)
+		public SDPViewModel GetSDPBody(Message Message)
 		{
 			int index;
 			index = Model.Messages.IndexOf(Message);
-			return Model.SDPBodies[index];
+			return SDPBodies[index];
+		}
+
+		public SDPViewModel GetSDPBody(ISIPMessage Message)
+		{
+			int index;
+			index = Model.SIPMessages.IndexOf(Message);
+			return SDPBodies[index];
 		}
 
 
