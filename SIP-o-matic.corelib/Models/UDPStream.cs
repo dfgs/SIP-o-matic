@@ -58,6 +58,10 @@ namespace SIP_o_matic.corelib.Models
 			return this.SourceAddress.Equals(Transmission.SourceAddress) && this.DestinationAddress.Equals(Transmission.DestinationAddress) && (this.DestinationPort == Transmission.DestinationPort);
 		}
 
+		public override string ToString()
+		{
+			return $"{SourceAddress} -> {DestinationAddress}:{DestinationPort}";
+		}
 
 	}
 }

@@ -38,8 +38,9 @@ namespace SIP_o_matic.ViewModels
 			switch(Item)
 			{
 				case Message message:return new MessageViewModel(message, DeviceNameProvider);
-				case RTPStart rtpStart:return new RTPStartViewModel(rtpStart, DeviceNameProvider);
-				default:throw new InvalidOperationException();
+				case RTPStart rtpStart: return new RTPStartViewModel(rtpStart, DeviceNameProvider);
+				case RTPStop rtpStop: return new RTPStopViewModel(rtpStop, DeviceNameProvider);
+				default: throw new InvalidOperationException();
 			}
 		}
 		

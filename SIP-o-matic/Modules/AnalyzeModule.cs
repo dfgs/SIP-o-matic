@@ -510,6 +510,7 @@ namespace SIP_o_matic.Modules
 			ConnectionField? connectionField;
 			MediaField? mediaField;
 			RTPStart rtpStart;
+			RTPStop rtpStop;
 
 			LogEnter();
 
@@ -525,10 +526,10 @@ namespace SIP_o_matic.Modules
 			for(int t=0;t<project.Messages.Count;t++)
 			{
 				body = project.SDPBodies[t];
-				if (!(body is SDP validSDP)) return;
+				if (!(body is SDP validSDP)) continue;
 
 				SIPMessage = project.SIPMessages[t];
-				if (!(SIPMessage is SIPMessage validSIPMessage)) return;
+				if (!(SIPMessage is SIPMessage validSIPMessage)) continue;
 
 				dialog = project.Dialogs.FirstOrDefault(item => item.IsChecked && item.Match(validSIPMessage));
 				if (dialog == null) continue; // filer only selected dialogs//*/
@@ -541,8 +542,11 @@ namespace SIP_o_matic.Modules
 
 				if ( (stream.DestinationPort==mediaField.Port) && (stream.DestinationAddress.ToString()==connectionField.Address) )
 				{
-					rtpStart = new RTPStart(stream.Timestamp,stream.SourceAddress,stream.DestinationAddress );
+					rtpStart = new RTPStart(stream.Timestamp, stream.SourceAddress, stream.DestinationAddress);
 					project.MessagesFrame.Events.Add(rtpStart);
+					
+					rtpStop = new RTPStop(stream.LastTimestamp, stream.SourceAddress, stream.DestinationAddress);
+					project.MessagesFrame.Events.Add(rtpStop);
 
 				}
 

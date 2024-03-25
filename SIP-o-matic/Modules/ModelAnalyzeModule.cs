@@ -126,7 +126,6 @@ namespace SIP_o_matic.Modules
 		{
 			ISIPMessage SIPMessage;
 			StringReader reader;
-			IParseResult result;
 			IBody SDP;
 
 			SIPMessage = project.SIPMessages[Index];
@@ -145,11 +144,19 @@ namespace SIP_o_matic.Modules
 
 
 			reader = new StringReader(validSIPMessage.Body);
-			result = SDPGrammar.SDP.TryParse(reader);
-			if (result is ISucceededParseResult<SDP> sdpResult) SDP = sdpResult.Value;
-			else SDP = new EmptySDP();
+			try
+			{
+				SDP = SIPParserLib.SDPGrammar.SDP.Parse(reader);
+				project.SDPBodies.Add(SDP);
+			}
+			catch (Exception ex)
+			{
+				string error = $"Failed to decode SDP body ({ex.Message})\r\r{validSIPMessage.Body}";
+				Log(LogLevels.Error, error);
+				project.SDPBodies.Add(new EmptySDP());
+			}
 
-			project.SDPBodies.Add(SDP);
+
 
 			await Task.Delay(1);
 			
