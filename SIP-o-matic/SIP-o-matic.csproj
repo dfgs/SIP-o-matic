@@ -48,6 +48,7 @@
     <None Remove="Images\server_add.png" />
     <None Remove="Images\server_delete.png" />
     <None Remove="Images\sound.png" />
+    <None Remove="Images\sound_mute.png" />
     <None Remove="Images\sound_none.png" />
     <None Remove="Images\tag_blue_add.png" />
     <None Remove="Images\telephone.png" />
@@ -123,6 +124,7 @@
     <Resource Include="Images\server_add.png" />
     <Resource Include="Images\server_delete.png" />
     <Resource Include="Images\sound.png" />
+    <Resource Include="Images\sound_mute.png" />
     <Resource Include="Images\sound_none.png" />
     <Resource Include="Images\tag_blue_add.png" />
     <Resource Include="Images\telephone.png" />

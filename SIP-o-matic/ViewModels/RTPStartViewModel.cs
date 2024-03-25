@@ -20,10 +20,13 @@ namespace SIP_o_matic.ViewModels
 
 		public string Description
 		{
-			get => "RTP Start";
+			get => $"RTP Start (port: {DestinationPort})";
 		}
-		
-		
+
+		public string DialogColor
+		{
+			get => Model.DialogColor;
+		}
 
 		public Address SourceAddress
 		{
@@ -47,7 +50,10 @@ namespace SIP_o_matic.ViewModels
 			}
 		}
 
-		
+		public ushort DestinationPort
+		{
+			get => Model.DestinationPort;
+		}
 
 		public static readonly DependencyProperty IsFlippedProperty = DependencyProperty.Register("IsFlipped", typeof(bool), typeof(RTPStartViewModel), new PropertyMetadata(false));
 		public bool IsFlipped

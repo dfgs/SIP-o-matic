@@ -66,10 +66,11 @@ namespace SIP_o_matic.Modules
 			step.Init();
 			progressSteps.Add(step);
 
-			step = new ProgressStep() { Label = "Format messages frame", TaskFactory = FormatMessagesFrameAsync };
+			step = new ProgressStep() { Label = "Format events frame", TaskFactory = FormatEventsFrameAsync };
 			step.MaximumGetter = () => project.Messages.Count;
 			step.Init();
 			progressSteps.Add(step);
+
 
 			step = new ProgressStep() { Label = "Create RTP events", TaskFactory = CreateRTPEventsAsync };
 			step.MaximumGetter = () => project.UDPStreams.Count;
@@ -459,7 +460,7 @@ namespace SIP_o_matic.Modules
 
 
 
-		public async Task FormatMessagesFrameAsync(CancellationToken CancellationToken, int Index)
+		public async Task FormatEventsFrameAsync(CancellationToken CancellationToken, int Index)
 		{
 			string callID;
 			string viaBranch;
@@ -511,6 +512,7 @@ namespace SIP_o_matic.Modules
 			MediaField? mediaField;
 			RTPStart rtpStart;
 			RTPStop rtpStop;
+			string callID, cseq, viaBranch, fromTag;
 
 			LogEnter();
 
@@ -542,10 +544,17 @@ namespace SIP_o_matic.Modules
 
 				if ( (stream.DestinationPort==mediaField.Port) && (stream.DestinationAddress.ToString()==connectionField.Address) )
 				{
-					rtpStart = new RTPStart(stream.Timestamp, stream.SourceAddress, stream.DestinationAddress);
+					callID = validSIPMessage.GetCallID();
+					viaBranch = validSIPMessage.GetViaBranch();
+					cseq = validSIPMessage.GetCSeq();
+					fromTag = validSIPMessage.GetFromTag();
+
+					rtpStart = new RTPStart(stream.Timestamp, stream.SourceAddress, stream.DestinationAddress,stream.DestinationPort);
+					rtpStart.DialogColor = GetDialogColor(callID, fromTag);
 					project.MessagesFrame.Events.Add(rtpStart);
 					
-					rtpStop = new RTPStop(stream.LastTimestamp, stream.SourceAddress, stream.DestinationAddress);
+					rtpStop = new RTPStop(stream.LastTimestamp, stream.SourceAddress, stream.DestinationAddress, stream.DestinationPort);
+					rtpStop.DialogColor = GetDialogColor(callID, fromTag);
 					project.MessagesFrame.Events.Add(rtpStop);
 
 				}

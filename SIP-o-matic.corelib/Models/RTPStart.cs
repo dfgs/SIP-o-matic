@@ -15,7 +15,13 @@ namespace SIP_o_matic.corelib.Models
             set;
         }
 
-			
+		[XmlIgnore]
+		public string DialogColor
+		{
+			get;
+			set;
+		}
+
 		public required Address SourceAddress
         {
             get;
@@ -27,21 +33,29 @@ namespace SIP_o_matic.corelib.Models
             get;
             set;
         }
+		public required ushort DestinationPort
+		{
+			get;
+			set;
+		}
 
-        public RTPStart()
+		public RTPStart()
         {
-           
-        }
-        [SetsRequiredMembers]
-        public RTPStart(DateTime Timestamp, Address SourceAddress, Address DestinationAddress)
+			this.DialogColor = "Black";
+
+		}
+		[SetsRequiredMembers]
+        public RTPStart(DateTime Timestamp, Address SourceAddress, Address DestinationAddress, ushort DestinationPort)
         {
             this.Timestamp = Timestamp;
             this.SourceAddress = SourceAddress;
             this.DestinationAddress = DestinationAddress;
-			
+			this.DestinationPort = DestinationPort;
+			this.DialogColor = "Black";
+
 		}
 
-		
+
 
 	}
 }
