@@ -12,8 +12,8 @@ namespace SIP_o_matic.corelib.DataSources
 {
 	public class AlcatelSIPTraceDataSource : IDataSource
 	{
-		private static Regex inRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>\D\D\D +\D\D\D +\d+ +\d\d:\d\d:\d\d +\d\d\d\d) RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
-		private static Regex outRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>\D\D\D +\D\D\D +\d+ +\d\d:\d\d:\d\d +\d\d\d\d) SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex inRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>.*) RECEIVE MESSAGE FROM NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
+		private static Regex outRegex = new Regex(@"(\d+ -\> )?(?<Timestamp>.*) SEND MESSAGE TO NETWORK \((?<Address>\d+\.\d+\.\d+\.\d+)");
 
 		private List<Device> devices;
 		private List<Message> messages;
@@ -52,7 +52,15 @@ namespace SIP_o_matic.corelib.DataSources
 
 		}
 
-		
+		private DateTime GetTimeStamp(string Value)
+		{
+			DateTime timeStamp;
+
+			if (DateTime.TryParseExact(Value, "ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out timeStamp)) return timeStamp;
+			if (DateTime.TryParseExact(Value, "dd/MM/yy HH:mm:ss.f", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out timeStamp)) return timeStamp;
+
+			throw new InvalidOperationException($"Unsupported date format: {Value}");
+		}
 
 		public async Task LoadAsync(string FileName)
 		{
@@ -90,7 +98,7 @@ namespace SIP_o_matic.corelib.DataSources
 					{
 						message = await ReadMessageAsync(reader);
 						dateString = inMatch.Groups["Timestamp"].Value.Replace("  "," ");
-						timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy",CultureInfo.InvariantCulture);
+						timeStamp = GetTimeStamp(dateString);
 						
 						sourceAddress = new Address(inMatch.Groups["Address"].Value);
 						destinationAddress = new Address("127.0.0.1");
@@ -112,7 +120,7 @@ namespace SIP_o_matic.corelib.DataSources
 						{
 							message = await ReadMessageAsync(reader);
 							dateString = outMatch.Groups["Timestamp"].Value.Replace("  ", " ");
-							timeStamp = DateTime.ParseExact(dateString, "ddd MMM d HH:mm:ss yyyy", CultureInfo.InvariantCulture);
+							timeStamp = GetTimeStamp(dateString);
 
 							sourceAddress = new Address("127.0.0.1");
 							destinationAddress = new Address(outMatch.Groups["Address"].Value);
