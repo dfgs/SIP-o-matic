@@ -117,6 +117,23 @@ namespace SIP_o_matic
 		}
 
 		#region command bindings
+		private void SearchCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.Handled = true; e.CanExecute = (applicationViewModel.Projects.SelectedItem != null);
+		}
+
+		private void SearchCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			SearchWindow window;
+
+			if (applicationViewModel.Projects.SelectedItem == null) return;
+
+			window = new SearchWindow();
+			window.Owner = this;
+			window.Project = applicationViewModel.Projects.SelectedItem;
+
+			window.ShowDialog();
+		}
 		private void AboutCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			e.Handled = true; e.CanExecute = true;
@@ -185,6 +202,7 @@ namespace SIP_o_matic
 			ProgressWindow analyzeWindow;
 			ModelAnalyzeModule modelAnalyzeModule;
 			ProjectViewModel newProject;
+			Project project;
 
 			dialog = new OpenFileDialog();
 			dialog.Title = "Open xml file";
@@ -196,16 +214,19 @@ namespace SIP_o_matic
 			{
 				try
 				{
-					newProject= await applicationViewModel.OpenProjectAsync(dialog.FileName);
+					project = await Project.LoadAsync(dialog.FileName);
 
-					modelAnalyzeModule = new ModelAnalyzeModule(Logger, newProject.GetModel());
+					modelAnalyzeModule = new ModelAnalyzeModule(Logger, project);
 
 					analyzeWindow = new ProgressWindow(Logger);
 					analyzeWindow.Owner = this;
 					analyzeWindow.Steps.AddRange(modelAnalyzeModule.ProgressSteps);
 					analyzeWindow.ShowDialog();
 
+					newProject = new ProjectViewModel(project);
 					newProject.RefreshDeviceAndMessages();
+					applicationViewModel.Projects.Add(newProject);
+					applicationViewModel.Projects.SelectedItem = newProject;
 
 				}
 				catch (Exception ex)

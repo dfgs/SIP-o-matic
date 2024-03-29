@@ -40,6 +40,7 @@
     <None Remove="Images\help.png" />
     <None Remove="Images\hourglass.png" />
     <None Remove="Images\magifier_zoom_out.png" />
+    <None Remove="Images\magnifier.png" />
     <None Remove="Images\magnifier_zoom_in.png" />
     <None Remove="Images\page_copy.png" />
     <None Remove="Images\page_white.png" />
@@ -116,6 +117,7 @@
     <Resource Include="Images\help.png" />
     <Resource Include="Images\hourglass.png" />
     <Resource Include="Images\magifier_zoom_out.png" />
+    <Resource Include="Images\magnifier.png" />
     <Resource Include="Images\magnifier_zoom_in.png" />
     <Resource Include="Images\page_copy.png" />
     <Resource Include="Images\page_white.png" />

@@ -14,6 +14,7 @@
 		<KeyBinding Modifiers="Ctrl" Key="S" Command="Save"/>
 		<KeyBinding Modifiers="Ctrl" Key="O" Command="Open"/>
 		<KeyBinding Modifiers="Ctrl" Key="F4" Command="Close"/>
+		<KeyBinding Modifiers="Ctrl" Key="F" Command="{x:Static root:RoutedCommands.Search}"/>
 		<KeyBinding Key="F5" Command="{x:Static root:RoutedCommands.Analyze}"/>
 		<KeyBinding Key="Delete" Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}"/>
 		<KeyBinding Key="F2" Command="{x:Static root:RoutedCommands.EditDeviceOrAddress}"/>
@@ -33,6 +34,8 @@
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddDevice}" CanExecute="AddDeviceCommandBinding_CanExecute" Executed="AddDeviceCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.AddAddress}" CanExecute="AddAddressCommandBinding_CanExecute" Executed="AddAddressCommandBinding_Executed"/>
 		<CommandBinding Command="{x:Static root:RoutedCommands.RemoveDeviceOrAddress}" CanExecute="RemoveDeviceOrAddressCommandBinding_CanExecute" Executed="RemoveDeviceOrAddressCommandBinding_Executed"/>
+
+		<CommandBinding Command="{x:Static root:RoutedCommands.Search}" CanExecute="SearchCommandBinding_CanExecute" Executed="SearchCommandBinding_Executed"/>
 
 		<CommandBinding Command="{x:Static root:RoutedCommands.About}" CanExecute="AboutCommandBinding_CanExecute" Executed="AboutCommandBinding_Executed"/>
 	</Window.CommandBindings>
@@ -117,6 +120,9 @@
 					<Image Source="/Images/bullet_go.png" Stretch="None"/>
 				</Button>
 				<Separator/>
+				<Button Command="{x:Static root:RoutedCommands.Search}"  ToolTip="Search" ToolTipService.ShowOnDisabled="true" >
+					<Image Source="/Images/magnifier.png" Stretch="None"/>
+				</Button>				<Separator/>
 				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true"  Visibility="Collapsed">
 					<Image Source="/Images/report_disk.png" Stretch="None"/>
 				</Button>
@@ -126,8 +132,10 @@
 				<Button Command="{x:Static root:RoutedCommands.About}"  ToolTip="About" ToolTipService.ShowOnDisabled="true" >
 					<Image Source="/Images/help.png" Stretch="None"/>
 				</Button>
+
 			</ToolBar>
 		</ToolBarTray>
+
 		<TabControl ItemsSource="{Binding Projects}" SelectedItem="{Binding Projects.SelectedItem}">
 			<TabControl.ItemTemplate>
 				<DataTemplate>

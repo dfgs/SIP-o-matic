@@ -6,7 +6,7 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1200">
-    <ListView ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}">
+    <ListView ItemsSource="{Binding}" SelectedItem="{Binding SelectedItem}" SelectionChanged="ListView_SelectionChanged" x:Name="ListView"	>
 		<!--ListView.ItemContainerStyle-->
 		<!--Style TargetType="ListViewItem"-->
 		<!--Setter Property="HorizontalContentAlignment" Value="Center" /-->

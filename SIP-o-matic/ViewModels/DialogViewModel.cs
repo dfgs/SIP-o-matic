@@ -94,15 +94,14 @@ namespace SIP_o_matic.ViewModels
 		{
 			if (DeviceNameProvider == null) throw new ArgumentNullException(nameof(DeviceNameProvider));
 			this.deviceNameProvider = DeviceNameProvider;
-			//this.deviceNameProvider.DeviceNameUpdated += DeviceNameProvider_DeviceNameUpdated;
-
 		}
 
-		/*private void DeviceNameProvider_DeviceNameUpdated(object? sender, EventArgs e)
+		public bool Match(string Value)
 		{
-			OnPropertyChanged(nameof(SourceDevice));
-			OnPropertyChanged(nameof(DestinationDevice));
-		}*/
+			return CallID.Contains(Value) || SourceAddress.ToString().Contains(Value) || DestinationAddress.ToString().Contains(Value)
+				|| SourceDevice.Name.Contains(Value) || DestinationDevice.Name.Contains(Value)
+				|| Caller.Contains(Value) || Callee.Contains(Value);
+		}
 
 		
 

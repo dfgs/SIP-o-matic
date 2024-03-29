@@ -30,5 +30,10 @@ namespace SIP_o_matic
 		public static RoutedCommand About = new RoutedCommand();
 
 		public static RoutedCommand HighlightSelection = new RoutedCommand();
+
+		public static RoutedCommand Search = new RoutedCommand();
+		public static RoutedCommand SearchNext = new RoutedCommand();
+		public static RoutedCommand SearchPrevious = new RoutedCommand();
+
 	}
 }

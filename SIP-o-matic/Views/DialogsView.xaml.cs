@@ -39,6 +39,11 @@ namespace SIP_o_matic.Views
 			}
 		}
 
+		private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			ListView.ScrollIntoView(e.AddedItems[0]);
+        }
 
-	}
+
+    }
 }

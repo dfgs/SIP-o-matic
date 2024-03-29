@@ -51,7 +51,7 @@
 							<Paragraph>SIP content selection</Paragraph>
 						</ListItem>
 						<ListItem>
-							<Paragraph>SIP content highligth</Paragraph>
+							<Paragraph>SIP content highlight</Paragraph>
 						</ListItem>
 						<ListItem>
 							<Paragraph>Device reorder in messages ladder</Paragraph>
@@ -68,7 +68,9 @@
 						<ListItem>
 							<Paragraph>Add RTP events in messages ladder</Paragraph>
 						</ListItem>
-						
+						<ListItem>
+							<Paragraph>Search dialogs feature</Paragraph>
+						</ListItem>
 					</List>
 				</FlowDocument>
 			</FlowDocumentReader>
