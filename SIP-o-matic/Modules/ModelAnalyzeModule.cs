@@ -113,12 +113,21 @@ namespace SIP_o_matic.Modules
 			if (!(validSIPMessage is Request request)) return;
 			if (request.RequestLine.Method != "INVITE") return;
 
-			dialog = project.Dialogs.FirstOrDefault(item => item.Match(validSIPMessage));
-			if (dialog != null) return;
+			try
+			{
+				dialog = project.Dialogs.FirstOrDefault(item => item.Match(validSIPMessage));
+				if (dialog != null) return;
 
-			dialog = new Dialog(message.Timestamp, validSIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, validSIPMessage.GetFromTag(), validSIPMessage.GetToTag(), validSIPMessage.GetFrom().ToHumanString() ?? "Undefined", validSIPMessage.GetTo().ToHumanString() ?? "Undefined");
-			project.Dialogs.Add(dialog!);
+				dialog = new Dialog(message.Timestamp, validSIPMessage.GetCallID(), message.SourceAddress, message.DestinationAddress, validSIPMessage.GetFromTag(), validSIPMessage.GetToTag(), validSIPMessage.GetFrom().ToHumanString() ?? "Undefined", validSIPMessage.GetTo().ToHumanString() ?? "Undefined");
+				project.Dialogs.Add(dialog!);
 
+			}
+			catch (Exception ex)
+			{
+				string error = $"Failed to create dialog ({ex.Message})\r\r{message.Content}";
+				Log(LogLevels.Error, error);
+				return;
+			}
 			await Task.Delay(1);
 
 		}

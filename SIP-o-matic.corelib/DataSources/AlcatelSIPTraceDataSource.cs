@@ -34,10 +34,12 @@ namespace SIP_o_matic.corelib.DataSources
 		}
 
 
-		private async Task<string> ReadMessageAsync(StreamReader Reader)
+		private async Task<string> ReadMessageAsync(AlcatelStreamReader Reader)
 		{
 			string? line;
 			string buffer;
+
+		
 
 			buffer = "";
 			// skip first line: ----------------------utf8-----------------------
@@ -73,7 +75,7 @@ namespace SIP_o_matic.corelib.DataSources
 			string message;
 			Match inMatch, outMatch;
 			uint index;
-			StreamReader reader;
+			AlcatelStreamReader reader;
 			string dateString;
 
 			index = 1;
@@ -87,7 +89,7 @@ namespace SIP_o_matic.corelib.DataSources
 
 			using (FileStream stream = new FileStream(FileName, FileMode.Open))
 			{
-				reader = new StreamReader(stream);
+				reader = new AlcatelStreamReader(stream);
 				while (!reader.EndOfStream)
 				{
 					line = await reader.ReadLineAsync();
