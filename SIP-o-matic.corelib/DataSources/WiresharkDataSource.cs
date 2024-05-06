@@ -62,11 +62,12 @@ namespace SIP_o_matic.DataSources
 
 			using (var reader = new Reader(FileName))
 			{
-
+				content = "";
 				await foreach (var block in reader.EnhancedPacketBlocks.ToAsyncEnumerable())
 				{
 					frame = frameReader.Read(block.Data);
 					packet = packetReader.Read(frame.Payload);
+
 
 					timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime();
 					sourceAddress = new Address(packet.Header.SourceAddress.ToString());
@@ -76,7 +77,7 @@ namespace SIP_o_matic.DataSources
 					{
 						case Protocols.UDP:
 							udpSegment = udpSegmentReader.Read(packet.Payload);
-							content = Encoding.UTF8.GetString(udpSegment.Payload);
+							content += Encoding.UTF8.GetString(udpSegment.Payload);
 
 							transmission = new UDPStream(timeStamp, sourceAddress, destinationAddress, udpSegment.Header.DestinationPort);
 							existingTransmission = transmissions.FirstOrDefault(item => item.Matches(transmission));
@@ -92,10 +93,12 @@ namespace SIP_o_matic.DataSources
 							break;
 						case Protocols.TCP:
 							tcpSegment = tcpSegmentReader.Read(packet.Payload);
-							content = Encoding.UTF8.GetString(tcpSegment.Payload);
+							content += Encoding.UTF8.GetString(tcpSegment.Payload);
 							break;
 						default: continue;
 					}
+					if (packet.Header.MoreFragments) continue; // reassemble fragmented packets
+
 
 					if (
 						content.StartsWith("SIP/2.0") ||
@@ -123,6 +126,7 @@ namespace SIP_o_matic.DataSources
 						messages.Add(message);
 					}
 
+					content = "";
 					
 
 				}
