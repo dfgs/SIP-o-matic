@@ -54,18 +54,19 @@ namespace SIP_o_matic.corelib
 		}
 		public static string GetFromTag(this SIPMessage Message)
 		{
-			SIPURL? fromURL;
+			Address? fromAddress;
 			string? value;
-			URLParameter? parameter;
+			AddressParameter? parameter;
 
-			fromURL = Message.GetHeader<FromHeader>()?.Value.URI as SIPURL;
-			if (fromURL == null)
+			fromAddress= Message.GetHeader<FromHeader>()?.Value;
+			if (fromAddress == null)
 			{
-				string error = $"Invalid or missing from URI in SIP message";
+				string error = $"Invalid or missing from address in SIP message";
 				throw new InvalidOperationException(error);
 			}
 
-			parameter = fromURL.Parameters.FirstOrDefault(item => item.Name == "tag");
+
+			parameter = fromAddress.Value.Parameters?.FirstOrDefault(item => item.Name == "tag");
 			if (parameter == null)
 			{
 				string error = $"Tag parameter missing in from header";
@@ -83,26 +84,30 @@ namespace SIP_o_matic.corelib
 		}
 		public static string? GetToTag(this SIPMessage Message)
 		{
-			SIPURL? toURL;
+			Address? toAddress;
 			string? value;
-			URLParameter? parameter;
+			AddressParameter? parameter;
 
-			toURL = Message.GetHeader<ToHeader>()?.Value.URI as SIPURL;
-			if (toURL == null)
+			toAddress = Message.GetHeader<ToHeader>()?.Value;
+			if (toAddress == null)
 			{
-				string error = $"Invalid or missing to URI in SIP message";
+				string error = $"Invalid or missing to address in SIP message";
 				throw new InvalidOperationException(error);
 			}
 
-			parameter = toURL.Parameters.FirstOrDefault(item => item.Name == "tag");
-			if (parameter == null)
-			{
-				string error = $"Tag parameter missing in to header";
-				throw new InvalidOperationException(error);
-			}
+
+			parameter = toAddress.Value.Parameters?.FirstOrDefault(item => item.Name == "tag");
+			if (parameter == null) return null;
+			
+
 			value = parameter.Value.Value;
-
+			if (value == null)
+			{
+				string error = $"From tag missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
 			return value;
+
 
 		}
 

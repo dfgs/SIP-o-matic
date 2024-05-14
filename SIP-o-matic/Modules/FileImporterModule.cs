@@ -1,6 +1,5 @@
 ﻿using LogLib;
 using ModuleLib;
-using ParserLib;
 using PcapngFile;
 using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.DataSources;

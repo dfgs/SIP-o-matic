@@ -1,6 +1,5 @@
 ﻿using LogLib;
 using ModuleLib;
-using ParserLib;
 using PcapngFile;
 using SIP_o_matic.corelib;
 using SIP_o_matic.corelib.DataSources;
@@ -8,8 +7,10 @@ using SIP_o_matic.corelib.Models;
 using SIP_o_matic.DataSources;
 using SIP_o_matic.ViewModels;
 using SIPParserLib;
+using SIPParserLib.Parsers;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
@@ -21,7 +22,10 @@ namespace SIP_o_matic.Modules
 {
 	public class ModelAnalyzeModule : BaseProgressModule
 	{
+		private SIPMessageParser sipMessageparser;
+		private SDPBodyParser sdpParser;
 		private List<ProgressStep> progressSteps;
+
 		public override IEnumerable<ProgressStep> ProgressSteps
 		{
 			get => progressSteps;
@@ -35,6 +39,9 @@ namespace SIP_o_matic.Modules
 
 
 			if (Project == null) throw new ArgumentNullException(nameof(Project));
+
+			sipMessageparser = new SIPMessageParser(Logger);
+			sdpParser = new SDPBodyParser(Logger);
 
 			this.project = Project;
 
@@ -77,24 +84,19 @@ namespace SIP_o_matic.Modules
 
 		private async Task DecodeSIPMessagesAsync(CancellationToken CancellationToken, int Index)
 		{
-			SIPMessage SIPMessage;
-			ParserLib.StringReader reader;
+			SIPMessage? SIPMessage;
 			string Content;
 
 			Content = project.Messages[Index].Content;
 
-			reader = new ParserLib.StringReader(Content, ' ');
-			try
+			SIPMessage = sipMessageparser.Parse(new MemoryStream(Encoding.UTF8.GetBytes(Content)));
+			if (SIPMessage == null)
 			{
-				SIPMessage = SIPParserLib.SIPGrammar.SIPMessage.Parse(reader);
-				project.SIPMessages.Add(SIPMessage);
-			}
-			catch (Exception ex)
-			{
-				string error = $"Failed to decode SIP message ({ex.Message})\r\r{Content}";
+				string error = $"Failed to decode SIP message\r\r{Content}";
 				Log(LogLevels.Error, error);
 				project.SIPMessages.Add(new InvalidSIPMessage());
 			}
+			else project.SIPMessages.Add(SIPMessage);
 			await Task.Delay(1);
 
 		}
@@ -135,7 +137,7 @@ namespace SIP_o_matic.Modules
 		{
 			ISIPMessage SIPMessage;
 			StringReader reader;
-			IBody SDP;
+			SDP? SDP;
 
 			SIPMessage = project.SIPMessages[Index];
 
@@ -151,19 +153,15 @@ namespace SIP_o_matic.Modules
 				return;
 			}
 
-
+			SDP = sdpParser.Parse(new MemoryStream(Encoding.UTF8.GetBytes(validSIPMessage.Body)));
 			reader = new StringReader(validSIPMessage.Body);
-			try
+			if (SDP == null)
 			{
-				SDP = SIPParserLib.SDPGrammar.SDP.Parse(reader);
-				project.SDPBodies.Add(SDP);
-			}
-			catch (Exception ex)
-			{
-				string error = $"Failed to decode SDP body ({ex.Message})\r\r{validSIPMessage.Body}";
+				string error = $"Failed to decode SDP body\r\r{validSIPMessage.Body}";
 				Log(LogLevels.Error, error);
 				project.SDPBodies.Add(new EmptySDP());
 			}
+			else project.SDPBodies.Add(SDP);
 
 
 

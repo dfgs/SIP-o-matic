@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\ParserLib\ParserLib\ParserLib.csproj" />
     <ProjectReference Include="..\SIP-o-matic.corelib\SIP-o-matic.corelib.csproj" />
   </ItemGroup>
 

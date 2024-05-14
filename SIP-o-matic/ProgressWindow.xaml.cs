@@ -18,7 +18,6 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using SIPParserLib;
-using ParserLib;
 using LogLib;
 using SIP_o_matic.corelib.Models.Transactions;
 using SIP_o_matic.Modules;

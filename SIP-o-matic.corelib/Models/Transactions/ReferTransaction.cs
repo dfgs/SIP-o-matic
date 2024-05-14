@@ -69,7 +69,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			Request? request;
 			ReferToHeader? header;
 			SIPURL? uri;
-			Header? uriHeader;
+			URIHeader? uriHeader;
 			Match match;
 
 			request=Transition.Parameters[0] as Request;
@@ -79,7 +79,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			if (header == null) return;
 
 			uri = header.Value.URI as SIPURL;
-			if (uri== null) return;
+			if ((uri== null) || ((uri.Headers == null)))return;
 
 			uriHeader = uri.Headers.FirstOrDefault(item => item.Name == "Replaces");
 			if (uriHeader == null) return;

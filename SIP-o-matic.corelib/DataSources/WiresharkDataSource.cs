@@ -67,9 +67,9 @@ namespace SIP_o_matic.DataSources
 				{
 					frame = frameReader.Read(block.Data);
 					packet = packetReader.Read(frame.Payload);
+					
 
-
-					timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime();
+					timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000000).ToLocalTime();
 					sourceAddress = new Address(packet.Header.SourceAddress.ToString());
 					destinationAddress = new Address(packet.Header.DestinationAddress.ToString());
 
