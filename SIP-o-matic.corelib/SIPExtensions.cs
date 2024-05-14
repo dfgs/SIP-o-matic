@@ -27,16 +27,29 @@ namespace SIP_o_matic.corelib
 		}
 		public static string GetViaBranch(this SIPMessage Message)
 		{
-			string? value;
+			ViaHeader? header;
+			ViaBranch? parameter;
+			
 
-			value = Message.GetHeader<ViaHeader>()?.Value;
-			if (value == null)
+			header = Message.GetHeader<ViaHeader>();
+			if (header== null)
 			{
-				string error = $"Via branch header missing in SIP message";
+				string error = $"Via header missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
+			parameter = header.GetParameter<ViaBranch>();
+			if (parameter== null)
+			{
+				string error = $"Branch parameter missing in SIP message";
+				throw new InvalidOperationException(error);
+			}
+			if (parameter.Value == null)
+			{
+				string error = $"Branch parameter has no value";
 				throw new InvalidOperationException(error);
 			}
 
-			return value;
+			return parameter.Value;
 		}
 
 		public static string GetCSeq(this SIPMessage Message)

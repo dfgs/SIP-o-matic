@@ -39,9 +39,11 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			SubscribeStarted, SubscribeProceeding, SubscribeError, SubscribeTerminated,
 			// UPDATE transaction states
 			UpdateStarted, UpdateProceeding, UpdateError, UpdateTerminated,
+			// PRACK transaction states
+			PrackStarted, PrackProceeding, PrackError, PrackTerminated,
 
 		};
-		public enum Triggers { INVITE, ACK, REFER,NOTIFY,BYE,OPTIONS,REGISTER,MESSAGE,CANCEL,SUBSCRIBE,UPDATE, Prov1xx, Prov180, Final2xx, Error };
+		public enum Triggers { INVITE, ACK, REFER,NOTIFY,BYE,OPTIONS,REGISTER,MESSAGE,CANCEL,SUBSCRIBE,UPDATE,PRACK, Prov1xx, Prov180, Final2xx, Error };
 
 
 		private StateMachine<States, Triggers> fsm;
@@ -57,6 +59,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> CancelTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> SubscribeTrigger;
 		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> UpdateTrigger;
+		protected StateMachine<States, Triggers>.TriggerWithParameters<Request> PrackTrigger;
 
 
 		public required string CallID
@@ -144,6 +147,7 @@ namespace SIP_o_matic.corelib.Models.Transactions
 			CancelTrigger = fsm.SetTriggerParameters<Request>(Triggers.CANCEL);
 			SubscribeTrigger = fsm.SetTriggerParameters<Request>(Triggers.SUBSCRIBE);
 			UpdateTrigger = fsm.SetTriggerParameters<Request>(Triggers.UPDATE);
+			PrackTrigger = fsm.SetTriggerParameters<Request>(Triggers.PRACK);
 
 			OnConfigureFSM(fsm);
 		}
@@ -222,6 +226,9 @@ namespace SIP_o_matic.corelib.Models.Transactions
 					break;
 				case "UPDATE":
 					fsm.Fire(UpdateTrigger, Request);
+					break;
+				case "PRACK":
+					fsm.Fire(PrackTrigger, Request);
 					break;
 				default: throw new InvalidOperationException($"Unsupported transaction transition ({Request.RequestLine.Method})");
 			}

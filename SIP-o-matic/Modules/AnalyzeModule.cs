@@ -198,6 +198,7 @@ namespace SIP_o_matic.Modules
 				case "CANCEL": return new CancelTransaction(callID, viaBranch, cseq);
 				case "SUBSCRIBE": return new SubscribeTransaction(callID, viaBranch, cseq);
 				case "UPDATE": return new UpdateTransaction(callID, viaBranch, cseq);
+				case "PRACK": return new PrackTransaction(callID, viaBranch, cseq);
 				default:
 					string error = $"Failed to create new transaction: Invalid request method {Request.RequestLine.Method}";
 					Log(LogLevels.Error, error);
