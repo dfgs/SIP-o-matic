@@ -51,6 +51,9 @@ namespace SIP_o_matic.DataSources
 
 			Address sourceAddress, destinationAddress;
 			Device? device;
+			InterfaceDescriptionBlock[] interfaceDescriptionBlocks;
+			bool precisionLoss;
+
 
 			frameReader = new FrameReader();
 			packetReader = new PacketReader();
@@ -63,13 +66,17 @@ namespace SIP_o_matic.DataSources
 			using (var reader = new Reader(FileName))
 			{
 				content = "";
+				interfaceDescriptionBlocks = reader.InterfaceDescriptionBlocks.ToArray();
+
 				await foreach (var block in reader.EnhancedPacketBlocks.ToAsyncEnumerable())
 				{
 					frame = frameReader.Read(block.Data);
 					packet = packetReader.Read(frame.Payload);
-					
 
-					timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000000).ToLocalTime();
+					//if (interfaceDescriptionBlocks[block.InterfaceID].TimestampResolution==255)	timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000000).ToLocalTime();
+					//else timeStamp = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime();
+					timeStamp = block.GetTimestamp(interfaceDescriptionBlocks[block.InterfaceID], out precisionLoss);
+
 					sourceAddress = new Address(packet.Header.SourceAddress.ToString());
 					destinationAddress = new Address(packet.Header.DestinationAddress.ToString());
 
@@ -103,6 +110,7 @@ namespace SIP_o_matic.DataSources
 					if (
 						content.StartsWith("SIP/2.0") ||
 						content.StartsWith("INVITE") || content.StartsWith("ACK") || content.StartsWith("OPTIONS") || content.StartsWith("BYE") || content.StartsWith("CANCEL") || content.StartsWith("REGISTER")
+						|| content.StartsWith("REFER") || content.StartsWith("NOTIFY") ||content.StartsWith("MESSAGE") ||content.StartsWith("SUBSCRIBE") ||content.StartsWith("UPDATE") ||content.StartsWith("PRACK") 
 						)
 					{
 						//new Message(index++, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime(), packet.Header.SourceAddress.ToString(), packet.Header.DestinationAddress.ToString(), message);

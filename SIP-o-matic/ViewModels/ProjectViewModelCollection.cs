@@ -32,7 +32,7 @@ namespace SIP_o_matic.ViewModels
 		}
 
 		
-		public async Task<ProjectViewModel> AddAsync(string Path)
+		/*public async Task<ProjectViewModel> AddAsync(string Path)
 		{
 			ProjectViewModel projectViewModel;
 
@@ -40,7 +40,7 @@ namespace SIP_o_matic.ViewModels
 			AddInternal(projectViewModel);
 			SelectedItem = projectViewModel;
 			return projectViewModel;
-		}
+		}*/
 
 	}
 }

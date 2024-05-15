@@ -224,6 +224,9 @@ namespace SIP_o_matic
 					analyzeWindow.ShowDialog();
 
 					newProject = new ProjectViewModel(project);
+					newProject.Path = dialog.FileName;
+					newProject.Name = System.IO.Path.GetFileName(dialog.FileName);
+
 					newProject.RefreshDeviceAndMessages();
 					applicationViewModel.Projects.Add(newProject);
 					applicationViewModel.Projects.SelectedItem = newProject;

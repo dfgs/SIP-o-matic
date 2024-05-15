@@ -163,6 +163,11 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.UpdateProceeding)
 				.Ignore(Transaction.States.UpdateError)
 				.Ignore(Transaction.States.UpdateTerminated)
+				.Ignore(Transaction.States.UpdateTerminated)
+				.Ignore(Transaction.States.PrackStarted)
+				.Ignore(Transaction.States.PrackProceeding)
+				.Ignore(Transaction.States.PrackError)
+				.Ignore(Transaction.States.PrackTerminated)
 				;
 			fsm.Configure(States.Ringing)
 				.PermitReentry(Transaction.States.InviteRinging)
@@ -177,6 +182,10 @@ namespace SIP_o_matic.corelib.Models
 				.Ignore(Transaction.States.UpdateProceeding)
 				.Ignore(Transaction.States.UpdateError)
 				.Ignore(Transaction.States.UpdateTerminated)
+				.Ignore(Transaction.States.PrackStarted)
+				.Ignore(Transaction.States.PrackProceeding)
+				.Ignore(Transaction.States.PrackError)
+				.Ignore(Transaction.States.PrackTerminated)
 				;
 
 			fsm.Configure(States.Established)

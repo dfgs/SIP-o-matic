@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
@@ -143,6 +144,7 @@ namespace SIP_o_matic.ViewModels
 			project = new ProjectViewModel(model);
 			project.Path = Path;
 			project.Name= System.IO.Path.GetFileName(Path);
+			
 			
 			return project;
 		}
