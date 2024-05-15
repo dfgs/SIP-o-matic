@@ -102,7 +102,8 @@ namespace SIP_o_matic.Views
 
 		private void WriteHeader(Paragraph Paragraph, MessageHeader Header)
 		{
-			Write(Paragraph, Header.Name + ": ", "Blue");
+			if (Header is InvalidHeader) Write(Paragraph, Header.Name + ": ", "Red");
+			else Write(Paragraph, Header.Name + ": ", "Blue");
 			WriteLine(Paragraph, Header.GetStringValue(), "Black");
 		}
 		private void WriteField(Paragraph Paragraph, SDPField Field)

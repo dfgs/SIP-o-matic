@@ -80,6 +80,22 @@ namespace SIP_o_matic.DataSources
 					sourceAddress = new Address(packet.Header.SourceAddress.ToString());
 					destinationAddress = new Address(packet.Header.DestinationAddress.ToString());
 
+					device = devices.FirstOrDefault(item => item.Name == sourceAddress.Value);
+					if (device == null)
+					{
+						device = new Device(sourceAddress.Value, new Address[] { sourceAddress });
+						devices.Add(device);
+					}
+
+					device = devices.FirstOrDefault(item => item.Name == destinationAddress.Value);
+					if (device == null)
+					{
+						device = new Device(destinationAddress.Value, new Address[] { destinationAddress });
+						devices.Add(device);
+					}
+
+
+
 					switch (packet.Header.Protocol)
 					{
 						case Protocols.UDP:
@@ -113,23 +129,6 @@ namespace SIP_o_matic.DataSources
 						|| content.StartsWith("REFER") || content.StartsWith("NOTIFY") ||content.StartsWith("MESSAGE") ||content.StartsWith("SUBSCRIBE") ||content.StartsWith("UPDATE") ||content.StartsWith("PRACK") 
 						)
 					{
-						//new Message(index++, new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc).AddMilliseconds(block.Timestamp / 1000).ToLocalTime(), packet.Header.SourceAddress.ToString(), packet.Header.DestinationAddress.ToString(), message);
-
-						device = devices.FirstOrDefault(item => item.Name == sourceAddress.Value);
-						if (device == null)
-						{
-							device = new Device(sourceAddress.Value, new Address[] { sourceAddress });
-							devices.Add(device);
-						}
-
-						device = devices.FirstOrDefault(item => item.Name == destinationAddress.Value);
-						if (device == null)
-						{
-							device = new Device(destinationAddress.Value, new Address[] { destinationAddress });
-							devices.Add(device);
-						}
-
-
 						Message message = new Message(index++, timeStamp,sourceAddress, destinationAddress, content);
 						messages.Add(message);
 					}

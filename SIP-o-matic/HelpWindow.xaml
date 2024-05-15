@@ -72,6 +72,27 @@
 							<Paragraph>Search dialogs feature</Paragraph>
 						</ListItem>
 					</List>
+					<Paragraph>
+						<Bold>
+							<Underline>
+								Version 1.3
+							</Underline>
+						</Bold>
+					</Paragraph>
+					<List>
+						<ListItem>
+							<Paragraph>Parse engine can handle invalid header messages</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>pcap data source can decode different time formats</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>pcap data source add devices for RTP destination</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Fixed bug on transaction color</Paragraph>
+						</ListItem>
+					</List>
 				</FlowDocument>
 			</FlowDocumentReader>
 		</TabItem>
