@@ -153,21 +153,26 @@ namespace SIP_o_matic.Modules
 
 			return messageColorManager.GetColorString(index);
 		}
-		private string GetDialogColor(string CallID, string FromTag)
+		private string GetDialogColor(string CallID, string FromTag,string? ToTag)
 		{
 			int index;
 			string key;
 
 			key = CallID + "/" + FromTag ;
-
 			index = dialogColors.IndexOf(key);
-			if (index == -1)
+			if (index != -1) return messageColorManager.GetColorString(index);
+			
+			if (ToTag != null)
 			{
-				index = dialogColors.Count;
-				dialogColors.Add(key);
+				key = CallID + "/" + ToTag;
+				index = dialogColors.IndexOf(key);
+				if (index != -1) return messageColorManager.GetColorString(index);
 			}
 
+			index = dialogColors.Count;
+			dialogColors.Add(key);
 			return messageColorManager.GetColorString(index);
+
 		}
 
 		private Transaction CreateNewTransaction(Request Request, Device SourceDevice, Device DestinationDevice)
@@ -466,6 +471,7 @@ namespace SIP_o_matic.Modules
 			string viaBranch;
 			string cseq;
 			string fromTag;
+			string? toTag;
 			Dialog? dialog;
 			Message message;
 			ISIPMessage SIPMessage;
@@ -484,9 +490,10 @@ namespace SIP_o_matic.Modules
 			viaBranch = validSIPMessage.GetViaBranch();
 			cseq = validSIPMessage.GetCSeq();
 			fromTag = validSIPMessage.GetFromTag();
+			toTag = validSIPMessage.GetToTag();
 
 			message.TransactionColor = GetTransactionColor(callID, viaBranch, cseq);
-			message.DialogColor = GetDialogColor(callID, fromTag);
+			message.DialogColor = GetDialogColor(callID, fromTag,toTag);
 
 			project.MessagesFrame.Events.Add(message);
 
@@ -513,6 +520,7 @@ namespace SIP_o_matic.Modules
 			RTPStart rtpStart;
 			RTPStop rtpStop;
 			string callID, cseq, viaBranch, fromTag;
+			string? toTag;
 
 			LogEnter();
 
@@ -548,13 +556,14 @@ namespace SIP_o_matic.Modules
 					viaBranch = validSIPMessage.GetViaBranch();
 					cseq = validSIPMessage.GetCSeq();
 					fromTag = validSIPMessage.GetFromTag();
+					toTag = validSIPMessage.GetToTag();
 
 					rtpStart = new RTPStart(stream.Timestamp, stream.SourceAddress, stream.DestinationAddress,stream.DestinationPort);
-					rtpStart.DialogColor = GetDialogColor(callID, fromTag);
+					rtpStart.DialogColor = GetDialogColor(callID, fromTag,toTag);
 					project.MessagesFrame.Events.Add(rtpStart);
 					
 					rtpStop = new RTPStop(stream.LastTimestamp, stream.SourceAddress, stream.DestinationAddress, stream.DestinationPort);
-					rtpStop.DialogColor = GetDialogColor(callID, fromTag);
+					rtpStop.DialogColor = GetDialogColor(callID, fromTag, toTag);
 					project.MessagesFrame.Events.Add(rtpStop);
 
 				}
