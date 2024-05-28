@@ -274,6 +274,9 @@ namespace SIP_o_matic
 				case "pcapng":
 					dialog.Filter = "pcapng files|*.pcapng|All files|*.*";
 					break;
+				case "pcap":
+					dialog.Filter = "pcap files|*.pcap|All files|*.*";
+					break;
 				case "SIP":
 					dialog.Filter = "SIP files|*.sip|All files|*.*";
 					break;

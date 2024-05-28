@@ -31,6 +31,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserLib", "..\ParserLib\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapngFile", "..\PcapngFile\PcapngFile\PcapngFile.csproj", "{A6EEB930-ECAA-4272-BFEC-D32A8F3EF970}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PcapReaderLib", "..\PcapReaderLib\PcapReaderLib\PcapReaderLib.csproj", "{D57C7733-3AEA-4616-81D4-306B425454FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{A6EEB930-ECAA-4272-BFEC-D32A8F3EF970}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A6EEB930-ECAA-4272-BFEC-D32A8F3EF970}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A6EEB930-ECAA-4272-BFEC-D32A8F3EF970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D57C7733-3AEA-4616-81D4-306B425454FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D57C7733-3AEA-4616-81D4-306B425454FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D57C7733-3AEA-4616-81D4-306B425454FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D57C7733-3AEA-4616-81D4-306B425454FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +105,7 @@ Global
 		{7F86EF1D-94C6-44DF-9C8F-4701ADA054FC} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{BAF92FF1-7786-4754-A086-A89D5767054F} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 		{A6EEB930-ECAA-4272-BFEC-D32A8F3EF970} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
+		{D57C7733-3AEA-4616-81D4-306B425454FD} = {FBC5094F-1E9C-4B2B-8DBC-710009E6DE9A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9229E506-032C-4EEB-9A4A-D9F3DC95820E}

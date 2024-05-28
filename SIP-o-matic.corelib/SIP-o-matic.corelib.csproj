@@ -17,6 +17,7 @@
     <ProjectReference Include="..\..\ModuleLib\ModuleLib\ModuleLib.csproj" />
     <ProjectReference Include="..\..\ParserLib\ParserLib\ParserLib.csproj" />
     <ProjectReference Include="..\..\PcapngFile\PcapngFile\PcapngFile.csproj" />
+    <ProjectReference Include="..\..\PcapReaderLib\PcapReaderLib\PcapReaderLib.csproj" />
     <ProjectReference Include="..\..\SIPParserLib\SIPParserLib\SIPParserLib.csproj" />
   </ItemGroup>
 

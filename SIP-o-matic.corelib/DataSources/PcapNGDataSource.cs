@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SIP_o_matic.DataSources
 {
-    public class WiresharkDataSource : IDataSource
+    public class PcapNGDataSource : IDataSource
 	{
 		private List<Device> devices;
 		private List<Message> messages;
@@ -20,7 +20,7 @@ namespace SIP_o_matic.DataSources
 		public string Description => "Wiresharp pcapng";
 
 
-		public WiresharkDataSource()
+		public PcapNGDataSource()
 		{
 			devices = new List<Device>();
 			messages = new List<Message>();

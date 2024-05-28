@@ -95,7 +95,10 @@ namespace SIP_o_matic.Modules
 					dataSource = new GenericSIPDataSource();
 					break;
 				case "pcapng":
-					dataSource = new WiresharkDataSource();
+					dataSource = new PcapNGDataSource();
+					break;
+				case "pcap":
+					dataSource = new PcapDataSource();
 					break;
 				default:
 					dataSource = new OracleOEMDataSource();
