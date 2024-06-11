@@ -7,11 +7,14 @@
 			 xmlns:dd="urn:gong-wpf-dragdrop"
              mc:Ignorable="d" x:Name="root" BorderThickness="1" BorderBrush="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"
              d:DesignHeight="450" d:DesignWidth="800">
+	<UserControl.CommandBindings>
+		<CommandBinding Command="Copy" CanExecute="CopyCommandBinding_CanExecute" Executed="CopyCommandBinding_Executed" PreviewCanExecute="CopyCommandBinding_PreviewCanExecute"  />
+	</UserControl.CommandBindings>
 
 
 	<DockPanel  VerticalAlignment="Stretch" x:Name="dockPanel">
 		<ScrollViewer DockPanel.Dock="Top" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" x:Name="headerScrollViewer">
-			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True"   >
+			<ItemsControl DockPanel.Dock="Top" ItemsSource="{Binding ElementName=root,Path=Devices}" dd:DragDrop.IsDragSource="True" dd:DragDrop.IsDropTarget="True" x:Name="header"   >
 				<ItemsControl.ItemsPanel>
 					<ItemsPanelTemplate>
 						<StackPanel Orientation="Horizontal"/>
@@ -29,9 +32,9 @@
 				</ItemsControl.ItemTemplate>
 			</ItemsControl>
 		</ScrollViewer>
-			
-		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" x:Name="contentScrollViewer" ScrollChanged="contentScrollViewer_ScrollChanged"  Background="Transparent" PreviewMouseWheel="contentScrollViewer_PreviewMouseWheel" >
-			<Grid>
+
+		<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" x:Name="contentScrollViewer" ScrollChanged="contentScrollViewer_ScrollChanged"  Background="Transparent" PreviewMouseWheel="contentScrollViewer_PreviewMouseWheel">
+			<Grid x:Name="content" >
 				<ItemsControl ItemsSource="{Binding ElementName=root,Path=Devices}"  >
 					<ItemsControl.ItemsPanel>
 						<ItemsPanelTemplate>

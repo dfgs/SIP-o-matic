@@ -6,7 +6,6 @@
              xmlns:views="clr-namespace:SIP_o_matic.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-
 	<Grid>
 		<Grid.ColumnDefinitions>
 			<ColumnDefinition Width="1*"/>
@@ -14,7 +13,7 @@
 			<ColumnDefinition Width="600"/>
 		</Grid.ColumnDefinitions>
 
-		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Events}" >
+		<views:LadderView Grid.Column="0" Devices="{Binding Devices}" ItemsSource="{Binding Events}" x:Name="callsView">
 			<views:LadderView.ItemTemplate>
 				<DataTemplate>
 					<views:EventView Margin="0,0,0,16"/>

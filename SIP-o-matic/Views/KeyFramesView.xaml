@@ -9,7 +9,6 @@
              d:DesignHeight="450" d:DesignWidth="800">
 
 	<UserControl.CommandBindings>
-		<CommandBinding Command="Copy" CanExecute="CopyCommandBinding_CanExecute" Executed="CopyCommandBinding_Executed" PreviewCanExecute="CopyCommandBinding_PreviewCanExecute" />
 		<CommandBinding Command="{x:Static local:RoutedCommands.ExportPPT}" CanExecute="ExportPPTCommandBinding_CanExecute" Executed="ExportPPTCommandBinding_Executed" PreviewCanExecute="ExportPPTCommandBinding_PreviewCanExecute" />
 	</UserControl.CommandBindings>
 

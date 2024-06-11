@@ -24,5 +24,9 @@ namespace SIP_o_matic.Views
 		{
 			InitializeComponent();
 		}
+
+		
+
+
 	}
 }

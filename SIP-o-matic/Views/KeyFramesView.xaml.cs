@@ -33,6 +33,7 @@ namespace SIP_o_matic.Views
 			InitializeComponent();
 		}
 
+
 		private static RenderTargetBitmap? ControlToImage(UIElement? target, double dpiX, double dpiY)
 		{
 			if (target == null) return null;
@@ -51,31 +52,6 @@ namespace SIP_o_matic.Views
 			rtb.Render(dv);
 			return rtb;
 		}
-
-		private void CopyCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = true;
-			e.Handled = true;
-			e.ContinueRouting = true;
-		}
-
-
-		private void CopyCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
-		{
-
-			RenderTargetBitmap? bmp = ControlToImage(callsView, 96, 96);
-			if (bmp == null) return;
-			Clipboard.SetImage(bmp);
-
-		}
-
-		private void CopyCommandBinding_PreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
-			e.CanExecute = true;
-			e.Handled = true;
-			e.ContinueRouting = true;
-		}
-
 
 		private void ExportPPTCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{

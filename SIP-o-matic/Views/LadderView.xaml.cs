@@ -12,6 +12,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Xml.Linq;
 
 namespace SIP_o_matic.Views
 {
@@ -70,6 +72,70 @@ namespace SIP_o_matic.Views
 			e.Handled = true;
 		}
 
+		private static RenderTargetBitmap? ControlToImage(UIElement? Header,UIElement? Content, double dpiX, double dpiY)
+		{
+			if ((Header == null) || (Content==null)) return null;
+			
+			Rect headerBounds = new Rect(0, 0, Header.DesiredSize.Width , Header.DesiredSize.Height);
+			Rect contentBounds = new Rect(0, 0, Content.DesiredSize.Width , Content.DesiredSize.Height );
 
+			Size headerSize = headerBounds.Size;
+			Size contentSize = contentBounds.Size;
+
+			Size targetSize = new Size(Math.Max(headerSize.Width,contentSize.Width),(headerSize.Height+contentSize.Height));
+			Rect targetRect = new Rect(targetSize);
+
+			RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap((int)targetRect.Width,(int)targetRect.Height,dpiX, dpiY,PixelFormats.Pbgra32);
+
+			RenderTargetBitmap renderTargetBitmapHeader = new RenderTargetBitmap((int)headerBounds.Width, (int)headerBounds.Height, dpiX, dpiY, PixelFormats.Pbgra32);
+			RenderTargetBitmap renderTargetBitmapContent = new RenderTargetBitmap((int)contentBounds.Width, (int)contentBounds.Height, dpiX, dpiY, PixelFormats.Pbgra32);
+
+			renderTargetBitmapHeader.Render(Header);
+			renderTargetBitmapContent.Render(Content);
+
+			DrawingVisual drawingVisual = new DrawingVisual();
+			using (DrawingContext context = drawingVisual.RenderOpen())
+			{
+				//context.PushTransform(new ScaleTransform(ScaleX, ScaleY));
+				context.DrawRectangle(Brushes.White, null, targetRect);
+
+				context.DrawImage(renderTargetBitmapHeader, new Rect(0, 0, headerSize.Width, headerSize.Height));
+				context.DrawImage(renderTargetBitmapContent, new Rect(0 , headerSize.Height, contentSize.Width , contentSize.Height));
+			}
+
+			renderTargetBitmap.Render(drawingVisual);
+			return renderTargetBitmap;
+		}
+
+		
+
+		private void CopyCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+			e.Handled = true;
+			e.ContinueRouting = true;
+		}
+
+
+		private async void CopyCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			contentScrollViewer.ScrollToHome();
+			headerScrollViewer.ScrollToHome();
+			await Task.Delay(100); // async method needed in order to scroll content to home before clipboard capture
+			
+			RenderTargetBitmap? bmp = ControlToImage(header,content, 96,96);
+			if (bmp == null) return;
+			Clipboard.SetImage(bmp);
+
+		}
+
+		private void CopyCommandBinding_PreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = true;
+			e.Handled = true;
+			e.ContinueRouting = true;
+		}
+
+		
 	}
 }

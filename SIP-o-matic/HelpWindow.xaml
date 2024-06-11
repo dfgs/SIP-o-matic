@@ -84,13 +84,28 @@
 							<Paragraph>Parse engine can handle invalid header messages</Paragraph>
 						</ListItem>
 						<ListItem>
-							<Paragraph>pcap data source can decode different time formats</Paragraph>
+							<Paragraph>pcapng data source can decode different time formats</Paragraph>
 						</ListItem>
 						<ListItem>
-							<Paragraph>pcap data source add devices for RTP destination</Paragraph>
+							<Paragraph>pcapng data source add devices for RTP destination</Paragraph>
 						</ListItem>
 						<ListItem>
 							<Paragraph>Fixed bug on transaction color</Paragraph>
+						</ListItem>
+					</List>
+					<Paragraph>
+						<Bold>
+							<Underline>
+								Version 1.4
+							</Underline>
+						</Bold>
+					</Paragraph>
+					<List>
+						<ListItem>
+							<Paragraph>Added pcap (legacy) data source</Paragraph>
+						</ListItem>
+						<ListItem>
+							<Paragraph>Added button to copy ladder diagram</Paragraph>
 						</ListItem>
 					</List>
 				</FlowDocument>

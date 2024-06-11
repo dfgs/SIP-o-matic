@@ -81,6 +81,10 @@
 				<Button Command="{x:Static root:RoutedCommands.ExportPPT}"  ToolTip="Export to power point" ToolTipService.ShowOnDisabled="true">
 					<Image Source="/Images/page_white_powerpoint.png" Stretch="None"/>
 				</Button>
+				<Button Command="Copy"  ToolTip="Copy diagram" ToolTipService.ShowOnDisabled="true" >
+					<Image Source="/Images/page_copy.png" Stretch="None"/>
+				</Button>
+
 				<Separator/>
 				
 				<Menu Background="Transparent">
@@ -130,9 +134,6 @@
 				</Button>				<Separator/>
 				<Button Command="{x:Static root:RoutedCommands.ExportSIP}"  ToolTip="Export SIP" ToolTipService.ShowOnDisabled="true"  Visibility="Collapsed">
 					<Image Source="/Images/report_disk.png" Stretch="None"/>
-				</Button>
-				<Button Command="Copy"  ToolTip="Copy frame" ToolTipService.ShowOnDisabled="true" Visibility="Collapsed">
-					<Image Source="/Images/page_copy.png" Stretch="None"/>
 				</Button>
 				<Button Command="{x:Static root:RoutedCommands.About}"  ToolTip="About" ToolTipService.ShowOnDisabled="true" >
 					<Image Source="/Images/help.png" Stretch="None"/>
