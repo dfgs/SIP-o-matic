@@ -107,7 +107,14 @@ namespace SIP_o_matic.Views
 			return renderTargetBitmap;
 		}
 
-		
+		public async Task<RenderTargetBitmap?> CopyToImageAsync()
+		{
+			contentScrollViewer.ScrollToHome();
+			headerScrollViewer.ScrollToHome();
+			await Task.Delay(100); // async method needed in order to scroll content to home before clipboard capture
+
+			return ControlToImage(header, content, 96, 96);
+		}
 
 		private void CopyCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
@@ -119,11 +126,7 @@ namespace SIP_o_matic.Views
 
 		private async void CopyCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
 		{
-			contentScrollViewer.ScrollToHome();
-			headerScrollViewer.ScrollToHome();
-			await Task.Delay(100); // async method needed in order to scroll content to home before clipboard capture
-			
-			RenderTargetBitmap? bmp = ControlToImage(header,content, 96,96);
+			RenderTargetBitmap? bmp = await CopyToImageAsync();
 			if (bmp == null) return;
 			Clipboard.SetImage(bmp);
 

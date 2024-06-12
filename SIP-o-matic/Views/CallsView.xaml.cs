@@ -26,7 +26,10 @@ namespace SIP_o_matic.Views
 			InitializeComponent();
 		}
 
-		
+		public async Task<RenderTargetBitmap?> CopyToImageAsync()
+		{
+			return await LadderView.CopyToImageAsync();
+		}
 
 
 

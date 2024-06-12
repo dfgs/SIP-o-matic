@@ -9,7 +9,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="1200">
 
-	<views:LadderView Devices="{Binding Devices}" ItemsSource="{Binding Calls}">
+	<views:LadderView Devices="{Binding Devices}" ItemsSource="{Binding Calls}" x:Name="LadderView">
 		<views:LadderView.ItemTemplate>
 			<DataTemplate>
 				<views:CallView Margin="0,0,0,16"/>

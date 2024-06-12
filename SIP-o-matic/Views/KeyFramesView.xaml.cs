@@ -34,24 +34,7 @@ namespace SIP_o_matic.Views
 		}
 
 
-		private static RenderTargetBitmap? ControlToImage(UIElement? target, double dpiX, double dpiY)
-		{
-			if (target == null) return null;
-			// render control content
-			Rect bounds = new Rect(0, 0, target.DesiredSize.Width, target.DesiredSize.Height);// VisualTreeHelper.GetDescendantBounds(target);
-			RenderTargetBitmap rtb = new RenderTargetBitmap((int)(bounds.Width * dpiX / 96.0),
-															(int)(bounds.Height * dpiY / 96.0),
-														   dpiX, dpiY,
-														   PixelFormats.Pbgra32);
-			DrawingVisual dv = new DrawingVisual();
-			using (DrawingContext ctx = dv.RenderOpen())
-			{
-				VisualBrush vb = new VisualBrush(target);
-				ctx.DrawRectangle(vb, null, VisualTreeHelper.GetDescendantBounds(target));
-			}
-			rtb.Render(dv);
-			return rtb;
-		}
+	
 
 		private void ExportPPTCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
@@ -115,7 +98,7 @@ namespace SIP_o_matic.Views
 					KeyFrames.SelectedItem = keyFrame;
 					await Task.Delay(100);
 
-					bmp = ControlToImage(callsView, 96, 96);
+					bmp = await callsView.CopyToImageAsync();
 					if (bmp == null) return;
 					frame = BitmapFrame.Create(bmp);
 					encoder = new PngBitmapEncoder();
