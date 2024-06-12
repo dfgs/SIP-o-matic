@@ -108,6 +108,18 @@
 							<Paragraph>Added button to copy ladder diagram</Paragraph>
 						</ListItem>
 					</List>
+					<Paragraph>
+						<Bold>
+							<Underline>
+								Version 1.5
+							</Underline>
+						</Bold>
+					</Paragraph>
+					<List>
+						<ListItem>
+							<Paragraph>Fixed ppt export</Paragraph>
+						</ListItem>
+					</List>
 				</FlowDocument>
 			</FlowDocumentReader>
 		</TabItem>
